@@ -1,0 +1,13 @@
+# Output products list for <sci_fifo>
+sci_fifo.asy
+sci_fifo.ngc
+sci_fifo.sym
+sci_fifo.v
+sci_fifo.veo
+sci_fifo.vhd
+sci_fifo.vho
+sci_fifo.xco
+sci_fifo_fifo_generator_v4_3_xst_1.ngc_xst.xrpt
+sci_fifo_fifo_generator_v4_3_xst_1_vhdl.prj
+sci_fifo_flist.txt
+sci_fifo_xmdf.tcl

@@ -1,0 +1,323 @@
+Release 10.1 Map K.31 (nt64)
+Xilinx Mapping Report File for Design 'Coincidence'
+
+Design Information
+------------------
+Command Line   : map -ise Z:/trigger/trigger.ise -intstyle ise -p
+xc2v3000-fg676-6 -cm area -pr off -k 4 -c 100 -tx off -o Coincidence_map.ncd
+Coincidence.ngd Coincidence.pcf 
+Target Device  : xc2v3000
+Target Package : fg676
+Target Speed   : -6
+Mapper Version : virtex2 -- $Revision: 1.46 $
+Mapped Date    : Mon Mar 03 16:34:37 2025
+
+Design Summary
+--------------
+Number of errors:      0
+Number of warnings:    2
+Logic Utilization:
+  Number of Slice Flip Flops:           122 out of  28,672    1%
+  Number of 4 input LUTs:               218 out of  28,672    1%
+Logic Distribution:
+  Number of occupied Slices:            150 out of  14,336    1%
+    Number of Slices containing only related logic:     150 out of     150 100%
+    Number of Slices containing unrelated logic:          0 out of     150   0%
+      *See NOTES below for an explanation of the effects of unrelated logic.
+  Total Number of 4 input LUTs:         272 out of  28,672    1%
+    Number used as logic:               218
+    Number used as a route-thru:         54
+  Number of bonded IOBs:                162 out of     484   33%
+  Number of BUFGMUXs:                     1 out of      16    6%
+
+Peak Memory Usage:  267 MB
+Total REAL time to MAP completion:  1 secs 
+Total CPU time to MAP completion:   0 secs 
+
+NOTES:
+
+   Related logic is defined as being logic that shares connectivity - e.g. two
+   LUTs are "related" if they share common inputs.  When assembling slices,
+   Map gives priority to combine logic that is related.  Doing so results in
+   the best timing performance.
+
+   Unrelated logic shares no connectivity.  Map will only begin packing
+   unrelated logic into a slice once 99% of the slices are occupied through
+   related logic packing.
+
+   Note that once logic distribution reaches the 99% level through related
+   logic packing, this does not mean the device is completely utilized.
+   Unrelated logic packing will then begin, continuing until all usable LUTs
+   and FFs are occupied.  Depending on your timing budget, increased levels of
+   unrelated logic packing may adversely affect the overall timing performance
+   of your design.
+
+Table of Contents
+-----------------
+Section 1 - Errors
+Section 2 - Warnings
+Section 3 - Informational
+Section 4 - Removed Logic Summary
+Section 5 - Removed Logic
+Section 6 - IOB Properties
+Section 7 - RPMs
+Section 8 - Guide Report
+Section 9 - Area Group and Partition Summary
+Section 10 - Modular Design Summary
+Section 11 - Timing Report
+Section 12 - Configuration String Information
+Section 13 - Control Set Information
+Section 14 - Utilization by Hierarchy
+
+Section 1 - Errors
+------------------
+
+Section 2 - Warnings
+--------------------
+WARNING:LIT:243 - Logical network coincid_MIP_cnt_out<15> has no load.
+WARNING:LIT:395 - The above warning message base_net_load_rule is repeated 87
+   more times for the following (max. 5 shown):
+   coincid_MIP_cnt_out<14>,
+   coincid_MIP_cnt_out<13>,
+   coincid_MIP_cnt_out<12>,
+   coincid_MIP_cnt_out<11>,
+   coincid_MIP_cnt_out<10>
+   To see the details of these warning messages, please use the -detail switch.
+
+Section 3 - Informational
+-------------------------
+INFO:MapLib:562 - No environment variables are currently set.
+INFO:LIT:244 - All of the single ended outputs in this design are using slew
+   rate limited output drivers. The delay on speed critical single ended outputs
+   can be dramatically reduced by designating them as fast outputs.
+
+Section 4 - Removed Logic Summary
+---------------------------------
+   2 block(s) optimized away
+
+Section 5 - Removed Logic
+-------------------------
+
+Optimized Block(s):
+TYPE 		BLOCK
+GND 		XST_GND
+VCC 		XST_VCC
+
+To enable printing of redundant blocks removed and signals merged, set the
+detailed map report option and rerun map.
+
+Section 6 - IOB Properties
+--------------------------
+
++----------------------------------------------------------------------------------------------------------------------------------------+
+| IOB Name                           | Type             | Direction | IO Standard | Drive    | Slew | Reg (s)      | Resistor | IOB      |
+|                                    |                  |           |             | Strength | Rate |              |          | Delay    |
++----------------------------------------------------------------------------------------------------------------------------------------+
+| acd_fee_sec_hit_a_in_N             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| acd_fee_sec_hit_b_in_N             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| acd_fee_sid_hit_a_in_N             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| acd_fee_sid_hit_b_in_N             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| acd_fee_top_hit_a_in_N             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| acd_fee_top_hit_b_in_N             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| busy_ab_sel_in<0>                  | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| busy_ab_sel_in<1>                  | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| busy_mask_in<0>                    | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| busy_mask_in<1>                    | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| busy_mask_set_in                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_1_hit_a_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_1_hit_b_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_2_hit_a_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_2_hit_b_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_3_hit_a_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_3_hit_b_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_4_hit_a_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| cal_fee_4_hit_b_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| clk_in                             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP1_div_in<0>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP1_div_in<1>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP1_div_in<2>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP1_div_in<3>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP1_div_in<4>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP1_div_in<5>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP2_div_in<0>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP2_div_in<1>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP2_div_in<2>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP2_div_in<3>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP2_div_in<4>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_MIP2_div_in<5>             | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_UBS_cnt_out<0>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<1>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<2>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<3>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<4>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<5>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<6>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<7>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<8>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<9>             | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<10>            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<11>            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<12>            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<13>            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<14>            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_cnt_out<15>            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_UBS_div_in<0>              | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_UBS_div_in<1>              | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_UBS_div_in<2>              | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_UBS_div_in<3>              | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_UBS_div_in<4>              | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_UBS_div_in<5>              | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| coincid_tag_raw_out                | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_trg_out                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| coincid_trg_raw_1us_out            | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| csi_fee_hit_a_in_N                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| csi_fee_hit_b_in_N                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<0>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<1>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<2>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<3>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<4>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<5>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<6>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_ab_sel_in<7>                   | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<0>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<1>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<2>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<3>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<4>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<5>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<6>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_in<7>                     | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_mask_set_in                    | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_start_out                      | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_start_sel_in<0>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_start_sel_in<1>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_start_sel_in<2>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_start_sel_in<3>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_start_sel_in<4>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_start_sel_in<5>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| hit_syn_out<0>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<1>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<2>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<3>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<4>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<5>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<6>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<7>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<8>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<9>                     | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<10>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<11>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<12>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<13>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<14>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<15>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<16>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<17>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<18>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<19>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<20>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<21>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<22>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<23>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<24>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<25>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<26>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<27>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<28>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<29>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<30>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| hit_syn_out<31>                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| logic_grp2_sel_in<0>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp2_sel_in<1>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp2_sel_in<2>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp2_sel_in<3>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp3_sel_in<0>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp3_sel_in<1>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp3_sel_in<2>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp3_sel_in<3>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp4_sel_in<0>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp4_sel_in<1>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp4_sel_in<2>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp4_sel_in<3>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp5_sel_in<0>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp5_sel_in<1>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp5_sel_in<2>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp5_sel_in<3>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp6_sel_in<0>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp6_sel_in<1>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp6_sel_in<2>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp6_sel_in<3>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp7_sel_in<0>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp7_sel_in<1>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp7_sel_in<2>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp7_sel_in<3>               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp_oe_in<0>                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp_oe_in<1>                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp_oe_in<2>                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp_oe_in<3>                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_grp_oe_in<4>                 | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_judge_mode_in                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| logic_match_out                    | IOB              | OUTPUT    | LVTTL       | 12       | SLOW |              |          |          |
+| rst_in_N                           | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| si_trb_1_busy_a_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| si_trb_1_busy_b_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| si_trb_2_busy_a_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| si_trb_2_busy_b_in_N               | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_wait_time_in<0>          | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_wait_time_in<1>          | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_wait_time_in<2>          | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_wait_time_in<3>          | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_wait_time_in<4>          | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_win_in<0>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_win_in<1>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_win_in<2>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_win_in<3>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_win_in<4>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
+| trg_match_win_in<5>                | IOB              | INPUT     | LVTTL       |          |      |              |          |          |
++----------------------------------------------------------------------------------------------------------------------------------------+
+
+Section 7 - RPMs
+----------------
+
+Section 8 - Guide Report
+------------------------
+Guide not run on this design.
+
+Section 9 - Area Group and Partition Summary
+--------------------------------------------
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+Area Group Information
+----------------------
+
+  No area groups were found in this design.
+
+----------------------
+
+Section 10 - Modular Design Summary
+-----------------------------------
+Modular Design not used for this design.
+
+Section 11 - Timing Report
+--------------------------
+This design was not run using timing mode.
+
+Section 12 - Configuration String Details
+-----------------------------------------
+Use the "-detail" map option to print out Configuration Strings
+
+Section 13 - Control Set Information
+------------------------------------
+No control set information for this architecture.
+
+Section 14 - Utilization by Hierarchy
+-------------------------------------
+
+This feature is not supported for this architecture.

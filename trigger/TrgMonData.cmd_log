@@ -1,0 +1,7 @@
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/TrgMonData.xst" -ofn "Z:/trigger/TrgMonData.syr"

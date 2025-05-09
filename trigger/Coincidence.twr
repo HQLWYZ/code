@@ -1,0 +1,213 @@
+--------------------------------------------------------------------------------
+Release 10.1 Trace  (nt64)
+Copyright (c) 1995-2008 Xilinx, Inc.  All rights reserved.
+
+C:\Xilinx\10.1\ISE\bin\nt64\unwrapped\trce.exe -ise Z:/trigger/trigger.ise
+-intstyle ise -e 3 -s 6 -xml Coincidence Coincidence.ncd -o Coincidence.twr
+Coincidence.pcf
+
+Design file:              Coincidence.ncd
+Physical constraint file: Coincidence.pcf
+Device,package,speed:     xc2v3000,fg676,-6 (PRODUCTION 1.121 2008-01-09, STEPPING level 0)
+Report level:             error report
+
+Environment Variable      Effect 
+--------------------      ------ 
+NONE                      No environment variables were set
+--------------------------------------------------------------------------------
+
+INFO:Timing:2698 - No timing constraints found, doing default enumeration.
+INFO:Timing:2752 - To get complete path coverage, use the unconstrained paths 
+   option. All paths that are not constrained will be reported in the 
+   unconstrained paths section(s) of the report.
+INFO:Timing:3339 - The clock-to-out numbers in this timing report are based on 
+   a 50 Ohm transmission line loading model.  For the details of this model, 
+   and for more information on accounting for different loading conditions, 
+   please see the device datasheet.
+
+
+
+Data Sheet report:
+-----------------
+All values displayed in nanoseconds (ns)
+
+Setup/Hold to clock clk_in
+-------------------------+------------+------------+------------------+--------+
+                         |  Setup to  |  Hold to   |                  | Clock  |
+Source                   | clk (edge) | clk (edge) |Internal Clock(s) | Phase  |
+-------------------------+------------+------------+------------------+--------+
+acd_fee_sec_hit_a_in_N   |   -0.312(R)|    0.550(R)|clk_in_BUFGP      |   0.000|
+acd_fee_sec_hit_b_in_N   |   -0.450(R)|    0.689(R)|clk_in_BUFGP      |   0.000|
+acd_fee_sid_hit_a_in_N   |    0.067(R)|    0.171(R)|clk_in_BUFGP      |   0.000|
+acd_fee_sid_hit_b_in_N   |    0.223(R)|    0.021(R)|clk_in_BUFGP      |   0.000|
+acd_fee_top_hit_a_in_N   |    0.254(R)|   -0.016(R)|clk_in_BUFGP      |   0.000|
+acd_fee_top_hit_b_in_N   |   -0.115(R)|    0.361(R)|clk_in_BUFGP      |   0.000|
+busy_ab_sel_in<0>        |   -0.021(R)|    0.267(R)|clk_in_BUFGP      |   0.000|
+busy_ab_sel_in<1>        |   -0.118(R)|    0.357(R)|clk_in_BUFGP      |   0.000|
+busy_mask_in<0>          |    2.830(R)|   -1.034(R)|clk_in_BUFGP      |   0.000|
+busy_mask_in<1>          |    2.435(R)|   -0.338(R)|clk_in_BUFGP      |   0.000|
+busy_mask_set_in         |    0.344(R)|    0.163(R)|clk_in_BUFGP      |   0.000|
+cal_fee_1_hit_a_in_N     |    0.491(R)|   -0.245(R)|clk_in_BUFGP      |   0.000|
+cal_fee_1_hit_b_in_N     |    0.077(R)|    0.167(R)|clk_in_BUFGP      |   0.000|
+cal_fee_2_hit_a_in_N     |   -0.368(R)|    0.614(R)|clk_in_BUFGP      |   0.000|
+cal_fee_2_hit_b_in_N     |   -0.515(R)|    0.754(R)|clk_in_BUFGP      |   0.000|
+cal_fee_3_hit_a_in_N     |    0.360(R)|    0.172(R)|clk_in_BUFGP      |   0.000|
+cal_fee_3_hit_b_in_N     |   -0.131(R)|    0.370(R)|clk_in_BUFGP      |   0.000|
+cal_fee_4_hit_a_in_N     |   -0.368(R)|    0.614(R)|clk_in_BUFGP      |   0.000|
+cal_fee_4_hit_b_in_N     |   -0.134(R)|    0.373(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP1_div_in<0>   |    0.767(R)|    0.218(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP1_div_in<1>   |    0.694(R)|    0.018(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP1_div_in<2>   |    0.341(R)|    0.429(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP1_div_in<3>   |    1.661(R)|   -1.446(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP1_div_in<4>   |    1.190(R)|   -0.975(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP1_div_in<5>   |    0.928(R)|   -0.713(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP2_div_in<0>   |    1.451(R)|   -0.640(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP2_div_in<1>   |    1.926(R)|   -0.689(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP2_div_in<2>   |    1.038(R)|    0.592(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP2_div_in<3>   |    0.760(R)|   -0.545(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP2_div_in<4>   |    0.563(R)|   -0.348(R)|clk_in_BUFGP      |   0.000|
+coincid_MIP2_div_in<5>   |    0.341(R)|   -0.126(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_div_in<0>    |    3.351(R)|   -1.728(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_div_in<1>    |    2.920(R)|   -1.330(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_div_in<2>    |    2.459(R)|   -0.255(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_div_in<3>    |    3.618(R)|   -1.838(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_div_in<4>    |    3.478(R)|   -1.698(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_div_in<5>    |    4.054(R)|   -2.274(R)|clk_in_BUFGP      |   0.000|
+csi_fee_hit_a_in_N       |   -0.707(R)|    0.946(R)|clk_in_BUFGP      |   0.000|
+csi_fee_hit_b_in_N       |    0.065(R)|    0.179(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<0>         |    0.068(R)|    0.176(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<1>         |   -0.154(R)|    0.466(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<2>         |    0.230(R)|    0.014(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<3>         |   -0.085(R)|    0.323(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<4>         |   -0.377(R)|    0.615(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<5>         |    0.415(R)|   -0.176(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<6>         |    0.057(R)|    0.189(R)|clk_in_BUFGP      |   0.000|
+hit_ab_sel_in<7>         |    0.274(R)|   -0.035(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<0>           |   -0.094(R)|    0.332(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<1>           |    0.250(R)|    0.143(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<2>           |   -0.238(R)|    0.476(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<3>           |    0.248(R)|   -0.009(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<4>           |   -0.371(R)|    0.617(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<5>           |    0.186(R)|    0.060(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<6>           |   -0.252(R)|    0.496(R)|clk_in_BUFGP      |   0.000|
+hit_mask_in<7>           |    0.491(R)|   -0.247(R)|clk_in_BUFGP      |   0.000|
+hit_mask_set_in          |    2.087(R)|   -0.690(R)|clk_in_BUFGP      |   0.000|
+hit_start_sel_in<0>      |    1.994(R)|   -0.797(R)|clk_in_BUFGP      |   0.000|
+hit_start_sel_in<1>      |    2.216(R)|   -0.973(R)|clk_in_BUFGP      |   0.000|
+hit_start_sel_in<2>      |    2.013(R)|   -0.253(R)|clk_in_BUFGP      |   0.000|
+hit_start_sel_in<3>      |    1.194(R)|   -0.203(R)|clk_in_BUFGP      |   0.000|
+hit_start_sel_in<4>      |    1.643(R)|   -1.001(R)|clk_in_BUFGP      |   0.000|
+hit_start_sel_in<5>      |    0.357(R)|   -0.142(R)|clk_in_BUFGP      |   0.000|
+logic_grp2_sel_in<0>     |    0.942(R)|   -0.727(R)|clk_in_BUFGP      |   0.000|
+logic_grp2_sel_in<1>     |    1.111(R)|   -0.896(R)|clk_in_BUFGP      |   0.000|
+logic_grp2_sel_in<2>     |    1.134(R)|   -0.919(R)|clk_in_BUFGP      |   0.000|
+logic_grp2_sel_in<3>     |    0.970(R)|   -0.755(R)|clk_in_BUFGP      |   0.000|
+logic_grp3_sel_in<0>     |    0.250(R)|   -0.035(R)|clk_in_BUFGP      |   0.000|
+logic_grp3_sel_in<1>     |   -0.121(R)|    0.336(R)|clk_in_BUFGP      |   0.000|
+logic_grp3_sel_in<2>     |   -0.204(R)|    0.419(R)|clk_in_BUFGP      |   0.000|
+logic_grp3_sel_in<3>     |   -0.608(R)|    0.823(R)|clk_in_BUFGP      |   0.000|
+logic_grp4_sel_in<0>     |    0.761(R)|   -0.546(R)|clk_in_BUFGP      |   0.000|
+logic_grp4_sel_in<1>     |    0.676(R)|   -0.461(R)|clk_in_BUFGP      |   0.000|
+logic_grp4_sel_in<2>     |    0.512(R)|   -0.297(R)|clk_in_BUFGP      |   0.000|
+logic_grp4_sel_in<3>     |    1.237(R)|   -1.022(R)|clk_in_BUFGP      |   0.000|
+logic_grp5_sel_in<0>     |    0.492(R)|   -0.277(R)|clk_in_BUFGP      |   0.000|
+logic_grp5_sel_in<1>     |    0.328(R)|   -0.113(R)|clk_in_BUFGP      |   0.000|
+logic_grp5_sel_in<2>     |    0.469(R)|   -0.254(R)|clk_in_BUFGP      |   0.000|
+logic_grp5_sel_in<3>     |    0.300(R)|   -0.085(R)|clk_in_BUFGP      |   0.000|
+logic_grp6_sel_in<0>     |    0.739(R)|   -0.524(R)|clk_in_BUFGP      |   0.000|
+logic_grp6_sel_in<1>     |    0.252(R)|   -0.037(R)|clk_in_BUFGP      |   0.000|
+logic_grp6_sel_in<2>     |    0.421(R)|   -0.206(R)|clk_in_BUFGP      |   0.000|
+logic_grp6_sel_in<3>     |    0.369(R)|   -0.154(R)|clk_in_BUFGP      |   0.000|
+logic_grp7_sel_in<0>     |    1.544(R)|   -0.689(R)|clk_in_BUFGP      |   0.000|
+logic_grp7_sel_in<1>     |    1.434(R)|   -0.579(R)|clk_in_BUFGP      |   0.000|
+logic_grp7_sel_in<2>     |    2.280(R)|   -1.425(R)|clk_in_BUFGP      |   0.000|
+logic_grp7_sel_in<3>     |    1.677(R)|   -0.822(R)|clk_in_BUFGP      |   0.000|
+logic_grp_oe_in<0>       |    1.129(R)|   -0.914(R)|clk_in_BUFGP      |   0.000|
+logic_grp_oe_in<1>       |    0.579(R)|   -0.364(R)|clk_in_BUFGP      |   0.000|
+logic_grp_oe_in<2>       |    0.936(R)|   -0.721(R)|clk_in_BUFGP      |   0.000|
+logic_grp_oe_in<3>       |    1.482(R)|   -1.267(R)|clk_in_BUFGP      |   0.000|
+logic_grp_oe_in<4>       |    1.485(R)|   -1.270(R)|clk_in_BUFGP      |   0.000|
+logic_judge_mode_in      |    1.122(R)|   -0.002(R)|clk_in_BUFGP      |   0.000|
+si_trb_1_busy_a_in_N     |   -0.051(R)|    0.297(R)|clk_in_BUFGP      |   0.000|
+si_trb_1_busy_b_in_N     |    0.788(R)|   -0.573(R)|clk_in_BUFGP      |   0.000|
+si_trb_2_busy_a_in_N     |    0.267(R)|    0.110(R)|clk_in_BUFGP      |   0.000|
+si_trb_2_busy_b_in_N     |    0.061(R)|    0.154(R)|clk_in_BUFGP      |   0.000|
+trg_match_wait_time_in<0>|    3.739(R)|   -2.620(R)|clk_in_BUFGP      |   0.000|
+trg_match_wait_time_in<1>|    3.418(R)|   -2.299(R)|clk_in_BUFGP      |   0.000|
+trg_match_wait_time_in<2>|    3.292(R)|   -1.796(R)|clk_in_BUFGP      |   0.000|
+trg_match_wait_time_in<3>|    2.404(R)|   -1.186(R)|clk_in_BUFGP      |   0.000|
+trg_match_wait_time_in<4>|    2.570(R)|   -1.167(R)|clk_in_BUFGP      |   0.000|
+trg_match_win_in<0>      |    3.533(R)|   -2.791(R)|clk_in_BUFGP      |   0.000|
+trg_match_win_in<1>      |    3.714(R)|   -2.914(R)|clk_in_BUFGP      |   0.000|
+trg_match_win_in<2>      |    3.149(R)|   -2.350(R)|clk_in_BUFGP      |   0.000|
+trg_match_win_in<3>      |    2.728(R)|   -1.792(R)|clk_in_BUFGP      |   0.000|
+trg_match_win_in<4>      |    2.586(R)|   -1.844(R)|clk_in_BUFGP      |   0.000|
+trg_match_win_in<5>      |    2.958(R)|   -2.117(R)|clk_in_BUFGP      |   0.000|
+-------------------------+------------+------------+------------------+--------+
+
+Clock clk_in to Pad
+-----------------------+------------+------------------+--------+
+                       | clk (edge) |                  | Clock  |
+Destination            |   to PAD   |Internal Clock(s) | Phase  |
+-----------------------+------------+------------------+--------+
+coincid_UBS_cnt_out<0> |    8.190(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<1> |    8.388(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<2> |    8.531(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<3> |    8.435(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<4> |    8.182(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<5> |    8.166(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<6> |    8.396(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<7> |    8.153(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<8> |    8.072(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<9> |    8.099(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<10>|    8.075(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<11>|    7.874(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<12>|    7.858(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<13>|    8.072(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<14>|    7.882(R)|clk_in_BUFGP      |   0.000|
+coincid_UBS_cnt_out<15>|    7.615(R)|clk_in_BUFGP      |   0.000|
+coincid_trg_out        |    8.090(R)|clk_in_BUFGP      |   0.000|
+coincid_trg_raw_1us_out|    7.974(R)|clk_in_BUFGP      |   0.000|
+hit_start_out          |    7.551(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<0>         |    9.370(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<1>         |    9.633(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<2>         |    9.425(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<3>         |    9.382(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<4>         |    9.069(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<5>         |    9.403(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<6>         |    9.978(R)|clk_in_BUFGP      |   0.000|
+hit_syn_out<7>         |    9.879(R)|clk_in_BUFGP      |   0.000|
+logic_match_out        |    9.415(R)|clk_in_BUFGP      |   0.000|
+-----------------------+------------+------------------+--------+
+
+Clock to Setup on destination clock clk_in
+---------------+---------+---------+---------+---------+
+               | Src:Rise| Src:Fall| Src:Rise| Src:Fall|
+Source Clock   |Dest:Rise|Dest:Rise|Dest:Fall|Dest:Fall|
+---------------+---------+---------+---------+---------+
+clk_in         |    4.473|         |         |         |
+---------------+---------+---------+---------+---------+
+
+Pad to Pad
+------------------+---------------+---------+
+Source Pad        |Destination Pad|  Delay  |
+------------------+---------------+---------+
+logic_grp_oe_in<0>|logic_match_out|    7.342|
+logic_grp_oe_in<1>|logic_match_out|    6.886|
+logic_grp_oe_in<2>|logic_match_out|    7.368|
+logic_grp_oe_in<3>|logic_match_out|    7.693|
+logic_grp_oe_in<4>|logic_match_out|    7.214|
+------------------+---------------+---------+
+
+
+Analysis completed Mon Mar 03 16:34:59 2025 
+--------------------------------------------------------------------------------
+
+Trace Settings:
+-------------------------
+Trace Settings 
+
+Peak Memory Usage: 198 MB
+
+
+

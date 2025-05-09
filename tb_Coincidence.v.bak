@@ -1,0 +1,234 @@
+//~ `New testbench
+
+`timescale  1ns / 1ps
+
+module tb_Coincidence;
+
+// Coincidence Parameters
+parameter PERIOD                = 40       ;
+parameter SI_DEAD_TIME_SET_NUM  = 24'd15000;
+parameter IDLE                  = 0        ;
+
+// Coincidence Inputs
+reg   clk_in                               = 1'b0 ;
+reg   rst_in_N                             = 1'b0 ;
+reg   si_trb_1_busy_a_in_N                 = 1'b1 ;
+reg   si_trb_1_busy_b_in_N                 = 1'b1 ;
+reg   si_trb_2_busy_a_in_N                 = 1'b1 ;
+reg   si_trb_2_busy_b_in_N                 = 1'b1 ;
+reg   acd_fee_top_hit_a_in_N               = 1'b1 ;
+reg   acd_fee_top_hit_b_in_N               = 1'b1 ;
+reg   acd_fee_sec_hit_a_in_N               = 1'b1 ;
+reg   acd_fee_sec_hit_b_in_N               = 1'b1 ;
+reg   acd_fee_sid_hit_a_in_N               = 1'b1 ;
+reg   acd_fee_sid_hit_b_in_N               = 1'b1 ;
+reg   csi_fee_hit_a_in_N                   = 1'b1 ;
+reg   csi_fee_hit_b_in_N                   = 1'b1 ;
+reg   cal_fee_1_hit_a_in_N                 = 1'b1 ;
+reg   cal_fee_1_hit_b_in_N                 = 1'b1 ;
+reg   cal_fee_2_hit_a_in_N                 = 1'b1 ;
+reg   cal_fee_2_hit_b_in_N                 = 1'b1 ;
+reg   cal_fee_3_hit_a_in_N                 = 1'b1 ;
+reg   cal_fee_3_hit_b_in_N                 = 1'b1 ;
+reg   cal_fee_4_hit_a_in_N                 = 1'b1 ;
+reg   cal_fee_4_hit_b_in_N                 = 1'b1 ;
+reg   [15:0]  hit_mask_in                  = 16'b0000_0000_0000_0000 ;
+reg   [15:0]  hit_ab_sel_in                = 16'b1000_0000_0000_0000 ;
+reg   hit_mask_set_in                      = 1'b1 ;
+reg   [5:0]  hit_start_sel_in              = 6'b00_0000 ;
+reg   [1:0]  busy_mask_in                  = 2'b00 ;
+reg   [1:0]  busy_ab_sel_in                = 2'b10 ;
+reg   busy_mask_set_in                     = 1'b1 ;
+reg   [5:0]  busy_start_sel_in             = 6'b00_0000 ;
+reg   [4:0]  logic_grp_oe_in               = 5'b00100 ;
+reg   logic_judge_mode_in                  = 1'b1 ;
+reg   [1:0]  logic_grp0_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp1_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp2_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp3_sel_in             = 2'b01 ;
+reg   [1:0]  logic_grp4_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp5_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp6_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp7_sel_in             = 2'b00 ;
+reg   [1:0]  logic_grp8_sel_in             = 2'b00 ;
+reg   [4:0]  trg_match_wait_time_in        = 5'b1_1100 ;
+reg   [5:0]  trg_match_win_in              = 6'b00_0011 ;
+reg   [5:0]  coincid_UBS_div_in            = 6'b00_0001 ;
+reg   [5:0]  coincid_MIP1_div_in           = 6'b00_0001 ;
+reg   [5:0]  coincid_MIP2_div_in           = 6'b00_0001 ;
+reg   [5:0]  coincid_Gm_div_in             = 6'b00_0001 ;
+
+// Coincidence Outputs
+wire  coincid_trg_out                      ;
+wire  logic_match_out                      ;
+wire  [31:0]  hit_syn_out                  ;
+wire  hit_start_out                        ;
+wire  [15:0]  coincid_UBS_cnt_out          ;
+wire  [15:0]  coincid_MIP_cnt_out          ;
+wire  [15:0]  coincid_Gm_cnt_out           ;
+wire  [15:0]  coincid_Brst_cnt_out         ;
+wire  coincid_trg_raw_1us_out              ;
+wire  coincid_tag_raw_out                  ;
+
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 acd_fee_top_hit_a_in_N=0;
+	#1_000_000 acd_fee_top_hit_a_in_N=1;
+	end
+acd_fee_top_hit_a_in_N=1'b1;
+end
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 acd_fee_sec_hit_a_in_N=0;
+	#1_000_000 acd_fee_sec_hit_a_in_N=1;
+	end
+acd_fee_sec_hit_a_in_N=1'b1;
+end
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 acd_fee_sid_hit_a_in_N=0;
+	#1_000_000 acd_fee_sid_hit_a_in_N=1;
+	end
+acd_fee_sid_hit_a_in_N=1'b1;
+end
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 csi_fee_hit_a_in_N=0;
+	#1_000_000 csi_fee_hit_a_in_N=1;
+	end
+csi_fee_hit_a_in_N=1'b1;
+end
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 cal_fee_1_hit_a_in_N=0;
+	#1_000_000 cal_fee_1_hit_a_in_N=1;
+	end
+cal_fee_1_hit_a_in_N=1'b1;
+end
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 cal_fee_2_hit_a_in_N=0;
+	#1_000_000 cal_fee_2_hit_a_in_N=1;
+	end
+cal_fee_2_hit_a_in_N=1'b1;
+end
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 cal_fee_3_hit_a_in_N=0;
+	#1_000_000 cal_fee_3_hit_a_in_N=1;
+	end
+cal_fee_3_hit_a_in_N=1'b1;
+end
+
+
+initial//-----------HIT IN------
+begin
+repeat(3000)
+	begin
+	#1_000_000 cal_fee_4_hit_a_in_N=0;
+	#1_000_000 cal_fee_4_hit_a_in_N=1;
+	end
+cal_fee_4_hit_a_in_N=1'b1;
+end
+
+
+
+
+initial
+begin
+    forever #(PERIOD/2)  clk_in=~clk_in;
+end
+
+initial
+begin
+    #(PERIOD*2) rst_in_N  =  1;
+end
+
+Coincidence #(
+    .SI_DEAD_TIME_SET_NUM ( SI_DEAD_TIME_SET_NUM ),
+    .IDLE                 ( IDLE                 ))
+ u_Coincidence (
+    .clk_in                   ( clk_in                          ),
+    .rst_in_N                 ( rst_in_N                        ),
+    .si_trb_1_busy_a_in_N     ( si_trb_1_busy_a_in_N            ),
+    .si_trb_1_busy_b_in_N     ( si_trb_1_busy_b_in_N            ),
+    .si_trb_2_busy_a_in_N     ( si_trb_2_busy_a_in_N            ),
+    .si_trb_2_busy_b_in_N     ( si_trb_2_busy_b_in_N            ),
+    .acd_fee_top_hit_a_in_N   ( acd_fee_top_hit_a_in_N          ),
+    .acd_fee_top_hit_b_in_N   ( acd_fee_top_hit_b_in_N          ),
+    .acd_fee_sec_hit_a_in_N   ( acd_fee_sec_hit_a_in_N          ),
+    .acd_fee_sec_hit_b_in_N   ( acd_fee_sec_hit_b_in_N          ),
+    .acd_fee_sid_hit_a_in_N   ( acd_fee_sid_hit_a_in_N          ),
+    .acd_fee_sid_hit_b_in_N   ( acd_fee_sid_hit_b_in_N          ),
+    .csi_fee_hit_a_in_N       ( csi_fee_hit_a_in_N              ),
+    .csi_fee_hit_b_in_N       ( csi_fee_hit_b_in_N              ),
+    .cal_fee_1_hit_a_in_N     ( cal_fee_1_hit_a_in_N            ),
+    .cal_fee_1_hit_b_in_N     ( cal_fee_1_hit_b_in_N            ),
+    .cal_fee_2_hit_a_in_N     ( cal_fee_2_hit_a_in_N            ),
+    .cal_fee_2_hit_b_in_N     ( cal_fee_2_hit_b_in_N            ),
+    .cal_fee_3_hit_a_in_N     ( cal_fee_3_hit_a_in_N            ),
+    .cal_fee_3_hit_b_in_N     ( cal_fee_3_hit_b_in_N            ),
+    .cal_fee_4_hit_a_in_N     ( cal_fee_4_hit_a_in_N            ),
+    .cal_fee_4_hit_b_in_N     ( cal_fee_4_hit_b_in_N            ),
+    .hit_mask_in              ( hit_mask_in              [15:0] ),
+    .hit_ab_sel_in            ( hit_ab_sel_in            [15:0] ),
+    .hit_mask_set_in          ( hit_mask_set_in                 ),
+    .hit_start_sel_in         ( hit_start_sel_in         [5:0]  ),
+    .busy_mask_in             ( busy_mask_in             [1:0]  ),
+    .busy_ab_sel_in           ( busy_ab_sel_in           [1:0]  ),
+    .busy_mask_set_in         ( busy_mask_set_in                ),
+    .busy_start_sel_in        ( busy_start_sel_in        [5:0]  ),
+    .logic_grp_oe_in          ( logic_grp_oe_in          [4:0]  ),
+    .logic_judge_mode_in      ( logic_judge_mode_in             ),
+    .logic_grp0_sel_in        ( logic_grp0_sel_in        [3:0]  ),
+    .logic_grp1_sel_in        ( logic_grp1_sel_in        [3:0]  ),
+    .logic_grp2_sel_in        ( logic_grp2_sel_in        [3:0]  ),
+    .logic_grp3_sel_in        ( logic_grp3_sel_in        [3:0]  ),
+    .logic_grp4_sel_in        ( logic_grp4_sel_in        [3:0]  ),
+    .logic_grp5_sel_in        ( logic_grp5_sel_in        [3:0]  ),
+    .logic_grp6_sel_in        ( logic_grp6_sel_in        [3:0]  ),
+    .logic_grp7_sel_in        ( logic_grp7_sel_in        [3:0]  ),
+    .logic_grp8_sel_in        ( logic_grp8_sel_in        [3:0]  ),
+    .trg_match_wait_time_in   ( trg_match_wait_time_in   [4:0]  ),
+    .trg_match_win_in         ( trg_match_win_in         [5:0]  ),
+    .coincid_UBS_div_in       ( coincid_UBS_div_in       [5:0]  ),
+    .coincid_MIP1_div_in      ( coincid_MIP1_div_in      [5:0]  ),
+    .coincid_MIP2_div_in      ( coincid_MIP2_div_in      [5:0]  ),
+    .coincid_Gm_div_in        ( coincid_Gm_div_in        [5:0]  ),
+
+    .coincid_trg_out          ( coincid_trg_out                 ),
+    .logic_match_out          ( logic_match_out                 ),
+    .hit_syn_out              ( hit_syn_out              [31:0] ),
+    .hit_start_out            ( hit_start_out                   ),
+    .coincid_UBS_cnt_out      ( coincid_UBS_cnt_out      [15:0] ),
+    .coincid_MIP_cnt_out      ( coincid_MIP_cnt_out      [15:0] ),
+    .coincid_Gm_cnt_out       ( coincid_Gm_cnt_out       [15:0] ),
+    .coincid_Brst_cnt_out     ( coincid_Brst_cnt_out     [15:0] ),
+    .coincid_trg_raw_1us_out  ( coincid_trg_raw_1us_out         ),
+    .coincid_tag_raw_out      ( coincid_tag_raw_out             )
+);
+
+
+
+endmodule

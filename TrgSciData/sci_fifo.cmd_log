@@ -1,0 +1,3 @@
+xst -ise "Z:/TrgSciData/xlnx_auto_0.ise" -intstyle ise -ifn "Z:/TrgSciData/sci_fifo.xst" -ofn "Z:/TrgSciData/sci_fifo.syr"
+xst -ise "Z:/TrgSciData/xlnx_auto_0.ise" -intstyle ise -ifn "Z:/TrgSciData/sci_fifo.xst" -ofn "Z:/TrgSciData/sci_fifo.syr"
+xst -ise "Z:/TrgSciData/TrgSciData.ise" -intstyle ise -ifn "Z:/TrgSciData/sci_fifo.xst" -ofn "Z:/TrgSciData/sci_fifo.syr"

@@ -1,0 +1,371 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dZ:/trigger
+T_opt
+!s110 1743076888
+V37ZXJNc9cZ1TKNjgm34hQ0
+04 16 4 work tb_GroundTestGen fast 0
+Z1 04 4 4 work glbl fast 0
+=1-00155de8d003-67e53e18-41-96c
+Z2 o-quiet -auto_acc_if_foreign -work work -L xilinxcorelib_ver -L unisims_ver -L unimacro_ver
+Z3 tCvgOpt 0
+n@_opt
+Z4 OL;O;10.6d;65
+R0
+T_opt1
+!s110 1743165634
+V@B7HSkUdBTYVF1JXNJgo;0
+04 13 4 work tb_TrgMonData fast 0
+R1
+=1-00155de8d003-67e698c2-1ef-d84
+R2
+R3
+n@_opt1
+R4
+T_opt2
+!s110 1743164859
+V:J]k4YN6I6W_3;1bn9c@G1
+04 11 4 work HitTrgCount fast 0
+R1
+=1-00155de8d003-67e695bb-c0-a68
+R2
+R3
+n@_opt2
+R4
+R0
+vCoincidence
+Z5 !s110 1741338722
+!i10b 1
+!s100 V=VPTnI4ULoGA5:JSTF0W1
+INjgY]GgdI^d7Bbz>l?nJA3
+Z6 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1741332242
+8../Coincidence.v
+F../Coincidence.v
+L0 10
+Z7 OL;L;10.6d;65
+r1
+!s85 0
+31
+Z8 !s108 1741338722.000000
+!s107 ../Coincidence.v|
+!s90 -reportprogress|300|+acc|../Coincidence.v|
+!i113 0
+Z9 o+acc -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R3
+n@coincidence
+vConfigReg
+Z10 !s110 1741339054
+!i10b 1
+!s100 fjEYo@M<Thm]0LjQ2UMN00
+IW632[9W@VzNacWWJoMRZA0
+R6
+R0
+w1741339039
+8../ConfigReg/ConfigReg.v
+F../ConfigReg/ConfigReg.v
+Z11 L0 11
+R7
+r1
+!s85 0
+31
+!s108 1741339053.000000
+!s107 ..\ConfigReg\Default.v|../ConfigReg/ConfigReg.v|
+!s90 -reportprogress|300|+acc|../ConfigReg/ConfigReg.v|
+!i113 0
+R9
+R3
+n@config@reg
+vCycledTrgGen
+Z12 !s110 1741611248
+!i10b 1
+!s100 eX`V7zhNfoYIN@`cdAMNo3
+IcY2zhZ?7ga`daXZm]`D?c1
+R6
+R0
+w1741610692
+8../CycledTrgGen/CycledTrgGen.v
+F../CycledTrgGen/CycledTrgGen.v
+R11
+R7
+r1
+!s85 0
+31
+Z13 !s108 1741611248.000000
+!s107 ../CycledTrgGen/CycledTrgGen.v|
+!s90 -reportprogress|300|+acc|../CycledTrgGen/CycledTrgGen.v|
+!i113 0
+R9
+R3
+n@cycled@trg@gen
+vglbl
+Z14 !s110 1743165633
+!i10b 1
+!s100 N@F]==L>T5C_JAFEkI4Ib1
+ILZmD>2M39k;o]YQ?Nh=X@3
+R6
+R0
+w1202685744
+8C:/Xilinx/10.1/ISE/verilog/src/glbl.v
+FC:/Xilinx/10.1/ISE/verilog/src/glbl.v
+L0 5
+R7
+r1
+!s85 0
+31
+Z15 !s108 1743165633.000000
+!s107 C:/Xilinx/10.1/ISE/verilog/src/glbl.v|
+!s90 -reportprogress|300|+acc|C:/Xilinx/10.1/ISE/verilog/src/glbl.v|
+!i113 0
+R9
+R3
+vGroundTestGen
+Z16 !s110 1743076886
+!i10b 1
+!s100 Q<`KkNH`_8cC;=?hK>ZTJ0
+IG`bCB5gacAmUC=m2kcm1H2
+R6
+R0
+w1743076514
+8../GroundTestGen/GroundTestGen.v
+F../GroundTestGen/GroundTestGen.v
+R11
+R7
+r1
+!s85 0
+31
+Z17 !s108 1743076886.000000
+!s107 ../GroundTestGen/GroundTestGen.v|
+!s90 -reportprogress|300|+acc|../GroundTestGen/GroundTestGen.v|
+!i113 0
+R9
+R3
+n@ground@test@gen
+vHitTrgCount
+!s110 1743164858
+!i10b 1
+!s100 haW7zHMDd33dzYzOS^CQ:0
+I@UQgc6@NJTL1A]X6GGMOe3
+R6
+R0
+w1742527821
+8../HitTrgCount/HitTrgCount.v
+F../HitTrgCount/HitTrgCount.v
+R11
+R7
+r1
+!s85 0
+31
+!s108 1743164858.000000
+!s107 ../HitTrgCount/HitTrgCount.v|
+!s90 -reportprogress|300|+acc|../HitTrgCount/HitTrgCount.v|
+!i113 0
+R9
+R3
+n@hit@trg@count
+vtb_Coincidence
+R5
+!i10b 1
+!s100 BRBUMEc_P1X0V?2L;Y2D:3
+IoeXkkbI0DH[mkEZ98JD<h3
+R6
+R0
+w1741332418
+8../tb_Coincidence.v
+F../tb_Coincidence.v
+L0 5
+R7
+r1
+!s85 0
+31
+R8
+!s107 ../tb_Coincidence.v|
+!s90 -reportprogress|300|+acc|../tb_Coincidence.v|
+!i113 0
+R9
+R3
+ntb_@coincidence
+vtb_ConfigReg
+R10
+!i10b 1
+!s100 d6QR^2Q2=EJ_WPHIm`Q9D0
+IDTed1W?k`6A8f=fO3L0862
+R6
+R0
+w1741338865
+8../ConfigReg/tb_ConfigReg.v
+F../ConfigReg/tb_ConfigReg.v
+L0 4
+R7
+r1
+!s85 0
+31
+!s108 1741339054.000000
+!s107 ../ConfigReg/tb_ConfigReg.v|
+!s90 -reportprogress|300|+acc|../ConfigReg/tb_ConfigReg.v|
+!i113 0
+R9
+R3
+ntb_@config@reg
+vtb_CycledTrgGen
+R12
+!i10b 1
+!s100 e=OQkabk0FLLVBY=1@TAd1
+INl]5Udzi_XLb1kcFkm7BH2
+R6
+R0
+w1741611243
+8../CycledTrgGen/tb_CycledTrgGen.v
+F../CycledTrgGen/tb_CycledTrgGen.v
+L0 4
+R7
+r1
+!s85 0
+31
+R13
+!s107 ../CycledTrgGen/tb_CycledTrgGen.v|
+!s90 -reportprogress|300|+acc|../CycledTrgGen/tb_CycledTrgGen.v|
+!i113 0
+R9
+R3
+ntb_@cycled@trg@gen
+vtb_GroundTestGen
+R16
+!i10b 1
+!s100 <E8;OGaP=6][4Q5Jn4dNk1
+I:icn<5F>W[=`kTR0I^4281
+R6
+R0
+w1743076875
+8../GroundTestGen/tb_GroundTestGen.v
+F../GroundTestGen/tb_GroundTestGen.v
+L0 4
+R7
+r1
+!s85 0
+31
+R17
+!s107 ../GroundTestGen/tb_GroundTestGen.v|
+!s90 -reportprogress|300|+acc|../GroundTestGen/tb_GroundTestGen.v|
+!i113 0
+R9
+R3
+ntb_@ground@test@gen
+vtb_HitTrgCount
+!s110 1742536459
+!i10b 1
+!s100 La>^d;OBFnL@599LCMfJ`3
+IQzRTkzEm5BfcchkH9:UIS2
+R6
+R0
+w1742527787
+8../HitTrgCount/tb_HitTrgCount.v
+F../HitTrgCount/tb_HitTrgCount.v
+L0 4
+R7
+r1
+!s85 0
+31
+!s108 1742536459.000000
+!s107 ../HitTrgCount/tb_HitTrgCount.v|
+!s90 -reportprogress|300|+acc|../HitTrgCount/tb_HitTrgCount.v|
+!i113 0
+R9
+R3
+ntb_@hit@trg@count
+vtb_TrgMonData
+R14
+!i10b 1
+!s100 >gEJdCJo=UEm5kBSaI^NS1
+IjeJdchIIA05:DnCEY>Y0Z0
+R6
+R0
+w1743165463
+8../TrgMonData/tb_TrgMonData.v
+F../TrgMonData/tb_TrgMonData.v
+L0 4
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../TrgMonData/tb_TrgMonData.v|
+!s90 -reportprogress|300|+acc|../TrgMonData/tb_TrgMonData.v|
+!i113 0
+R9
+R3
+ntb_@trg@mon@data
+vtb_TrgOutCtrl
+Z18 !s110 1743076349
+!i10b 1
+!s100 CU^7mIa<^ZEKnP;df@KL41
+IemQE@:<7bmgW0j4oND=QA1
+R6
+R0
+w1742539300
+8../TrgOutCtrl/tb_TrgOutCtrl.v
+F../TrgOutCtrl/tb_TrgOutCtrl.v
+L0 4
+R7
+r1
+!s85 0
+31
+Z19 !s108 1743076349.000000
+!s107 ../TrgOutCtrl/tb_TrgOutCtrl.v|
+!s90 -reportprogress|300|+acc|../TrgOutCtrl/tb_TrgOutCtrl.v|
+!i113 0
+R9
+R3
+ntb_@trg@out@ctrl
+vTrgMonData
+R14
+!i10b 1
+!s100 3m3cBUK6oFfz80UPTX[KQ2
+IM]WSGEha_1Tke3BT_9XVd3
+R6
+R0
+w1743165428
+8../TrgMonData/TrgMonData.v
+F../TrgMonData/TrgMonData.v
+R11
+R7
+r1
+!s85 0
+31
+R15
+!s107 ../TrgMonData/TrgMonData.v|
+!s90 -reportprogress|300|+acc|../TrgMonData/TrgMonData.v|
+!i113 0
+R9
+R3
+n@trg@mon@data
+vTrgOutCtrl
+R18
+!i10b 1
+!s100 i3TMZ_QznNz`Pi<40B9h60
+I=]cVRj4Mz=g6mijIEG>f33
+R6
+R0
+w1742541289
+8../TrgOutCtrl/TrgOutCtrl.v
+F../TrgOutCtrl/TrgOutCtrl.v
+R11
+R7
+r1
+!s85 0
+31
+R19
+!s107 ../TrgOutCtrl/TrgOutCtrl.v|
+!s90 -reportprogress|300|+acc|../TrgOutCtrl/TrgOutCtrl.v|
+!i113 0
+R9
+R3
+n@trg@out@ctrl

@@ -1,0 +1,2 @@
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/GroundTestGen.xst" -ofn "Z:/trigger/GroundTestGen.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/GroundTestGen.xst" -ofn "Z:/trigger/GroundTestGen.syr"

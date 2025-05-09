@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RootFolder label="COREGEN" treetype="folder" language="COREGEN">
+	<Folder label="VERILOG Component Instantiation" treetype="folder">
+		<Template label="sci_fifo" treetype="template">
+ 
+ 
+// The following must be inserted into your Verilog file for this
+// core to be instantiated. Change the instance name and port connections
+// (in parentheses) to your own signal names.
+ 
+sci_fifo YourInstanceName (
+    .clk(clk),
+    .din(din), // Bus [15 : 0] 
+    .rd_en(rd_en),
+    .rst(rst),
+    .wr_en(wr_en),
+    .dout(dout), // Bus [15 : 0] 
+    .empty(empty),
+    .full(full));
+
+ 
+		</Template>
+	</Folder>
+	<Folder label="VHDL Component Instantiation" treetype="folder">
+		<Template label="sci_fifo" treetype="template">
+ 
+ 
+-- The following code must appear in the VHDL architecture header:
+ 
+component sci_fifo
+    port (
+    clk: IN std_logic;
+    din: IN std_logic_VECTOR(15 downto 0);
+    rd_en: IN std_logic;
+    rst: IN std_logic;
+    wr_en: IN std_logic;
+    dout: OUT std_logic_VECTOR(15 downto 0);
+    empty: OUT std_logic;
+    full: OUT std_logic);
+end component;
+
+
+ 
+-------------------------------------------------------------
+ 
+-- The following code must appear in the VHDL architecture body.
+-- Substitute your own instance name and net names.
+ 
+your_instance_name : sci_fifo
+        port map (
+            clk =&gt; clk,
+            din =&gt; din,
+            rd_en =&gt; rd_en,
+            rst =&gt; rst,
+            wr_en =&gt; wr_en,
+            dout =&gt; dout,
+            empty =&gt; empty,
+            full =&gt; full);
+ 
+		</Template>
+	</Folder>
+</RootFolder>

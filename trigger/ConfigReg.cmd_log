@@ -1,0 +1,3 @@
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/ConfigReg.xst" -ofn "Z:/trigger/ConfigReg.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/ConfigReg.xst" -ofn "Z:/trigger/ConfigReg.syr"
+xst -ise "Z:/trigger/trigger.ise" -intstyle ise -ifn "Z:/trigger/ConfigReg.xst" -ofn "Z:/trigger/ConfigReg.syr"

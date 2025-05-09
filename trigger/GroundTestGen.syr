@@ -1,0 +1,443 @@
+Release 10.1 - xst K.31 (nt64)
+Copyright (c) 1995-2008 Xilinx, Inc.  All rights reserved.
+--> Parameter TMPDIR set to Z:/trigger/xst/projnav.tmp
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.17 secs
+ 
+--> Parameter xsthdpdir set to Z:/trigger/xst
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.18 secs
+ 
+--> Reading design: GroundTestGen.prj
+
+TABLE OF CONTENTS
+  1) Synthesis Options Summary
+  2) HDL Compilation
+  3) Design Hierarchy Analysis
+  4) HDL Analysis
+  5) HDL Synthesis
+     5.1) HDL Synthesis Report
+  6) Advanced HDL Synthesis
+     6.1) Advanced HDL Synthesis Report
+  7) Low Level Synthesis
+  8) Partition Report
+  9) Final Report
+     9.1) Device utilization summary
+     9.2) Partition Resource Summary
+     9.3) TIMING REPORT
+
+
+=========================================================================
+*                      Synthesis Options Summary                        *
+=========================================================================
+---- Source Parameters
+Input File Name                    : "GroundTestGen.prj"
+Input Format                       : mixed
+Ignore Synthesis Constraint File   : NO
+
+---- Target Parameters
+Output File Name                   : "GroundTestGen"
+Output Format                      : NGC
+Target Device                      : xc2v3000-6-fg676
+
+---- Source Options
+Top Module Name                    : GroundTestGen
+Automatic FSM Extraction           : YES
+FSM Encoding Algorithm             : Auto
+Safe Implementation                : No
+FSM Style                          : lut
+RAM Extraction                     : Yes
+RAM Style                          : Auto
+ROM Extraction                     : Yes
+Mux Style                          : Auto
+Decoder Extraction                 : YES
+Priority Encoder Extraction        : YES
+Shift Register Extraction          : YES
+Logical Shifter Extraction         : YES
+XOR Collapsing                     : YES
+ROM Style                          : Auto
+Mux Extraction                     : YES
+Resource Sharing                   : YES
+Asynchronous To Synchronous        : NO
+Multiplier Style                   : auto
+Automatic Register Balancing       : No
+
+---- Target Options
+Add IO Buffers                     : YES
+Global Maximum Fanout              : 500
+Add Generic Clock Buffer(BUFG)     : 16
+Register Duplication               : YES
+Slice Packing                      : YES
+Optimize Instantiated Primitives   : NO
+Convert Tristates To Logic         : Yes
+Use Clock Enable                   : Yes
+Use Synchronous Set                : Yes
+Use Synchronous Reset              : Yes
+Pack IO Registers into IOBs        : auto
+Equivalent register Removal        : YES
+
+---- General Options
+Optimization Goal                  : Speed
+Optimization Effort                : 1
+Library Search Order               : GroundTestGen.lso
+Keep Hierarchy                     : NO
+Netlist Hierarchy                  : as_optimized
+RTL Output                         : Yes
+Global Optimization                : AllClockNets
+Read Cores                         : YES
+Write Timing Constraints           : NO
+Cross Clock Analysis               : NO
+Hierarchy Separator                : /
+Bus Delimiter                      : <>
+Case Specifier                     : maintain
+Slice Utilization Ratio            : 100
+BRAM Utilization Ratio             : 100
+Verilog 2001                       : YES
+Auto BRAM Packing                  : NO
+Slice Utilization Ratio Delta      : 5
+
+=========================================================================
+
+
+=========================================================================
+*                          HDL Compilation                              *
+=========================================================================
+Compiling verilog file "/../GroundTestGen/GroundTestGen.v" in library work
+Module <GroundTestGen> compiled
+No errors in compilation
+Analysis of file <"GroundTestGen.prj"> succeeded.
+ 
+
+=========================================================================
+*                     Design Hierarchy Analysis                         *
+=========================================================================
+Analyzing hierarchy for module <GroundTestGen> in library <work> with parameters.
+	TRG_PULSE_WIDTH = "00000000000000000000000000010100"
+
+
+=========================================================================
+*                            HDL Analysis                               *
+=========================================================================
+Analyzing top module <GroundTestGen>.
+	TRG_PULSE_WIDTH = 32'sb00000000000000000000000000010100
+Module <GroundTestGen> is correct for synthesis.
+ 
+
+=========================================================================
+*                           HDL Synthesis                               *
+=========================================================================
+
+Performing bidirectional port resolution...
+
+Synthesizing Unit <GroundTestGen>.
+    Related source file is "/../GroundTestGen/GroundTestGen.v".
+    Found 1-bit register for signal <coincid_trg_etd_r>.
+    Found 5-bit register for signal <coincid_trg_width_cnt>.
+    Found 5-bit adder for signal <coincid_trg_width_cnt$addsub0000> created at line 118.
+    Found 6-bit comparator greatequal for signal <coincid_trg_width_cnt$cmp_ge0000> created at line 113.
+    Found 8-bit register for signal <ext_trg_delay_cnt>.
+    Found 8-bit adder for signal <ext_trg_delay_cnt$addsub0000> created at line 67.
+    Found 1-bit register for signal <ext_trg_enb_r>.
+    Found 1-bit register for signal <ext_trg_raw_1us_sig>.
+    Found 6-bit comparator greatequal for signal <ext_trg_raw_1us_sig$cmp_ge0000> created at line 97.
+    Found 6-bit comparator less for signal <ext_trg_raw_1us_sig$cmp_lt0000> created at line 93.
+    Found 6-bit register for signal <ext_trg_raw_expd_cnt>.
+    Found 6-bit adder for signal <ext_trg_raw_expd_cnt$addsub0000> created at line 94.
+    Found 1-bit register for signal <ext_trg_syn_r>.
+    Found 8-bit comparator greatequal for signal <ext_trg_syn_r$cmp_ge0000> created at line 60.
+    Found 1-bit register for signal <ext_trg_tmp0_r>.
+    Found 1-bit register for signal <ext_trg_tmp1_r>.
+    Found 1-bit register for signal <ext_trg_tmp2_r>.
+    Summary:
+	inferred  26 D-type flip-flop(s).
+	inferred   3 Adder/Subtractor(s).
+	inferred   4 Comparator(s).
+Unit <GroundTestGen> synthesized.
+
+
+=========================================================================
+HDL Synthesis Report
+
+Macro Statistics
+# Adders/Subtractors                                   : 3
+ 5-bit adder                                           : 1
+ 6-bit adder                                           : 1
+ 8-bit adder                                           : 1
+# Registers                                            : 10
+ 1-bit register                                        : 7
+ 5-bit register                                        : 1
+ 6-bit register                                        : 1
+ 8-bit register                                        : 1
+# Comparators                                          : 4
+ 6-bit comparator greatequal                           : 2
+ 6-bit comparator less                                 : 1
+ 8-bit comparator greatequal                           : 1
+
+=========================================================================
+
+=========================================================================
+*                       Advanced HDL Synthesis                          *
+=========================================================================
+
+Loading device for application Rf_Device from file '2v3000.nph' in environment C:\Xilinx\10.1\ISE.
+
+=========================================================================
+Advanced HDL Synthesis Report
+
+Macro Statistics
+# Adders/Subtractors                                   : 3
+ 5-bit adder                                           : 1
+ 6-bit adder                                           : 1
+ 8-bit adder                                           : 1
+# Registers                                            : 26
+ Flip-Flops                                            : 26
+# Comparators                                          : 4
+ 6-bit comparator greatequal                           : 2
+ 6-bit comparator less                                 : 1
+ 8-bit comparator greatequal                           : 1
+
+=========================================================================
+
+=========================================================================
+*                         Low Level Synthesis                           *
+=========================================================================
+
+Optimizing unit <GroundTestGen> ...
+
+Mapping all equations...
+Building and optimizing final netlist ...
+Found area constraint ratio of 100 (+ 5) on block GroundTestGen, actual ratio is 0.
+
+Final Macro Processing ...
+
+=========================================================================
+Final Register Report
+
+Macro Statistics
+# Registers                                            : 26
+ Flip-Flops                                            : 26
+
+=========================================================================
+
+=========================================================================
+*                           Partition Report                             *
+=========================================================================
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+=========================================================================
+*                            Final Report                               *
+=========================================================================
+Final Results
+RTL Top Level Output File Name     : GroundTestGen.ngr
+Top Level Output File Name         : GroundTestGen
+Output Format                      : NGC
+Optimization Goal                  : Speed
+Keep Hierarchy                     : NO
+
+Design Statistics
+# IOs                              : 22
+
+Cell Usage :
+# BELS                             : 78
+#      INV                         : 5
+#      LUT2                        : 16
+#      LUT2_D                      : 1
+#      LUT2_L                      : 3
+#      LUT3                        : 8
+#      LUT3_D                      : 1
+#      LUT3_L                      : 3
+#      LUT4                        : 25
+#      LUT4_D                      : 3
+#      MUXCY                       : 8
+#      MUXF5                       : 4
+#      VCC                         : 1
+# FlipFlops/Latches                : 26
+#      FDC                         : 17
+#      FDCE                        : 9
+# Clock Buffers                    : 1
+#      BUFGP                       : 1
+# IO Buffers                       : 21
+#      IBUF                        : 15
+#      OBUF                        : 6
+=========================================================================
+
+Device utilization summary:
+---------------------------
+
+Selected Device : 2v3000fg676-6 
+
+ Number of Slices:                       34  out of  14336     0%  
+ Number of Slice Flip Flops:             26  out of  28672     0%  
+ Number of 4 input LUTs:                 65  out of  28672     0%  
+ Number of IOs:                          22
+ Number of bonded IOBs:                  22  out of    484     4%  
+ Number of GCLKs:                         1  out of     16     6%  
+
+---------------------------
+Partition Resource Summary:
+---------------------------
+
+  No Partitions were found in this design.
+
+---------------------------
+
+
+=========================================================================
+TIMING REPORT
+
+NOTE: THESE TIMING NUMBERS ARE ONLY A SYNTHESIS ESTIMATE.
+      FOR ACCURATE TIMING INFORMATION PLEASE REFER TO THE TRACE REPORT
+      GENERATED AFTER PLACE-and-ROUTE.
+
+Clock Information:
+------------------
+-----------------------------------+------------------------+-------+
+Clock Signal                       | Clock buffer(FF name)  | Load  |
+-----------------------------------+------------------------+-------+
+clk_in                             | BUFGP                  | 26    |
+-----------------------------------+------------------------+-------+
+
+Asynchronous Control Signals Information:
+----------------------------------------
+-----------------------------------+--------------------------+-------+
+Control Signal                     | Buffer(FF name)          | Load  |
+-----------------------------------+--------------------------+-------+
+rst_in_N_inv(rst_in_N_inv1_INV_0:O)| NONE(ext_trg_delay_cnt_5)| 26    |
+-----------------------------------+--------------------------+-------+
+
+Timing Summary:
+---------------
+Speed Grade: -6
+
+   Minimum period: 4.392ns (Maximum Frequency: 227.713MHz)
+   Minimum input arrival time before clock: 4.452ns
+   Maximum output required time after clock: 5.818ns
+   Maximum combinational path delay: 5.673ns
+
+Timing Detail:
+--------------
+All values displayed in nanoseconds (ns)
+
+=========================================================================
+Timing constraint: Default period analysis for Clock 'clk_in'
+  Clock period: 4.392ns (frequency: 227.713MHz)
+  Total number of paths / destination ports: 402 / 34
+-------------------------------------------------------------------------
+Delay:               4.392ns (Levels of Logic = 10)
+  Source:            ext_trg_delay_cnt_0 (FF)
+  Destination:       ext_trg_enb_r (FF)
+  Source Clock:      clk_in rising
+  Destination Clock: clk_in rising
+
+  Data Path: ext_trg_delay_cnt_0 to ext_trg_enb_r
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     FDC:C->Q              6   0.449   0.752  ext_trg_delay_cnt_0 (ext_trg_delay_cnt_0)
+     LUT2:I1->O            1   0.347   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_lut<0> (Mcompar_ext_trg_syn_r_cmp_ge0000_lut<0>)
+     MUXCY:S->O            1   0.235   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<0> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<0>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<1> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<1>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<2> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<2>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<3> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<3>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<4> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<4>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<5> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<5>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<6> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<6>)
+     MUXCY:CI->O          11   0.601   0.837  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<7> (ext_trg_syn_r_cmp_ge0000)
+     LUT2:I1->O            1   0.347   0.382  ext_trg_enb_r_not00011 (ext_trg_enb_r_not0001)
+     FDCE:CE                   0.190          ext_trg_enb_r
+    ----------------------------------------
+    Total                      4.392ns (2.421ns logic, 1.971ns route)
+                                       (55.1% logic, 44.9% route)
+
+=========================================================================
+Timing constraint: Default OFFSET IN BEFORE for Clock 'clk_in'
+  Total number of paths / destination ports: 90 / 13
+-------------------------------------------------------------------------
+Offset:              4.452ns (Levels of Logic = 11)
+  Source:            ext_trg_delay_in<0> (PAD)
+  Destination:       ext_trg_enb_r (FF)
+  Destination Clock: clk_in rising
+
+  Data Path: ext_trg_delay_in<0> to ext_trg_enb_r
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     IBUF:I->O             1   0.653   0.608  ext_trg_delay_in_0_IBUF (ext_trg_delay_in_0_IBUF)
+     LUT2:I0->O            1   0.347   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_lut<0> (Mcompar_ext_trg_syn_r_cmp_ge0000_lut<0>)
+     MUXCY:S->O            1   0.235   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<0> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<0>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<1> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<1>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<2> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<2>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<3> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<3>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<4> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<4>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<5> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<5>)
+     MUXCY:CI->O           1   0.042   0.000  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<6> (Mcompar_ext_trg_syn_r_cmp_ge0000_cy<6>)
+     MUXCY:CI->O          11   0.601   0.837  Mcompar_ext_trg_syn_r_cmp_ge0000_cy<7> (ext_trg_syn_r_cmp_ge0000)
+     LUT2:I1->O            1   0.347   0.382  ext_trg_enb_r_not00011 (ext_trg_enb_r_not0001)
+     FDCE:CE                   0.190          ext_trg_enb_r
+    ----------------------------------------
+    Total                      4.452ns (2.625ns logic, 1.827ns route)
+                                       (59.0% logic, 41.0% route)
+
+=========================================================================
+Timing constraint: Default OFFSET OUT AFTER for Clock 'clk_in'
+  Total number of paths / destination ports: 3 / 3
+-------------------------------------------------------------------------
+Offset:              5.818ns (Levels of Logic = 2)
+  Source:            ext_trg_syn_r (FF)
+  Destination:       ext_trg_syn_out (PAD)
+  Source Clock:      clk_in rising
+
+  Data Path: ext_trg_syn_r to ext_trg_syn_out
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     FDC:C->Q             11   0.449   0.897  ext_trg_syn_r (ext_trg_syn_r)
+     LUT2:I0->O            1   0.347   0.383  ext_trg_syn_out1 (ext_trg_syn_out_OBUF)
+     OBUF:I->O                 3.743          ext_trg_syn_out_OBUF (ext_trg_syn_out)
+    ----------------------------------------
+    Total                      5.818ns (4.539ns logic, 1.279ns route)
+                                       (78.0% logic, 22.0% route)
+
+=========================================================================
+Timing constraint: Default path analysis
+  Total number of paths / destination ports: 4 / 4
+-------------------------------------------------------------------------
+Delay:               5.673ns (Levels of Logic = 3)
+  Source:            ext_trg_oe_in (PAD)
+  Destination:       ext_trg_syn_out (PAD)
+
+  Data Path: ext_trg_oe_in to ext_trg_syn_out
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     IBUF:I->O             1   0.653   0.548  ext_trg_oe_in_IBUF (ext_trg_oe_in_IBUF)
+     LUT2:I1->O            1   0.347   0.383  ext_trg_syn_out1 (ext_trg_syn_out_OBUF)
+     OBUF:I->O                 3.743          ext_trg_syn_out_OBUF (ext_trg_syn_out)
+    ----------------------------------------
+    Total                      5.673ns (4.743ns logic, 0.930ns route)
+                                       (83.6% logic, 16.4% route)
+
+=========================================================================
+
+
+Total REAL time to Xst completion: 6.00 secs
+Total CPU time to Xst completion: 6.56 secs
+ 
+--> 
+
+Total memory usage is 273376 kilobytes
+
+Number of errors   :    0 (   0 filtered)
+Number of warnings :    0 (   0 filtered)
+Number of infos    :    0 (   0 filtered)
+

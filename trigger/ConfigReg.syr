@@ -1,0 +1,629 @@
+Release 10.1 - xst K.31 (nt64)
+Copyright (c) 1995-2008 Xilinx, Inc.  All rights reserved.
+--> Parameter TMPDIR set to Z:/trigger/xst/projnav.tmp
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.05 secs
+ 
+--> Parameter xsthdpdir set to Z:/trigger/xst
+
+
+Total REAL time to Xst completion: 0.00 secs
+Total CPU time to Xst completion: 0.05 secs
+ 
+--> Reading design: ConfigReg.prj
+
+TABLE OF CONTENTS
+  1) Synthesis Options Summary
+  2) HDL Compilation
+  3) Design Hierarchy Analysis
+  4) HDL Analysis
+  5) HDL Synthesis
+     5.1) HDL Synthesis Report
+  6) Advanced HDL Synthesis
+     6.1) Advanced HDL Synthesis Report
+  7) Low Level Synthesis
+  8) Partition Report
+  9) Final Report
+     9.1) Device utilization summary
+     9.2) Partition Resource Summary
+     9.3) TIMING REPORT
+
+
+=========================================================================
+*                      Synthesis Options Summary                        *
+=========================================================================
+---- Source Parameters
+Input File Name                    : "ConfigReg.prj"
+Input Format                       : mixed
+Ignore Synthesis Constraint File   : NO
+
+---- Target Parameters
+Output File Name                   : "ConfigReg"
+Output Format                      : NGC
+Target Device                      : xc2v3000-6-fg676
+
+---- Source Options
+Top Module Name                    : ConfigReg
+Automatic FSM Extraction           : YES
+FSM Encoding Algorithm             : Auto
+Safe Implementation                : No
+FSM Style                          : lut
+RAM Extraction                     : Yes
+RAM Style                          : Auto
+ROM Extraction                     : Yes
+Mux Style                          : Auto
+Decoder Extraction                 : YES
+Priority Encoder Extraction        : YES
+Shift Register Extraction          : YES
+Logical Shifter Extraction         : YES
+XOR Collapsing                     : YES
+ROM Style                          : Auto
+Mux Extraction                     : YES
+Resource Sharing                   : YES
+Asynchronous To Synchronous        : NO
+Multiplier Style                   : auto
+Automatic Register Balancing       : No
+
+---- Target Options
+Add IO Buffers                     : YES
+Global Maximum Fanout              : 500
+Add Generic Clock Buffer(BUFG)     : 16
+Register Duplication               : YES
+Slice Packing                      : YES
+Optimize Instantiated Primitives   : NO
+Convert Tristates To Logic         : Yes
+Use Clock Enable                   : Yes
+Use Synchronous Set                : Yes
+Use Synchronous Reset              : Yes
+Pack IO Registers into IOBs        : auto
+Equivalent register Removal        : YES
+
+---- General Options
+Optimization Goal                  : Speed
+Optimization Effort                : 1
+Library Search Order               : ConfigReg.lso
+Keep Hierarchy                     : NO
+Netlist Hierarchy                  : as_optimized
+RTL Output                         : Yes
+Global Optimization                : AllClockNets
+Read Cores                         : YES
+Write Timing Constraints           : NO
+Cross Clock Analysis               : NO
+Hierarchy Separator                : /
+Bus Delimiter                      : <>
+Case Specifier                     : maintain
+Slice Utilization Ratio            : 100
+BRAM Utilization Ratio             : 100
+Verilog 2001                       : YES
+Auto BRAM Packing                  : NO
+Slice Utilization Ratio Delta      : 5
+
+=========================================================================
+
+
+=========================================================================
+*                          HDL Compilation                              *
+=========================================================================
+Compiling verilog file "/../ConfigReg/ConfigReg.v" in library work
+Compiling verilog include file "/../ConfigReg/Default.v"
+Module <ConfigReg> compiled
+No errors in compilation
+Analysis of file <"ConfigReg.prj"> succeeded.
+ 
+
+=========================================================================
+*                     Design Hierarchy Analysis                         *
+=========================================================================
+Analyzing hierarchy for module <ConfigReg> in library <work>.
+
+
+=========================================================================
+*                            HDL Analysis                               *
+=========================================================================
+Analyzing top module <ConfigReg>.
+Module <ConfigReg> is correct for synthesis.
+ 
+
+=========================================================================
+*                           HDL Synthesis                               *
+=========================================================================
+
+Performing bidirectional port resolution...
+INFO:Xst:2679 - Register <trg_enb_reg> in unit <ConfigReg> has a constant value of 1 during circuit operation. The register is replaced by logic.
+INFO:Xst:2679 - Register <cycled_trg_bgn_reg> in unit <ConfigReg> has a constant value of 1 during circuit operation. The register is replaced by logic.
+INFO:Xst:2679 - Register <cmd_rst_reg> in unit <ConfigReg> has a constant value of 1 during circuit operation. The register is replaced by logic.
+
+Synthesizing Unit <ConfigReg>.
+    Related source file is "/../ConfigReg/ConfigReg.v".
+WARNING:Xst:646 - Signal <trg_mode_reg5<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg5<5:0>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg4<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg3<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg3<5:0>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg2<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg2<5:0>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg1<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_reg0<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_mode_oe_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_match_win_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <trg_dead_time_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <hit_delay_win_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <ext_trg_delay_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <cycled_trg_period_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <ctrl_reg> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <cmd_reg> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <busy_set_reg<15:8>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+WARNING:Xst:646 - Signal <busy_set_reg<2>> is assigned but never used. This unconnected signal will be trimmed during the optimization process.
+    Found 16-bit register for signal <busy_set_reg>.
+    Found 16-bit register for signal <cycled_trg_num_reg>.
+    Found 16-bit register for signal <cycled_trg_period_reg>.
+    Found 16-bit register for signal <ext_trg_delay_reg>.
+    Found 16-bit register for signal <hit_ab_sel_reg>.
+    Found 16-bit register for signal <hit_align_reg0>.
+    Found 16-bit register for signal <hit_align_reg1>.
+    Found 16-bit register for signal <hit_delay_win_reg>.
+    Found 16-bit register for signal <hit_mask_reg>.
+    Found 16-bit register for signal <trg_dead_time_reg>.
+    Found 16-bit register for signal <trg_match_win_reg>.
+    Found 16-bit register for signal <trg_mode_oe_reg>.
+    Found 16-bit register for signal <trg_mode_reg0>.
+    Found 16-bit register for signal <trg_mode_reg1>.
+    Found 16-bit register for signal <trg_mode_reg2>.
+    Found 16-bit register for signal <trg_mode_reg3>.
+    Found 16-bit register for signal <trg_mode_reg4>.
+    Found 16-bit register for signal <trg_mode_reg5>.
+Unit <ConfigReg> synthesized.
+
+
+=========================================================================
+HDL Synthesis Report
+
+Macro Statistics
+# Registers                                            : 18
+ 16-bit register                                       : 18
+
+=========================================================================
+
+=========================================================================
+*                       Advanced HDL Synthesis                          *
+=========================================================================
+
+Loading device for application Rf_Device from file '2v3000.nph' in environment C:\Xilinx\10.1\ISE.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_reg0>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_reg1>.
+WARNING:Xst:2677 - Node <0> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <1> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <2> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <3> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <4> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <5> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_reg2>.
+WARNING:Xst:2677 - Node <0> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <1> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <2> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <3> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <4> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <5> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_reg3>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_reg4>.
+WARNING:Xst:2677 - Node <0> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <1> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <2> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <3> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <4> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <5> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_reg5>.
+WARNING:Xst:2677 - Node <2> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <7> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <busy_set_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <hit_delay_win_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_match_win_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_dead_time_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <trg_mode_oe_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <cycled_trg_period_reg>.
+WARNING:Xst:2677 - Node <8> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <9> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <10> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <11> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <12> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <13> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <14> of sequential type is unconnected in block <ext_trg_delay_reg>.
+WARNING:Xst:2677 - Node <15> of sequential type is unconnected in block <ext_trg_delay_reg>.
+
+=========================================================================
+Advanced HDL Synthesis Report
+
+Macro Statistics
+# Registers                                            : 288
+ Flip-Flops                                            : 288
+
+=========================================================================
+
+=========================================================================
+*                         Low Level Synthesis                           *
+=========================================================================
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <ext_trg_delay_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <cycled_trg_period_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_oe_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_dead_time_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_match_win_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <hit_delay_win_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_7> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <busy_set_reg_2> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_5> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_4> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_3> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_2> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_1> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg5_0> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg4_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_5> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_4> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_3> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_2> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_1> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg3_0> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_5> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_4> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_3> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_2> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_1> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg2_0> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg1_8> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_15> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_14> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_13> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_12> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_11> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_10> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_9> of sequential type is unconnected in block <ConfigReg>.
+WARNING:Xst:2677 - Node <trg_mode_reg0_8> of sequential type is unconnected in block <ConfigReg>.
+
+Optimizing unit <ConfigReg> ...
+
+Mapping all equations...
+Building and optimizing final netlist ...
+Found area constraint ratio of 100 (+ 5) on block ConfigReg, actual ratio is 0.
+FlipFlop busy_set_reg_5 has been replicated 1 time(s) to handle iob=true attribute.
+
+Final Macro Processing ...
+
+=========================================================================
+Final Register Report
+
+Macro Statistics
+# Registers                                            : 165
+ Flip-Flops                                            : 165
+
+=========================================================================
+
+=========================================================================
+*                           Partition Report                             *
+=========================================================================
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+=========================================================================
+*                            Final Report                               *
+=========================================================================
+Final Results
+RTL Top Level Output File Name     : ConfigReg.ngr
+Top Level Output File Name         : ConfigReg
+Output Format                      : NGC
+Optimization Goal                  : Speed
+Keep Hierarchy                     : NO
+
+Design Statistics
+# IOs                              : 195
+
+Cell Usage :
+# BELS                             : 27
+#      GND                         : 1
+#      INV                         : 1
+#      LUT2                        : 2
+#      LUT3                        : 9
+#      LUT4                        : 12
+#      MUXF5                       : 1
+#      VCC                         : 1
+# FlipFlops/Latches                : 165
+#      FDCE                        : 136
+#      FDPE                        : 29
+# Clock Buffers                    : 1
+#      BUFGP                       : 1
+# IO Buffers                       : 194
+#      IBUF                        : 26
+#      OBUF                        : 168
+=========================================================================
+
+Device utilization summary:
+---------------------------
+
+Selected Device : 2v3000fg676-6 
+
+ Number of Slices:                       13  out of  14336     0%  
+ Number of 4 input LUTs:                 24  out of  28672     0%  
+ Number of IOs:                         195
+ Number of bonded IOBs:                 195  out of    484    40%  
+    IOB Flip Flops:                     165
+ Number of GCLKs:                         1  out of     16     6%  
+
+---------------------------
+Partition Resource Summary:
+---------------------------
+
+  No Partitions were found in this design.
+
+---------------------------
+
+
+=========================================================================
+TIMING REPORT
+
+NOTE: THESE TIMING NUMBERS ARE ONLY A SYNTHESIS ESTIMATE.
+      FOR ACCURATE TIMING INFORMATION PLEASE REFER TO THE TRACE REPORT
+      GENERATED AFTER PLACE-and-ROUTE.
+
+Clock Information:
+------------------
+-----------------------------------+------------------------+-------+
+Clock Signal                       | Clock buffer(FF name)  | Load  |
+-----------------------------------+------------------------+-------+
+clk_in                             | BUFGP                  | 165   |
+-----------------------------------+------------------------+-------+
+
+Asynchronous Control Signals Information:
+----------------------------------------
+-----------------------------------------------------+------------------------+-------+
+Control Signal                                       | Buffer(FF name)        | Load  |
+-----------------------------------------------------+------------------------+-------+
+busy_set_reg_Acst_inv(busy_set_reg_Acst_inv1_INV_0:O)| NONE(trg_mode_oe_reg_4)| 165   |
+-----------------------------------------------------+------------------------+-------+
+
+Timing Summary:
+---------------
+Speed Grade: -6
+
+   Minimum period: No path found
+   Minimum input arrival time before clock: 5.037ns
+   Maximum output required time after clock: 4.575ns
+   Maximum combinational path delay: No path found
+
+Timing Detail:
+--------------
+All values displayed in nanoseconds (ns)
+
+=========================================================================
+Timing constraint: Default OFFSET IN BEFORE for Clock 'clk_in'
+  Total number of paths / destination ports: 1650 / 330
+-------------------------------------------------------------------------
+Offset:              5.037ns (Levels of Logic = 5)
+  Source:            wr_addr_in<7> (PAD)
+  Destination:       hit_mask_reg_15 (FF)
+  Destination Clock: clk_in rising
+
+  Data Path: wr_addr_in<7> to hit_mask_reg_15
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     IBUF:I->O             1   0.653   0.608  wr_addr_in_7_IBUF (wr_addr_in_7_IBUF)
+     LUT4:I0->O            4   0.347   0.777  cycled_trg_num_reg_not0001111 (N5)
+     LUT4:I0->O            1   0.347   0.000  hit_ab_sel_reg_not000111 (hit_ab_sel_reg_not00011)
+     MUXF5:I0->O           2   0.345   0.684  hit_ab_sel_reg_not00011_f5 (N4)
+     LUT2:I1->O           16   0.347   0.740  hit_mask_reg_not00011 (hit_mask_reg_not0001)
+     FDPE:CE                   0.190          hit_mask_reg_0
+    ----------------------------------------
+    Total                      5.037ns (2.229ns logic, 2.808ns route)
+                                       (44.3% logic, 55.7% route)
+
+=========================================================================
+Timing constraint: Default OFFSET OUT AFTER for Clock 'clk_in'
+  Total number of paths / destination ports: 165 / 165
+-------------------------------------------------------------------------
+Offset:              4.575ns (Levels of Logic = 1)
+  Source:            busy_set_reg_3 (FF)
+  Destination:       busy_mask_set_out (PAD)
+  Source Clock:      clk_in rising
+
+  Data Path: busy_set_reg_3 to busy_mask_set_out
+                                Gate     Net
+    Cell:in->out      fanout   Delay   Delay  Logical Name (Net Name)
+    ----------------------------------------  ------------
+     FDCE:C->Q             1   0.449   0.383  busy_set_reg_3 (busy_set_reg_3)
+     OBUF:I->O                 3.743          busy_mask_set_out_OBUF (busy_mask_set_out)
+    ----------------------------------------
+    Total                      4.575ns (4.192ns logic, 0.383ns route)
+                                       (91.6% logic, 8.4% route)
+
+=========================================================================
+
+
+Total REAL time to Xst completion: 3.00 secs
+Total CPU time to Xst completion: 2.88 secs
+ 
+--> 
+
+Total memory usage is 276448 kilobytes
+
+Number of errors   :    0 (   0 filtered)
+Number of warnings :  267 (   0 filtered)
+Number of infos    :    3 (   0 filtered)
+

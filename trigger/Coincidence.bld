@@ -1,0 +1,34 @@
+Release 10.1 ngdbuild K.31 (nt64)
+Copyright (c) 1995-2008 Xilinx, Inc.  All rights reserved.
+
+Command Line: C:\Xilinx\10.1\ISE\bin\nt64\unwrapped\ngdbuild.exe -ise
+Z:/trigger/trigger.ise -intstyle ise -dd _ngo -nt timestamp -i -p
+xc2v3000-fg676-6 Coincidence.ngc Coincidence.ngd
+
+Reading NGO file "Z:/trigger/Coincidence.ngc" ...
+Gathering constraint information from source properties...
+Done.
+
+Resolving constraint associations...
+Checking Constraint Associations...
+Done...
+Checking Partitions ...
+
+Checking expanded design ...
+
+Partition Implementation Status
+-------------------------------
+
+  No Partitions were found in this design.
+
+-------------------------------
+
+NGDBUILD Design Results Summary:
+  Number of errors:     0
+  Number of warnings:   0
+
+Total memory usage is 125476 kilobytes
+
+Writing NGD file "Coincidence.ngd" ...
+
+Writing NGDBUILD log file "Coincidence.bld"...

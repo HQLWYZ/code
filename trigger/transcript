@@ -1,0 +1,125 @@
+# Reading C:/modeltech64_10.6d/tcl/vsim/pref.tcl
+# //  ModelSim SE-64 10.6d Feb 24 2018
+# //
+# //  Copyright 1991-2018 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  ModelSim SE-64 and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# do {tb_TrgMonData.fdo}
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+# Start time: 20:40:33 on Mar 28,2025
+# vlog -reportprogress 300 "+acc" ../TrgMonData/TrgMonData.v 
+# -- Compiling module TrgMonData
+# 
+# Top level modules:
+# 	TrgMonData
+# End time: 20:40:33 on Mar 28,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+# Start time: 20:40:33 on Mar 28,2025
+# vlog -reportprogress 300 "+acc" ../TrgMonData/tb_TrgMonData.v 
+# -- Compiling module tb_TrgMonData
+# 
+# Top level modules:
+# 	tb_TrgMonData
+# End time: 20:40:33 on Mar 28,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+# Start time: 20:40:33 on Mar 28,2025
+# vlog -reportprogress 300 "+acc" C:/Xilinx/10.1/ISE/verilog/src/glbl.v 
+# -- Compiling module glbl
+# 
+# Top level modules:
+# 	glbl
+# End time: 20:40:33 on Mar 28,2025, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -t 1ps -L xilinxcorelib_ver -L unisims_ver -L unimacro_ver -lib work tb_TrgMonData glbl 
+# Start time: 20:40:33 on Mar 28,2025
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading work.tb_TrgMonData(fast)
+# Loading work.TrgMonData(fast)
+# Loading work.glbl(fast)
+# ** Warning: (vsim-3015) ../TrgMonData/tb_TrgMonData.v(155): [PCDPC] - Port size (32) does not match connection size (16) for port 'hit_monit_cnt_0_in'. The port definition is at: ../TrgMonData/TrgMonData.v(30).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_TrgMonData/u_TrgMonData File: ../TrgMonData/TrgMonData.v
+# ** Warning: (vsim-3015) ../TrgMonData/tb_TrgMonData.v(155): [PCDPC] - Port size (32) does not match connection size (16) for port 'hit_monit_cnt_1_in'. The port definition is at: ../TrgMonData/TrgMonData.v(31).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_TrgMonData/u_TrgMonData File: ../TrgMonData/TrgMonData.v
+# ** Warning: (vsim-WLF-5000) WLF file currently in use: vsim.wlf
+#           File in use by: FPGA  Hostname: FPGA-PC  ProcessID: 3572
+#           Attempting to use alternate WLF file "./wlft690zrd".
+# ** Warning: (vsim-WLF-5001) Could not open WLF file: vsim.wlf
+#           Using alternate file: ./wlft690zrd
+# .main_pane.wave.interior.cs.body.pw.wf
+# .main_pane.structure.interior.cs.body.struct
+# .main_pane.objects.interior.cs.body.tree
+add wave -position insertpoint  \
+sim:/tb_TrgMonData/u_TrgMonData/clk_in \
+sim:/tb_TrgMonData/u_TrgMonData/rst_in_N \
+sim:/tb_TrgMonData/u_TrgMonData/rd_in \
+sim:/tb_TrgMonData/u_TrgMonData/rd_addr_in \
+sim:/tb_TrgMonData/u_TrgMonData/ctrl_reg_in \
+sim:/tb_TrgMonData/u_TrgMonData/cmd_reg_in \
+sim:/tb_TrgMonData/u_TrgMonData/trig_mode_mip1_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_mode_mip2_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_mode_gm1_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_mode_gm2_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_mode_ubs_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_mode_brst_in \
+sim:/tb_TrgMonData/u_TrgMonData/eff_trg_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/coincid_trg_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_fix_sel_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_sel_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_err_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_start_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_cnt_0_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_cnt_1_in \
+sim:/tb_TrgMonData/u_TrgMonData/busy_monit_fix_sel_in \
+sim:/tb_TrgMonData/u_TrgMonData/busy_monit_err_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/busy_monit_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/coincid_MIP1_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/coincid_MIP2_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/coincid_GM1_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/coincid_GM2_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/coincid_UBS_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/logic_match_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/ext_trg_cnt_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_ab_sel_in \
+sim:/tb_TrgMonData/u_TrgMonData/busy_ab_sel_in \
+sim:/tb_TrgMonData/u_TrgMonData/hit_mask_in \
+sim:/tb_TrgMonData/u_TrgMonData/busy_mask_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_match_win_in \
+sim:/tb_TrgMonData/u_TrgMonData/trg_dead_time_in \
+sim:/tb_TrgMonData/u_TrgMonData/config_received_in \
+sim:/tb_TrgMonData/u_TrgMonData/ext_trg_delay_in \
+sim:/tb_TrgMonData/u_TrgMonData/cycle_trg_period_in \
+sim:/tb_TrgMonData/u_TrgMonData/mon_data_out \
+sim:/tb_TrgMonData/u_TrgMonData/mon_data_reg \
+sim:/tb_TrgMonData/u_TrgMonData/status_reg \
+sim:/tb_TrgMonData/u_TrgMonData/monit_hit_sel_reg \
+sim:/tb_TrgMonData/u_TrgMonData/hit_busy_ab_sel_reg \
+sim:/tb_TrgMonData/u_TrgMonData/hit_busy_mask_reg \
+sim:/tb_TrgMonData/u_TrgMonData/ctrl_reg_w \
+sim:/tb_TrgMonData/u_TrgMonData/cmd_reg_w \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_fix_sel_w \
+sim:/tb_TrgMonData/u_TrgMonData/hit_monit_sel_w \
+sim:/tb_TrgMonData/u_TrgMonData/hit_ab_sel_w \
+sim:/tb_TrgMonData/u_TrgMonData/busy_ab_sel_w \
+sim:/tb_TrgMonData/u_TrgMonData/hit_mask_w \
+sim:/tb_TrgMonData/u_TrgMonData/busy_mask_w
+restart
+# ** Note: (vsim-8009) Loading existing optimized design _opt1
+# Loading work.tb_TrgMonData(fast)
+# Loading work.TrgMonData(fast)
+# Loading work.glbl(fast)
+# ** Warning: (vsim-3015) ../TrgMonData/tb_TrgMonData.v(155): [PCDPC] - Port size (32) does not match connection size (16) for port 'hit_monit_cnt_0_in'. The port definition is at: ../TrgMonData/TrgMonData.v(30).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_TrgMonData/u_TrgMonData File: ../TrgMonData/TrgMonData.v
+# ** Warning: (vsim-3015) ../TrgMonData/tb_TrgMonData.v(155): [PCDPC] - Port size (32) does not match connection size (16) for port 'hit_monit_cnt_1_in'. The port definition is at: ../TrgMonData/TrgMonData.v(31).
+#    Time: 0 ps  Iteration: 0  Instance: /tb_TrgMonData/u_TrgMonData File: ../TrgMonData/TrgMonData.v
+run 10ms
