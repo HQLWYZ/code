@@ -2,7 +2,7 @@
 /* 															*/
 /*	file name:	Coincidence.v	--	--	           			*/
 /* 	date:		2025/02/27									*/
-/* 	modified:	2025/05/10//test/cyr								*/
+/* 	modified:	2025/05/10//test/							*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	note:		system clock = 50MHz						*/
