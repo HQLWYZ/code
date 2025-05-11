@@ -2,7 +2,6 @@
 /* 															*/
 /*	file name:	Coincidence.v	--	--	           			*/
 /* 	date:		2025/02/27									*/
-/* 	modified:	2025/05/10//test/							*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	note:		system clock = 50MHz						*/
@@ -10,7 +9,7 @@
 /*----------------------------------------------------------*/
 module Coincidence(
 	input			clk_in,
-	input			rst_in_N,
+	input			rst_in,
 
     //--------------all hits input and busy input
     input           si_trb_1_busy_a_in_N,
@@ -49,7 +48,7 @@ module Coincidence(
 	input   [1:0]   busy_ab_sel_in,
 	input   [1:0]   busy_mask_in,
 	input   [7:0]   acd_csi_hit_tim_diff_in, //default set 4us, e.g. 4us/20ns = 200 = 8'hC8
-	input   [3:0]   acd_fee_top_hit_align_in,//default jitter is 20ns, 40ns/20ns = 2 = 4'h2
+	input   [3:0]   acd_fee_top_hit_align_in,//default jitter is 40ns, 40ns/20ns = 2 = 4'h2
 	input   [3:0]   acd_fee_sec_hit_align_in,
 	input   [3:0]   acd_fee_sid_hit_align_in,
 	input   [3:0]   csi_hit_align_in,	//default jitter is 200ns, 200ns/20ns = 10 = 4'h0a
@@ -75,7 +74,8 @@ module Coincidence(
     output  [4:0]   coincid_tag_raw_out,
 	output  [23:0]  trg_busy_time_cnt_out,
 	output			trg_busy_timer_rdy_out,
-	output [15:0]	hit_sig_stus_out
+	output [15:0]	hit_sig_stus_out,
+	output          si_busy_tmp
 	);
 	
 
@@ -106,9 +106,9 @@ module Coincidence(
 
 //synchonize the input of hit signal, if (ab_sel_in == 0) select  signal from channel A, 
 //if mask==0010 for channel ABCD, so the C channel will be masked
-always @(posedge clk_in or negedge rst_in_N)//two stage synchronizer, delay time {1CK, 2CK}, e.g. 20ns to 40ns
+always @(posedge clk_in)//two stage synchronizer, delay time {1CK, 2CK}, e.g. 20ns to 40ns
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		busy_syn_tmp_r <= 2'b0;
 		busy_syn_r <= 2'b0;
 		hit_syn_tmp_r <= 8'b0;
@@ -143,9 +143,9 @@ end
 	reg [255:0] buffer_7, buffer_6, buffer_5, buffer_4, buffer_3, buffer_2, buffer_1, buffer_0;//ring buffer depth = 256
 
 //Align the hit signal of ACD_TOP
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_7<=8'b0;
 		buffer_7<=256'b0;
 		shift_reg[7]<=1'b0;     
@@ -158,9 +158,9 @@ begin
 end
 
 //Align the hit signal of ACD_SEC
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_6<=8'b0;
 		buffer_6<=256'b0;
 		shift_reg[6]<=1'b0;     
@@ -173,9 +173,9 @@ begin
 end
 
 //Align the hit signal of ACD_SID
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_5<=8'b0;
 		buffer_5<=256'b0;
 		shift_reg[5]<=1'b0;     
@@ -188,9 +188,9 @@ begin
 end
 
 //Align the hit signal of CSI
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_4<=8'b0;
 		buffer_4<=256'b0;
 		shift_reg[4]<=1'b0;     
@@ -203,9 +203,9 @@ begin
 end
 
 //Align the hit signal of CAL_1
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_3<=8'b0;
 		buffer_3<=256'b0;
 		shift_reg[3]<=1'b0;     
@@ -218,9 +218,9 @@ begin
 end
 
 //Align the hit signal of CAL_2
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_2<=8'b0;
 		buffer_2<=256'b0;
 		shift_reg[2]<=1'b0;     
@@ -233,9 +233,9 @@ begin
 end
 
 //Align the hit signal of CAL_3
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_1<=8'b0;
 		buffer_1<=256'b0;
 		shift_reg[1]<=1'b0;     
@@ -248,9 +248,9 @@ begin
 end
 
 //Align the hit signal of CAL_4
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		wr_ptr_0<=8'b0;
 		buffer_0<=256'b0;
 		shift_reg[0]<=1'b0;     
@@ -284,9 +284,9 @@ end
 reg	logic_grp0_result_r, logic_grp1_result_r, logic_grp2_result_r, logic_grp3_result_r, logic_grp4_result_r;
 
 //coincidence logic group0, for MIPs trigger type1
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		logic_grp0_result_r <= 1'b0;
 	end
 	else begin
@@ -307,9 +307,9 @@ begin
 end
 
 /////coincidence logic group1, for MIPs trigger type2
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		logic_grp1_result_r <= 1'b0;
 	end
 	else begin
@@ -330,9 +330,9 @@ begin
 end
 
 /////coincidence logic group2, for Gamma trigger type1
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		logic_grp2_result_r <= 1'b0;
 	end
 	else begin
@@ -353,9 +353,9 @@ begin
 end
 
 /////coincidence logic group3, for Gamma trigger type2
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		logic_grp3_result_r <= 1'b0;
 	end
 	else begin
@@ -376,9 +376,9 @@ begin
 end
 
 /////coincidence logic group4, for unbias trigger.
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		logic_grp4_result_r <= 1'b0;
 	end
 	else begin
@@ -410,9 +410,9 @@ reg[23:0]	dead_time_cnt;
 
 
 ////coincide trigger  counter
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		coincid_MIP1_cnt <= 16'b0;
         coincid_MIP2_cnt <= 16'b0;
 		coincid_GM1_cnt <= 16'b0;
@@ -431,9 +431,9 @@ end
 
 
 ////pre-scaler (divider) for the the trigger: mip1, mip2, unbias trigger.	
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		coincid_MIP1_engine_enb_r <= 1'b1;
 		coincid_MIP2_engine_enb_r <= 1'b1;
 		coincid_UBS_engine_enb_r <= 1'b1;
@@ -517,7 +517,7 @@ assign	logic_match_out = |(W_logic_all_grp_result & logic_grp_oe_in);///the sign
 
 ///coincidence process
 //two stage: 1, detect the selected signal which is for starting the coincidence process
-/////////////2, wait for the time (trg_match_wait_time_in), make sure other hit signal is valid and filter the noise (0-400ns)
+//////////////2, wait for the time (trg_match_wait_time_in), make sure other hit signal is valid and filter the noise (0-400ns)
 /////////////3, coincidence (400ns -TRG_MATCH_WIN)
 //////////in flight logic, add one clock delay for the trigger signal
 reg[2:0] c_state, n_state;
@@ -531,9 +531,9 @@ parameter   IDLE = 0,
             COINCIDENCE_BURST_GEN = 5, 
             COINCIDENCE_END = 6;
 
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N)
+	if (rst_in)
 		c_state <= IDLE;
 	else 
 		c_state <= n_state;	
@@ -545,7 +545,7 @@ begin
 	n_state = IDLE; //default value
 	case(c_state)
 		IDLE: begin
-			if (hit_start_r)   ///detect the hit_start signal
+			if (hit_start_r)   ///detect the hit_start signal 
 				n_state = COINCIDENCE_STAGE;
 			else 
 				n_state = IDLE;			
@@ -600,9 +600,9 @@ end
 
 
 ////////////coincidence process
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	   if (!rst_in_N) begin
+	   if (rst_in) begin
         coincid_trg_sig <= 1'b0;////the final result of the coincid trg
         coincid_trg_raw_r <= 1'b0;/////the coincide trigger before oe (mask)
         coincid_result_stp0_r <= 5'b0;///the coincide result after the wait window
@@ -677,24 +677,24 @@ end
 
 
 //SI_DEAD_TIME_SET_NUM
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
-		dead_time_cnt <= 23'd0;
+	if (rst_in) begin
+		dead_time_cnt <= 24'd0;//23'd0
 	end
 	else if (si_fix_dead_time_cnt_start_tag ) begin // start count
         dead_time_cnt<= dead_time_cnt + 1'b1;
     end
-	else if (dead_time_cnt == SI_DEAD_TIME_SET_NUM) begin // re-triggerable
+	else if (dead_time_cnt == SI_DEAD_TIME_SET_NUM + 2) begin // re-triggerable //dead_time_cnt == SI_DEAD_TIME_SET_NUM
         dead_time_cnt <= 24'd0;
 	end
 end
 
 
 ////latch the coincidence tag
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		coincid_tag_raw_r <= 5'b0;
 	end
 	else if (coincid_tag_raw_enb_r) begin
@@ -704,9 +704,9 @@ end
 
 ////////expand the width of the coincid_trigger_raw_r to 1000ns
 reg[5:0]	coincid_trg_raw_expd_cnt;
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		coincid_trg_raw_1us_sig <= 1'b0;
 		coincid_trg_raw_expd_cnt <= 6'b0;
 	end
@@ -734,9 +734,9 @@ reg		trg_busy_timer_rdy;
 //si_busy_tmp
 
 
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		coincid_trg_sig_r <= 1'b0;
 		si_busy_tmp_r <= 1'b0;
 	end
@@ -755,9 +755,9 @@ parameter   BUSY_IDLE = 0,
 
 			BUSY_END = 6;
 
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N)
+	if (rst_in)
 		busy_c_state <= BUSY_IDLE;
 	else 
 		busy_c_state <= busy_n_state;	
@@ -791,9 +791,9 @@ begin
 end
 
 
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		trg_busy_time_cnt <= 24'b0;
 		trg_busy_timer_rdy <= 1'b0;
 	end
