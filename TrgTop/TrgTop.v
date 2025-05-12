@@ -16,10 +16,12 @@ module TrgTop(
     input   [15:0]  data_in,        //to ConFigReg module
     input           rd_in,          //to TrgMonData module
     input   [7:0]   rd_addr_in,     //to TrgMonData module
-	input 			store_en,
+	input 			store_en,       //when starting to transmit, store the transient register value 
+	input           fifo_rd_clk,    //to TrgSciData module
     input           fifo_rd_in,     //to TrgSciData module
     input			cntl_rst_in,    //to ResetGen module
     input           ext_trg_test_in, //to GroundTestGen module
+    input    [1:0]  ext_trg_enb_sig,
     input           si_trb_1_busy_a_in_N,   //to Coincidence module
     input           si_trb_1_busy_b_in_N,
     input           si_trb_2_busy_a_in_N,
@@ -40,11 +42,9 @@ module TrgTop(
     input           cal_fee_3_hit_b_in_N,
     input           cal_fee_4_hit_a_in_N,
     input           cal_fee_4_hit_b_in_N,   //to Coincidence module
-    output  [15:0]  fifo_data_out,          //from TrgSciData module
+    output  [7:0]  fifo_data_out,          //from TrgSciData module
     output          fifo_empty_out,         //from TrgSciData module
-    output          fifo_full_out,          //from TrgSciData module
     output  [15:0]  mon_data_out,       //from TrgMonData module    
-    output          trg_out_N,          //from TrgOutCtrl module
     output			trg_out_N_acd_a,//trig to acd(primary A)
     output			trg_out_N_acd_b,//trig to acd(backup B)
     output			trg_out_N_CsI_track_a,//trig to CsI_track(primary A)
@@ -53,6 +53,9 @@ module TrgTop(
     output			trg_out_N_CsI_cal_b,//trig to CsI_cal(backup B)
     output			trg_out_N_Si_a,//trig to Si(primary A)
     output			trg_out_N_Si_b,//trig to Si(backup B)
+    
+    output          trg_enb_sig,
+    output          cmd_rst_sig,
 	
     output          daq_busy_out        //from TrgOutCtrl module
 );
@@ -106,8 +109,7 @@ wire			trg_busy_timer_rdy_sig;
 wire    [15:0]	hit_sig_stus_sig;
 wire            si_busy_tmp;
 
-wire			trg_enb_sig;
-wire  	   		cmd_rst_sig;
+//wire			trg_enb_sig;
 wire  	   		cycled_trg_bgn_sig;
 wire    [15:0]  ctrl_reg_sig;
 wire    [15:0]  cmd_reg_sig;
