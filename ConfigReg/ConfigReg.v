@@ -10,7 +10,7 @@
 `include "Default.v"
 module ConfigReg(
 	input			clk_in,
-	input			rst_in_N,
+	input			rst_in,
     input           wr_in,
     input	[7:0]   wr_addr_in,
     input   [15:0]  data_in,
@@ -30,6 +30,9 @@ module ConfigReg(
     output  [1:0]   logic_grp4_sel_out,
 	output  [5:0]   coincid_UBS_div_out,
 	output  [1:0]   logic_burst_sel_out,
+	output  reg[15:0]	trg_mode_mip1_reg, trg_mode_mip2_reg, trg_mode_gm1_reg,
+	output	reg[15:0]	trg_mode_gm2_reg, trg_mode_ubs_reg, trg_mode_brst_reg,
+	
 	output  [15:0]  hit_ab_sel_out,
     output	[15:0]  hit_mask_out,
 	output	[2:0]	hit_monit_fix_sel_out,
@@ -57,21 +60,17 @@ module ConfigReg(
 	output  [15:0]  config_received_out
 	);
 	
-
-
 	reg		trg_enb_reg, cmd_rst_reg, cycled_trg_bgn_reg;
     reg     [15:0]	ctrl_reg, cmd_reg;
-	reg     [15:0]	trg_mode_mip1_reg, trg_mode_mip2_reg, trg_mode_gm1_reg;
-	reg     [15:0]	trg_mode_gm2_reg, trg_mode_ubs_reg, trg_mode_brst_reg;
 	reg     [15:0]	hit_ab_sel_reg, hit_mask_reg, busy_set_reg, hit_delay_win_reg;
 	reg     [15:0]	hit_align_reg0, hit_align_reg1;
 	reg     [15:0]	trg_match_win_reg, trg_dead_time_reg, trg_mode_oe_reg;
 	reg     [15:0]	cycled_trg_period_reg, cycled_trg_num_reg;
 	reg     [15:0]	ext_trg_delay_reg;
 
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-    if (!rst_in_N) begin    	
+    if (rst_in) begin    	
     	ctrl_reg <= `CTRL_REG;
 		cmd_reg <= `CMD_REG;
 		trg_mode_mip1_reg <= `TRG_MODE_MIP1_REG;
@@ -92,13 +91,18 @@ begin
 		cycled_trg_period_reg <= `CYCLE_TRG_PERIOD_REG;
 		cycled_trg_num_reg <= `CYCLE_TRG_NUM_REG;
 		ext_trg_delay_reg <= `EXT_TRG_DELAY;
+		cycled_trg_bgn_reg <= 1'b0;  
+		cmd_rst_reg <= 1'b0;
+		trg_enb_reg<=1'b0;  
 	end
 	else if (wr_in) begin
 			case (wr_addr_in) //////* synthesis parallel_case */
 				8'b0000_0000: begin
 					ctrl_reg <= data_in;
 					if(data_in==16'b0000_0000_0000_0001)
-						trg_enb_reg<=1'b1;
+					   trg_enb_reg<=1'b1;
+					else if(data_in==16'b0000_0000_0000_0000)
+					   trg_enb_reg<=1'b0;   
 				end
 				8'b0000_0001: begin
 					cmd_reg <= data_in;
@@ -125,30 +129,29 @@ begin
 				8'b0001_0001: cycled_trg_period_reg <= data_in;
 				8'b0001_0010: cycled_trg_num_reg <= data_in;
 				8'b0001_0011: ext_trg_delay_reg <= data_in;
-				default: ;
 			endcase
     end
 end
 
-reg 			wr_addr_in_r;
+reg 			wr_in_r;//wr_addr_in_r
 reg 	[15:0]	config_received_cnt;
 
-always @(posedge clk_in or negedge rst_in_N)
+always @(posedge clk_in)
 begin
-    if (!rst_in_N) begin
-        wr_addr_in_r <= 1'b0;
+    if (rst_in) begin
+        wr_in_r <= 1'b0;
     end
     else begin
-        wr_addr_in_r <= wr_addr_in;
+        wr_in_r <= wr_in;
     end
 end
 
-always @(posedge clk_in or negedge rst_in_N) //Count the number of configuration received
+always @(posedge clk_in) //Count the number of configuration received
 begin
-	if (!rst_in_N) begin
+	if (rst_in) begin
 		config_received_cnt <= 16'b0;
 	end
-	else if ( (wr_addr_in) & ~wr_addr_in_r ) begin//leading edge of wr_addr_in
+	else if (wr_in & ~wr_in_r) begin//leading edge of wr_addr_in
 		config_received_cnt <= config_received_cnt+ 1'b1;
 	end	
 
@@ -161,15 +164,16 @@ assign	cycled_trg_bgn_out = cycled_trg_bgn_reg;
 assign	ctrl_reg_out = ctrl_reg[15:0];
 assign	cmd_reg_out = cmd_reg[15:0];
 
-assign	logic_grp0_sel_out 			= trg_mode_mip1_reg[7:6];
+assign	logic_grp0_sel_out 			= trg_mode_mip1_reg[7:6];//
 assign	coincid_MIP1_div_out 		= trg_mode_mip1_reg[5:0];
-assign	logic_grp1_sel_out 			= trg_mode_mip2_reg[7:6];
+assign	logic_grp1_sel_out 			= trg_mode_mip2_reg[7:6];//
 assign	coincid_MIP2_div_out 		= trg_mode_mip2_reg[5:0];
-assign	logic_grp2_sel_out 			= trg_mode_gm1_reg[7:6];
-assign	logic_grp3_sel_out 			= trg_mode_gm2_reg[7:6];
+assign	logic_grp2_sel_out 			= trg_mode_gm1_reg[7:6];//
+assign	logic_grp3_sel_out 			= trg_mode_gm2_reg[7:6];//
 assign	logic_grp4_sel_out 			= trg_mode_ubs_reg[7:6];
 assign	coincid_UBS_div_out 		= trg_mode_ubs_reg[5:0];
 assign	logic_burst_sel_out 		= trg_mode_brst_reg[7:6];
+                      
 assign	hit_ab_sel_out 				= hit_ab_sel_reg[15:0];
 assign	hit_mask_out 				= hit_mask_reg[15:0];
 
@@ -181,11 +185,11 @@ assign	busy_mask_out 				= busy_set_reg[5:4];
 //assign	busy_mask_set_out 			= busy_set_reg[3];
 //assign	busy_start_sel_out 			= busy_set_reg[1:0];
 assign	acd_csi_hit_tim_diff_out 	= hit_delay_win_reg[7:0];
-assign	acd_fee_top_hit_align_out 	= hit_align_reg0[15:12];
+assign	acd_fee_top_hit_align_out 	= hit_align_reg0[15:12];//
 assign	acd_fee_sec_hit_align_out 	= hit_align_reg0[11:8];
 assign	acd_fee_sid_hit_align_out 	= hit_align_reg0[7:4];
-assign	csi_hit_align_out 			= hit_align_reg0[3:0];
-assign	cal_fee_1_hit_align_out 	= hit_align_reg1[15:12];
+assign	csi_hit_align_out 			= hit_align_reg0[3:0];//
+assign	cal_fee_1_hit_align_out 	= hit_align_reg1[15:12];//
 assign	cal_fee_2_hit_align_out 	= hit_align_reg1[11:8];
 assign	cal_fee_3_hit_align_out 	= hit_align_reg1[7:4];
 assign	cal_fee_4_hit_align_out 	= hit_align_reg1[3:0];
