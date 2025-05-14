@@ -35,8 +35,8 @@ module HitTrgCount(
 	);
 
 
-parameter   HIT_WIDTH = 4; 		// STD:160ns, [120ns to 200ns]
-parameter   BUSY_WIDTH = 4; 	//STD:160ns, [120ns to 200ns]
+parameter   HIT_WIDTH = 8; 		// STD:160ns, [120ns to 200ns]
+parameter   BUSY_WIDTH = 8; 	//STD:160ns, [120ns to 200ns]
 
 
 wire	[15:0] 		W_hit_pulse;
@@ -182,7 +182,7 @@ end
 
 
 //---------------->>  monitor the width of hit signal 0 [fixed hit signal]
-reg		[2:0]	hit_monit_width_cnt_0; // max value= 8, clk=25Mhz, the width of hit is 320ns
+reg		[3:0]	hit_monit_width_cnt_0; // max value= 16, clk=50Mhz, the width of hit is 320ns
 reg				hit_monit_err_r_0;
 
 reg c_hit_0_monit_state, n_hit_0_monit_state;  //monitor the hit signal
@@ -220,14 +220,14 @@ end
 always @(posedge clk_in)
 begin
     if (rst_in) begin
-        hit_monit_width_cnt_0 <= 3'b0;
+        hit_monit_width_cnt_0 <= 4'b0;
         hit_monit_err_r_0 <= 1'b0;// flag of the error of hit pulse width, hit_monit_err_r
     end
     else begin
         case (c_hit_0_monit_state) 
          MONIT_HIT_0_IDLE: begin
             hit_monit_err_r_0 <= 1'b0;
-            hit_monit_width_cnt_0 <= 3'b0;
+            hit_monit_width_cnt_0 <= 4'b0;
          end
          MONIT_HIT_0_WIDTH_CHECK: begin   ////must consider this condition: the "updata_end_in" is concided with the hit signal      	
          		hit_monit_width_cnt_0 <= (hit_syn_in[hit_monit_fix_sel_in])? (hit_monit_width_cnt_0 + 1) : hit_monit_width_cnt_0;
@@ -240,7 +240,7 @@ begin
             end	
          end
          default: begin
-            hit_monit_width_cnt_0 <= 3'b0;
+            hit_monit_width_cnt_0 <= 4'b0;
             hit_monit_err_r_0 <= 1'b0;  
          end
         endcase
@@ -251,7 +251,7 @@ end
 
 
 //---------------->>  monitor the width of hit signal 1, selected by hit_monit_sel_r
-reg		[2:0]	 hit_monit_width_cnt_1; // max value= 8, clk=25Mhz, the width of hit is 320ns
+reg		[3:0]	 hit_monit_width_cnt_1; // max value= 16, clk=50Mhz, the width of hit is 320ns
 reg				 hit_monit_err_r_1;
 reg c_hit_1_monit_state, n_hit_1_monit_state;  //monitor the hit signal
 parameter MONIT_HIT_1_IDLE = 0, MONIT_HIT_1_WIDTH_CHECK = 1;
@@ -288,14 +288,14 @@ end
 always @(posedge clk_in)
 begin
     if (rst_in) begin
-        hit_monit_width_cnt_1 <= 3'b0;
+        hit_monit_width_cnt_1 <= 4'b0;
         hit_monit_err_r_1 <= 1'b0;// flag of the error of hit pulse width, hit_monit_err_r
     end
     else begin
         case (c_hit_1_monit_state) 
          MONIT_HIT_1_IDLE: begin
             hit_monit_err_r_1 <= 1'b0;
-            hit_monit_width_cnt_1 <= 3'b0;
+            hit_monit_width_cnt_1 <= 4'b0;
          end
          MONIT_HIT_1_WIDTH_CHECK: begin   ////must consider this condition: the "updata_end_in" is concided with the hit signal      	
          		hit_monit_width_cnt_1 <= (hit_syn_in[hit_monit_sel_r])? (hit_monit_width_cnt_1 + 1) : hit_monit_width_cnt_1;
@@ -308,7 +308,7 @@ begin
             end	
          end
          default: begin
-            hit_monit_width_cnt_1 <= 3'b0;
+            hit_monit_width_cnt_1 <= 4'b0;
             hit_monit_err_r_1 <= 1'b0;  
          end
         endcase
@@ -319,7 +319,7 @@ end
 
 
 //---------------->>  monitor the width of busy signal
-reg		[2:0]	busy_monit_width_cnt; // max value= 8, clk=25Mhz, the width of hit is 320ns
+reg		[3:0]	busy_monit_width_cnt; // max value= 16, clk=50Mhz, the width of hit is 320ns
 reg				busy_monit_err_r;
 reg 			c_busy_monit_state, n_busy_monit_state;  //monitor the busy signal
 parameter 		MONIT_BUSY_IDLE = 0, MONIT_BUSY_WIDTH_CHECK = 1;
@@ -356,14 +356,14 @@ end
 always @(posedge clk_in)
 begin
     if (rst_in) begin
-		busy_monit_width_cnt <= 3'b0;
+		busy_monit_width_cnt <= 4'b0;
         busy_monit_err_r <= 1'b0;// flag of the error of hit pulse width
     end
     else begin
         case (c_busy_monit_state) 
          MONIT_BUSY_IDLE: begin
             busy_monit_err_r <= 1'b0;
-            busy_monit_width_cnt <= 3'b0;
+            busy_monit_width_cnt <= 4'b0;
          end
          MONIT_BUSY_WIDTH_CHECK: begin   ////must consider this condition: the "updata_end_in" is concided with the busy signal      	
          		busy_monit_width_cnt <= (busy_syn_in[busy_monit_fix_sel_in])? (busy_monit_width_cnt + 1) : busy_monit_width_cnt;
@@ -376,7 +376,7 @@ begin
             end
          end
          default: begin
-            busy_monit_width_cnt <= 3'b0;
+            busy_monit_width_cnt <= 4'b0;
             busy_monit_err_r <= 1'b0;         
          end
         endcase
