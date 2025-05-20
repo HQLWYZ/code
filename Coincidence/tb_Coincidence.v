@@ -11,7 +11,7 @@ parameter IDLE                  = 0        ;
 
 // Coincidence Inputs
 reg   clk_in                               = 1'b0 ;
-reg   rst_in_N                             = 1'b0 ;
+reg   rst_in                             = 1'b0 ;
 reg   si_trb_1_busy_a_in_N                 = 1'b1 ;
 reg   si_trb_1_busy_b_in_N                 = 1'b1 ;
 reg   si_trb_2_busy_a_in_N                 = 1'b1 ;
@@ -53,7 +53,7 @@ reg   [1:0]  logic_grp2_sel_in             = 2'b00 ;//Trigger type: GM1
 reg   [1:0]  logic_grp3_sel_in             = 2'b00 ;//Trigger type: GM2
 reg   [1:0]  logic_grp4_sel_in             = 2'b00 ;//Trigger type: UBS
 reg   [1:0]  logic_burst_sel_in            = 2'b00 ;//Trigger type: Burst
-reg   [5:0]  trg_match_win_in              = 6'b11_1001 ;// 32
+reg   [15:0]  trg_match_win_in             = 16'b0010_1000_0001_0100 ;// MSB:40, LSB:20
 reg   [5:0]  coincid_UBS_div_in            = 6'b00_0001 ;
 reg   [5:0]  coincid_MIP1_div_in           = 6'b00_0010 ;
 reg   [5:0]  coincid_MIP2_div_in           = 6'b00_0001 ;
@@ -87,8 +87,9 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#80_000 acd_fee_top_hit_a_in_N=0;
-	#80_000 acd_fee_top_hit_a_in_N=1;
+	#159_800 acd_fee_top_hit_a_in_N=0;
+	#200    acd_fee_top_hit_a_in_N=1;
+
 	end
 acd_fee_top_hit_a_in_N=1'b1;
 end
@@ -97,8 +98,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#80_000 acd_fee_sec_hit_a_in_N=0;
-	#80_000 acd_fee_sec_hit_a_in_N=1;
+	#159_800 acd_fee_sec_hit_a_in_N=0;
+	#200    acd_fee_sec_hit_a_in_N=1;
 	end
 acd_fee_sec_hit_a_in_N=1'b1;
 end
@@ -107,8 +108,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#80_000 acd_fee_sid_hit_a_in_N=0;
-	#80_000 acd_fee_sid_hit_a_in_N=1;
+	#159_800 acd_fee_sid_hit_a_in_N=0;
+	#200    acd_fee_sid_hit_a_in_N=1;
 	end
 acd_fee_sid_hit_a_in_N=1'b1;
 end
@@ -117,8 +118,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#82_000 csi_fee_hit_a_in_N=0;
-	#78_000 csi_fee_hit_a_in_N=1;
+	#200        csi_fee_hit_a_in_N=1;
+	#159_800    csi_fee_hit_a_in_N=0;
 	end
 csi_fee_hit_a_in_N=1'b1;
 end
@@ -127,8 +128,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#82_000 cal_fee_1_hit_a_in_N=0;
-	#78_000 cal_fee_1_hit_a_in_N=1;
+	#200        cal_fee_1_hit_a_in_N=1;
+	#159_800    cal_fee_1_hit_a_in_N=0;
 	end
 cal_fee_1_hit_a_in_N=1'b1;
 end
@@ -137,8 +138,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#82_000 cal_fee_2_hit_a_in_N=0;
-	#78_000 cal_fee_2_hit_a_in_N=1;
+	#200        cal_fee_2_hit_a_in_N=1;
+	#159_800    cal_fee_2_hit_a_in_N=0;
 	end
 cal_fee_2_hit_a_in_N=1'b1;
 end
@@ -147,8 +148,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#82_000 cal_fee_3_hit_a_in_N=0;
-	#78_000 cal_fee_3_hit_a_in_N=1;
+	#200        cal_fee_3_hit_a_in_N=1;
+	#159_800    cal_fee_3_hit_a_in_N=0;
 	end
 cal_fee_3_hit_a_in_N=1'b1;
 end
@@ -158,8 +159,8 @@ initial//-----------HIT IN------
 begin
 repeat(3000)
 	begin
-	#82_000 cal_fee_4_hit_a_in_N=0;
-	#78_000 cal_fee_4_hit_a_in_N=1;
+	#200        cal_fee_4_hit_a_in_N=1;
+	#159_800    cal_fee_4_hit_a_in_N=0;
 	end
 cal_fee_4_hit_a_in_N=1'b1;
 end
@@ -175,7 +176,9 @@ end
 
 initial
 begin
-    #(PERIOD*2) rst_in_N  =  1;
+    #(PERIOD*2) rst_in  =  1;
+    #(PERIOD*2) rst_in  =  0;
+    //#(PERIOD*2) rst_in  =  1;
 end
 
 
@@ -184,7 +187,7 @@ Coincidence #(
     .IDLE                 ( IDLE                 ))
  u_Coincidence (
     .clk_in                   ( clk_in                          ),
-    .rst_in_N                 ( rst_in_N                        ),
+    .rst_in                 ( rst_in                        ),
     .si_trb_1_busy_a_in_N     ( si_trb_1_busy_a_in_N            ),
     .si_trb_1_busy_b_in_N     ( si_trb_1_busy_b_in_N            ),
     .si_trb_2_busy_a_in_N     ( si_trb_2_busy_a_in_N            ),
@@ -227,7 +230,7 @@ Coincidence #(
     .cal_fee_2_hit_align_in     ( cal_fee_2_hit_align_in     [3:0]  ),
     .cal_fee_3_hit_align_in     ( cal_fee_3_hit_align_in     [3:0]  ), 
     .cal_fee_4_hit_align_in     ( cal_fee_4_hit_align_in     [3:0]  ),
-    .trg_match_win_in       ( trg_match_win_in           [7:0]  ),
+    .trg_match_win_in       ( trg_match_win_in           [15:0] ),
     .logic_grp_oe_in        ( logic_grp_oe_in            [7:0]  ),
 
     .coincid_trg_out          ( coincid_trg_out                 ),
@@ -235,7 +238,7 @@ Coincidence #(
     .hit_syn_out              ( hit_syn_out              [7:0] ),
     .busy_syn_out              ( busy_syn_out              [1:0] ),
     .hit_start_out            ( hit_start_out                   ),
-    .busy_start_out            ( busy_start_out                   ),
+   // .busy_start_out            ( busy_start_out                   ),
     .coincid_UBS_cnt_out      ( coincid_UBS_cnt_out      [15:0] ),
     .coincid_MIP1_cnt_out      ( coincid_MIP1_cnt_out      [15:0] ),
     .coincid_MIP2_cnt_out       ( coincid_MIP2_cnt_out       [15:0] ),
