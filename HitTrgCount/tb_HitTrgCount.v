@@ -13,7 +13,7 @@ parameter MONIT_BUSY_IDLE  = 0;
 
 // HitTrgCount Inputs
 reg   clk_in                               = 0 ;
-reg   rst_in_N                             = 0 ;
+reg   rst_in                             = 0 ;
 reg   [7:0]  hit_syn_in                    = 0 ;
 reg   [1:0]  busy_syn_in                   = 0 ;
 reg   hit_start_in                         = 0 ;
@@ -37,6 +37,7 @@ wire  [15:0]  logic_match_cnt_out          ;
 wire  [15:0]  eff_trg_cnt_out              ;
 wire  [15:0]  coincid_trg_cnt_out          ;
 wire  [15:0]  ext_trg_cnt_out              ;
+wire  [7:0]  trg_delay_timer_out              ;
 
 
 initial
@@ -46,9 +47,30 @@ end
 
 initial
 begin
-    #(PERIOD*2) rst_in_N  =  1;
+    #(PERIOD*2) rst_in  =  1;
+    #(PERIOD*2) rst_in  =  0;
 end
 
+
+initial//-----------HIT[7] IN------
+begin
+repeat(3000)
+	begin
+	#800_000 hit_syn_in[7]=1;
+	#160 hit_syn_in[7]=0;
+	end
+hit_syn_in[7]=1'b1;
+end
+
+initial//-----------HIT[4] IN------
+begin
+repeat(3000)
+	begin
+	#803_000 hit_syn_in[4]=1;
+	#160 hit_syn_in[4]=0;
+	end
+hit_syn_in[4]=1'b1;
+end
 
 initial//-----------HIT[0] IN------
 begin
@@ -136,7 +158,7 @@ HitTrgCount #(
     .MONIT_BUSY_IDLE ( MONIT_BUSY_IDLE ))
  u_HitTrgCount (
     .clk_in                  ( clk_in                         ),
-    .rst_in_N                ( rst_in_N                       ),
+    .rst_in                ( rst_in                       ),
     .hit_syn_in              ( hit_syn_in              [7:0]  ),
     .busy_syn_in             ( busy_syn_in             [1:0]  ),
     .hit_start_in            ( hit_start_in                   ),
@@ -158,7 +180,8 @@ HitTrgCount #(
     .logic_match_cnt_out     ( logic_match_cnt_out     [15:0] ),
     .eff_trg_cnt_out         ( eff_trg_cnt_out         [15:0] ),
     .coincid_trg_cnt_out     ( coincid_trg_cnt_out     [15:0] ),
-    .ext_trg_cnt_out         ( ext_trg_cnt_out         [15:0] )
+    .ext_trg_cnt_out         ( ext_trg_cnt_out         [15:0] ),
+    .trg_delay_timer_out       (  trg_delay_timer_out    [7:0]  )
 );
 
 

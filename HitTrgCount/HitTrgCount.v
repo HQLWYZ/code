@@ -2,6 +2,7 @@
 /* 															*/
 /*	file name:	HitTrgCount.v			           			*/
 /* 	date:		2025/03/13									*/
+/* 	modified:	2025/05/20									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	note:	system clock = 50MHz                            */
@@ -31,7 +32,8 @@ module HitTrgCount(
 	output	[15:0]	logic_match_cnt_out, 	// Logic match count
 	output	[15:0]	eff_trg_cnt_out, 		// Effective trigger count
 	output	[15:0]	coincid_trg_cnt_out, 	// Coincidence trigger count
-	output	[15:0]	ext_trg_cnt_out			// External trigger count
+	output	[15:0]	ext_trg_cnt_out,		// External trigger count
+	output 	[7:0]	trg_delay_timer_out 	// time delay count between acd_fee_top_hit_in and csi_fee_hit_in, e.g. hit_syn_in[7] and hit_syn_in[4], before synchronization
 	);
 
 
@@ -55,6 +57,7 @@ reg		[15:0] 		eff_trg_cnt;
 reg		[15:0]		busy_monit_cnt;
 reg		[7:0]		busy_monit_err_cnt;
 reg					update_end_in_r;
+reg		[7:0]		trg_delay_timer_cnt;
 
 
 
@@ -474,6 +477,34 @@ begin
 	end
 end
 
+//------>>	hit delay timer counter, W_hit_pulse[7], W_hit_pulse[4] are the leading edge signals from acd_fee_top_hit_in and csi_fee_hit_in, respectively
+// in Coincidence module, MIPS1 mode, case logic_grp0_sel_in=2'b00;
+reg [1:0]	work_state;
+always @(posedge clk_in)
+begin
+	if (rst_in) begin
+		trg_delay_timer_cnt <= 8'b0;
+		work_state <= 2'b0;
+	end
+	else begin
+		if(work_state == 2'b00) begin
+			//trg_delay_timer_cnt <= 8'b0;
+			if (W_hit_pulse[7] ) begin
+				work_state <= 2'b01;
+				trg_delay_timer_cnt <= 8'b0;
+			end
+		end
+		else if (work_state == 2'b01) begin
+			trg_delay_timer_cnt <= trg_delay_timer_cnt+1'b1;
+			if (W_hit_pulse[4] ) begin
+				work_state <= 2'b10;
+			end
+		end
+		else if (work_state == 2'b10) begin
+				work_state <= 2'b00;
+		end
+	end
+end
 
 assign	hit_start_cnt_out = hit_start_cnt;
 assign	hit_monit_err_cnt_out = hit_monit_err_cnt;
@@ -486,6 +517,7 @@ assign	ext_trg_cnt_out = ext_trg_cnt;
 assign	eff_trg_cnt_out = eff_trg_cnt;
 assign	busy_monit_err_cnt_out = busy_monit_err_cnt;
 assign	busy_monit_cnt_out = busy_monit_cnt;
+assign	trg_delay_timer_out = trg_delay_timer_cnt; 
 
 
 

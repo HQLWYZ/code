@@ -2,6 +2,7 @@
 /* 															*/
 /*	file name:	Coincidence.v	--	--	           			*/
 /* 	date:		2025/02/27									*/
+/* 	modified:	2025/05/20									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	note:		system clock = 50MHz						*/
@@ -56,7 +57,7 @@ module Coincidence(
 	input   [3:0]   cal_fee_2_hit_align_in,
 	input   [3:0]   cal_fee_3_hit_align_in,
 	input   [3:0]   cal_fee_4_hit_align_in,
-    input   [5:0]   trg_match_win_in,//wait time for trigger windows
+    input   [15:0]   trg_match_win_in,//wait time for trigger windows
 	input   [4:0]   logic_grp_oe_in,
 
     output          coincid_trg_out,
@@ -116,7 +117,8 @@ begin
 	end
 	else begin  
 			busy_syn_tmp_r <=   (~busy_mask_in) & (((~busy_ab_sel_in) & (~W_busya_N)) | (busy_ab_sel_in & (~W_busyb_N))) ;						
-			hit_syn_tmp_r <=   (~hit_mask_in) & (((~hit_ab_sel_in) & (~W_hita_N)) | (hit_ab_sel_in & (~W_hitb_N)))  ;						
+			hit_syn_tmp_r <=   (~hit_mask_in) & (((~hit_ab_sel_in) & (~W_hita_N)) | (hit_ab_sel_in & (~W_hitb_N)))  ;		
+			//hit_syn_tmp_r <=	~W_hita_N;			
 																														//hit_ab_sel_in equal==0:select channel A
 																														// hit_ab_sel_in == 1: select hit channel B
 																														//hit_syn_r is actived high
@@ -278,7 +280,75 @@ end
 
 	//assign	busy_start_r = busy_syn_r[0] | busy_syn_r[1];//////select the busy
 
+reg [7:0] 	trg_seed_win_cnt;
+reg [2:0] 	trg_seed_state;
+reg [7:0]	trg_seed_reg;
+wire		acd_fee_top_hit_syn_seed,	
+			acd_fee_sec_hit_syn_seed,
+			acd_fee_sid_hit_syn_seed,
+			csi_fee_hit_syn_seed,
+			cal_fee_1_hit_syn_seed,
+			cal_fee_2_hit_syn_seed,
+			cal_fee_3_hit_syn_seed,
+			cal_fee_4_hit_syn_seed;
 
+//create trigger seed, modified by shen, 2025-05-20
+always @(posedge clk_in)
+begin
+	if (rst_in) begin
+		trg_seed_state <= 3'b000;
+		trg_seed_reg<= 8'b0;
+	end
+	else begin
+		if	(trg_seed_state == 3'b000) begin
+			trg_seed_win_cnt <= 8'b0;
+			trg_seed_reg <= 8'b0;
+			if (hit_start_r ) begin
+				trg_seed_state <= 3'b001;
+			end
+		end
+		else if (trg_seed_state == 3'b001) begin
+			trg_seed_win_cnt <= trg_seed_win_cnt+ 1'b1;
+			if(acd_fee_top_hit_syn)
+				trg_seed_reg[7] <= 1'b1;
+			if(acd_fee_sec_hit_syn)
+				trg_seed_reg[6] <= 1'b1;
+			if(acd_fee_sid_hit_syn)
+				trg_seed_reg[5] <= 1'b1;
+			if(csi_fee_hit_syn)
+				trg_seed_reg[4] <= 1'b1;
+			if(cal_fee_1_hit_syn)	
+				trg_seed_reg[3] <= 1'b1;
+			if(cal_fee_2_hit_syn)	
+				trg_seed_reg[2] <= 1'b1;
+			if(cal_fee_3_hit_syn)
+				trg_seed_reg[1] <= 1'b1;
+			if(cal_fee_4_hit_syn)
+				trg_seed_reg[0] <= 1'b1;
+			if (trg_seed_win_cnt == trg_match_win_in[15:8]) begin   //HIGH END of trg_match_win_in[15:8]: find seed window MAX is 256*20ns=5.12us, typical 800ns(8'd40)
+				trg_seed_state <= 3'b010;
+				trg_seed_win_cnt <= 8'b0;
+			end
+		end
+		else if (trg_seed_state ==3'b010) begin
+			trg_seed_win_cnt <= trg_seed_win_cnt+ 1'b1;
+			if (trg_seed_win_cnt == trg_match_win_in[7:0]) begin   //LOW END of trg_match_win_in[7:0]: check trigger logic window MAX is 256*20ns=5.12us, typical 200ns(8'd10)
+				trg_seed_state <= 3'b000;
+				trg_seed_win_cnt <= 8'b0;
+				trg_seed_reg <= 8'b0;
+			end
+		end
+	end	
+end
+
+assign acd_fee_top_hit_syn_seed = trg_seed_reg[7];
+assign acd_fee_sec_hit_syn_seed = trg_seed_reg[6];
+assign acd_fee_sid_hit_syn_seed = trg_seed_reg[5];
+assign csi_fee_hit_syn_seed = trg_seed_reg[4];
+assign cal_fee_1_hit_syn_seed = trg_seed_reg[3];
+assign cal_fee_2_hit_syn_seed = trg_seed_reg[2];
+assign cal_fee_3_hit_syn_seed = trg_seed_reg[1];
+assign cal_fee_4_hit_syn_seed = trg_seed_reg[0];
 
 //there are 9 logic group. Five of them using coincidence logic. in each group, we can use one of the logic in the group
 reg	logic_grp0_result_r, logic_grp1_result_r, logic_grp2_result_r, logic_grp3_result_r, logic_grp4_result_r;
@@ -292,10 +362,10 @@ begin
 	else begin
 		//////select the logic in group0
 		case (logic_grp0_sel_in)////* synthesis parallel_case */
-		//2'b00:
-
+		2'b00:
+			logic_grp0_result_r <= acd_fee_top_hit_syn_seed  & csi_fee_hit_syn_seed; //used for Trg_Delay_timer test. in this mode, set syn timer to 0
 		2'b01:
-			logic_grp0_result_r <= acd_fee_top_hit_syn & acd_fee_sec_hit_syn & csi_fee_hit_syn &(  cal_fee_2_hit_syn | cal_fee_4_hit_syn);
+			logic_grp0_result_r <= acd_fee_top_hit_syn_seed & acd_fee_sec_hit_syn_seed & csi_fee_hit_syn_seed &(  cal_fee_2_hit_syn_seed | cal_fee_4_hit_syn_seed);
 		//2'b10:
 			
 		//2'b11:
@@ -318,7 +388,7 @@ begin
 		//2'b00:
 
 		2'b01:
-			logic_grp1_result_r <=  cal_fee_2_hit_syn & cal_fee_4_hit_syn;
+			logic_grp1_result_r <=  cal_fee_2_hit_syn_seed & cal_fee_4_hit_syn_seed;
 		//2'b10:
 			
 		//2'b11:
@@ -341,7 +411,7 @@ begin
 		//2'b00:
 
 		2'b01:
-			logic_grp2_result_r <=  ((~acd_fee_top_hit_syn)&(~acd_fee_sec_hit_syn))& csi_fee_hit_syn & (cal_fee_1_hit_syn | cal_fee_3_hit_syn) ;
+			logic_grp2_result_r <=  ((~acd_fee_top_hit_syn_seed)&(~acd_fee_sec_hit_syn_seed))& csi_fee_hit_syn_seed & (cal_fee_1_hit_syn_seed | cal_fee_3_hit_syn_seed) ;
 		//2'b10:
 			
 		//2'b11:
@@ -364,7 +434,7 @@ begin
 		//2'b00:
 
 		2'b01:
-			logic_grp3_result_r <=  ((~acd_fee_top_hit_syn)|(~acd_fee_sec_hit_syn))& csi_fee_hit_syn & (cal_fee_1_hit_syn | cal_fee_3_hit_syn) ;
+			logic_grp3_result_r <=  ((~acd_fee_top_hit_syn_seed)|(~acd_fee_sec_hit_syn_seed))& csi_fee_hit_syn_seed & (cal_fee_1_hit_syn_seed | cal_fee_3_hit_syn_seed) ;
 		//2'b10:
 			
 		//2'b11:
@@ -387,7 +457,7 @@ begin
 		//2'b00:
             //logic_grp4_result_r <= hit_start_r;/
 		2'b01:
-			logic_grp4_result_r <=  cal_fee_1_hit_syn | cal_fee_3_hit_syn ;
+			logic_grp4_result_r <=  cal_fee_1_hit_syn_seed | cal_fee_3_hit_syn_seed ;
 		//2'b10:
 			
 		//2'b11:
@@ -521,7 +591,7 @@ assign	logic_match_out = |(W_logic_all_grp_result & logic_grp_oe_in);///the sign
 /////////////3, coincidence (400ns -TRG_MATCH_WIN)
 //////////in flight logic, add one clock delay for the trigger signal
 reg[2:0] c_state, n_state;
-reg[5:0] trg_win_cnt;/////trigger match windows counter
+reg[7:0] trg_win_cnt;/////trigger match windows counter
 
 parameter   IDLE = 0, 
             COINCIDENCE_STAGE = 1, 
@@ -551,14 +621,14 @@ begin
 				n_state = IDLE;			
 		end
 		COINCIDENCE_STAGE: begin
-			if (trg_win_cnt >= trg_match_win_in)//////coincidence windows
+			if (trg_win_cnt >= trg_match_win_in[15:8])//////coincidence windows
 				n_state = COINCIDENCE_RESULT;
-			else if (trg_win_cnt < trg_match_win_in ) begin
-				if (!hit_start_r)  //it is a noise
-					n_state = IDLE;
-				else
-					n_state = COINCIDENCE_STAGE;
-			end
+			//else if (trg_win_cnt < trg_match_win_in ) begin
+			//	if (!hit_start_r)  //it is a noise
+			//		n_state = IDLE;
+			//	else
+			//		n_state = COINCIDENCE_STAGE;
+			//end
 			else
 				n_state = COINCIDENCE_STAGE;			
 		end
@@ -607,7 +677,7 @@ begin
         coincid_trg_raw_r <= 1'b0;/////the coincide trigger before oe (mask)
         coincid_result_stp0_r <= 5'b0;///the coincide result after the wait window
         coincid_result_r <= 5'b0;////////the final result of the coincide 
-        trg_win_cnt <= 6'b0;////counter of the match windows
+        trg_win_cnt <= 8'b0;////counter of the match windows
         coincid_tag_raw_enb_r <= 1'b0;  //latch the coincid tag
         si_fix_dead_time_cnt_start_tag<=1'b0;
     end
@@ -618,7 +688,7 @@ begin
             coincid_trg_raw_r <= 1'b0;
             coincid_result_stp0_r <= 5'b0;
             coincid_result_r <= 5'b0;
-            trg_win_cnt <= 6'b0;
+            trg_win_cnt <= 8'b0;
             coincid_tag_raw_enb_r <= 1'b0; 
             si_fix_dead_time_cnt_start_tag<=1'b0;
          end
@@ -626,12 +696,12 @@ begin
          		coincid_trg_sig <= 1'b0;
          		coincid_trg_raw_r <= 1'b0;
             trg_win_cnt <= trg_win_cnt + 1;           
-            if (trg_win_cnt == {1'b0, trg_match_win_in}) //wait for other hit
+            if (trg_win_cnt == {trg_match_win_in[15:8]}) //wait for other hit
             	coincid_result_stp0_r <= W_logic_all_grp_result;
-            else if (trg_win_cnt < {1'b0, trg_match_win_in}) begin
-                if (!hit_start_r) //the width of the T0 signal less than expected, it is a noise
-                    trg_win_cnt <= 6'b0;
-            end
+           // else if (trg_win_cnt < { trg_match_win_in[15:8]}) begin
+           //     if (!hit_start_r) //the width of the T0 signal less than expected, it is a noise
+           //         trg_win_cnt <= 6'b0;
+           // end
          end
          COINCIDENCE_RESULT: begin //
          	coincid_tag_raw_enb_r <= 1'b1;////latch the coincidence tag, please attention the timing, normally LOGIC OR, e.g.logic_judge_mode_in=1'b0
