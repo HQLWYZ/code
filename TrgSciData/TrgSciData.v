@@ -12,6 +12,7 @@ module TrgSciData
 (
 	input	        clk_in,
 	input			rst_in,
+	input           trg_enb_sig,
 	input           fifo_rd_clk,
     input           fifo_rd_in,  
     //----select one mode that drive the trigger signal
@@ -98,7 +99,7 @@ begin
 	n_state = IDLE; //default value
 	case(c_state)
 		IDLE: begin
-			if (coincid_trg_in)   
+			if (coincid_trg_in & trg_enb_sig)   
 				n_state = WRITE_FIFO_START;
 			else 
 				n_state = IDLE;			

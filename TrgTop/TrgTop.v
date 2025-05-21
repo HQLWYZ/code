@@ -42,7 +42,7 @@ module TrgTop(
     input           cal_fee_3_hit_b_in_N,
     input           cal_fee_4_hit_a_in_N,
     input           cal_fee_4_hit_b_in_N,   //to Coincidence module
-    output  [7:0]  fifo_data_out,          //from TrgSciData module
+    output  [7:0]   fifo_data_out,          //from TrgSciData module
     output          fifo_empty_out,         //from TrgSciData module
     output  [15:0]  mon_data_out,       //from TrgMonData module    
     output			trg_out_N_acd_a,//trig to acd(primary A)
@@ -391,6 +391,7 @@ TrgSciData TrgSciData_inst
 (
 	.clk_in(clk_in),
 	.rst_in(rst_in),
+	.trg_enb_sig(trg_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
     .trg_mode_mip1_in(trg_mode_mip1_sig[7:0]),
