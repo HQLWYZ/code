@@ -10,7 +10,8 @@
 
 module TrgTop(
 	input	        clk_in,
-	input			rst_in,
+    input			ctrl_rst_in,    //to ResetGen module
+    //input			ctrl_busy_in,    //to 
     input           wr_in,          //to ConFigReg module
     input	[7:0]   wr_addr_in,     //to ConFigReg module
     input   [15:0]  data_in,        //to ConFigReg module
@@ -19,7 +20,6 @@ module TrgTop(
 	input 			store_en,       //when starting to transmit, store the transient register value 
 	input           fifo_rd_clk,    //to TrgSciData module
     input           fifo_rd_in,     //to TrgSciData module
-    input			cntl_rst_in,    //to ResetGen module
     input           ext_trg_test_in, //to GroundTestGen module
     input    [1:0]  ext_trg_enb_sig,
     input           si_trb_1_busy_a_in_N,   //to Coincidence module
@@ -55,9 +55,7 @@ module TrgTop(
     output			trg_out_N_Si_b,//trig to Si(backup B)
     
     output          trg_enb_sig,
-    output          cmd_rst_sig,
-	
-    output          daq_busy_out        //from TrgOutCtrl module
+    output          cmd_rst_sig
 );
 	
 wire	[1:0]   logic_grp0_sel_sig;
@@ -149,7 +147,7 @@ wire    [7:0]   trg_dead_time_sig;
 
 ConfigReg ConfigReg_inst(
 	.clk_in(clk_in),
-	.rst_in(rst_in),
+	.rst_in(rst_intf_sig),
     .wr_in(wr_in),
     .wr_addr_in(wr_addr_in),
     .data_in(data_in),
@@ -202,7 +200,7 @@ ConfigReg ConfigReg_inst(
 //---------- TRIG ----------
 Coincidence Coincidence_inst(
 	.clk_in(clk_in),
-	.rst_in(rst_in),
+	.rst_in(rst_logic_sig),
     .si_trb_1_busy_a_in_N(si_trb_1_busy_a_in_N),
     .si_trb_1_busy_b_in_N(si_trb_1_busy_b_in_N),
     .si_trb_2_busy_a_in_N(si_trb_2_busy_a_in_N),
@@ -268,7 +266,7 @@ Coincidence Coincidence_inst(
 
 CycledTrgGen CycledTrgGen_inst(
 	.clk_in(clk_in),
-	.rst_in(rst_in),
+	.rst_in(rst_logic_sig),
     .cycled_trg_oe_in(2'b11),
     .cycled_trg_bgn_in(cycled_trg_bgn_sig),
     .cycled_trg_period_in(cycled_trg_period_sig),
@@ -280,7 +278,7 @@ CycledTrgGen CycledTrgGen_inst(
 
 GroundTestGen GroundTestGen_inst(
 	.clk_in(clk_in),
-	.rst_in(rst_in),
+	.rst_in(rst_logic_sig),
     .ext_trg_test_in(ext_trg_test_in),
     //.trg_in_N(trg_in_N),
     .coincid_trg_in(coincid_trg_sig),
@@ -298,7 +296,7 @@ GroundTestGen GroundTestGen_inst(
 
 TrgOutCtrl TrgOutCtrl_inst(
     .clk_in(clk_in),
-    .rst_in(rst_in),
+    .rst_in(rst_logic_sig),
     .coincid_trg_in(coincid_trg_sig),
     .ext_trg_syn_in(ext_trg_syn_sig),
     .cycled_trg_in(cycled_trg_sig),
@@ -313,13 +311,12 @@ TrgOutCtrl TrgOutCtrl_inst(
     .trg_out_N_CsI_cal_a(trg_out_N_CsI_cal_a),//trig to CsI_cal(primary A)
     .trg_out_N_CsI_cal_b(trg_out_N_CsI_cal_b),//trig to CsI_cal(backup B)
     .trg_out_N_Si_a(trg_out_N_Si_a),//trig to Si(primary A)
-    .trg_out_N_Si_b(trg_out_N_Si_b),//trig to Si(backup B)
-    .daq_busy_out(daq_busy_out)
+    .trg_out_N_Si_b(trg_out_N_Si_b)//trig to Si(backup B)
 );
 
 HitTrgCount HitTrgCount_inst(
 	.clk_in(clk_in),
-	.rst_in(rst_in), 
+	.rst_in(rst_logic_sig), 
 	.hit_syn_in(hit_syn_sig),
 	.busy_syn_in(busy_syn_sig),
 	.hit_start_in(hit_start_sig),
@@ -345,7 +342,7 @@ HitTrgCount HitTrgCount_inst(
 
 TrgMonData TrgMonData_inst(
 	.clk_in(clk_in),
-	.rst_in(rst_in),
+	.rst_in(rst_logic_sig),
     .rd_in(rd_in),  
     .rd_addr_in(rd_addr_in),
     .store_en(store_en),
@@ -390,7 +387,7 @@ TrgMonData TrgMonData_inst(
 TrgSciData TrgSciData_inst
 (
 	.clk_in(clk_in),
-	.rst_in(rst_in),
+	.rst_in(rst_logic_sig),
 	.trg_enb_sig(trg_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
@@ -412,7 +409,7 @@ TrgSciData TrgSciData_inst
 
 ResetGen inst_ResetGen(
 	.clk_in(clk_in),
-	.cntl_rst_in(cntl_rst_in),
+	.ctrl_rst_in(ctrl_rst_in),
     .cmd_rst_in(cmd_rst_sig),
     .rst_logic_out_N(rst_logic_sig),
     .rst_intf_out_N(rst_intf_sig)

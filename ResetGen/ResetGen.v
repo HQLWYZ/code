@@ -10,23 +10,23 @@
 
 module ResetGen(
 	input			clk_in,
-	input			cntl_rst_in, //from FPGA 
+	input			ctrl_rst_in, //from FPGA 
     input           cmd_rst_in,//from ConfigReg
-    output          rst_logic_out_N,//"rst_logic_out_N": reset other modules,except RegCtrl_MOD and BpInterface_MOD
-    output          rst_intf_out_N//"rst_intf_out_N": reset the modules of RegCtrl_MOD and BpInterface_MOD
+    output          rst_logic_out_N,//"rst_logic_out_N": reset other modules,except ConfigReg 
+    output          rst_intf_out_N//"rst_intf_out_N": reset the modules of ConfigReg 
 	);
 	
-reg     [16:0]	    pulse_width_cnt;////use to counter the width of the "cntl_rst_in", and fliter the short width pulse
+reg     [16:0]	    pulse_width_cnt;////use to counter the width of the "ctrl_rst_in", and fliter the short width pulse
 reg     bp_rst_syn0_r, bp_rst_syn1_r;
-wire    W_bp_rst_valid;
+wire    W_ctrl_rst_valid;
 
 parameter   PULSE_WIDTH_200US = 5000; //200us
 parameter   PULSE_WIDTH_2_5MS = 62500; //2.5ms
 
-// synchronize the "cntl_rst_in"
+// synchronize the "ctrl_rst_in"
 always @(posedge clk_in)
 begin 
-	bp_rst_syn0_r <= cntl_rst_in;
+	bp_rst_syn0_r <= ctrl_rst_in;
 	bp_rst_syn1_r <= bp_rst_syn0_r;
 end
 
@@ -53,12 +53,12 @@ begin
 		pulse_width_flag12_r <= 1'b0;
 	end
 	else begin
-		if (pulse_width_cnt == PULSE_WIDTH_200US) begin// the pulse width of cntl_rst_in is larger than 200us
+		if (pulse_width_cnt == PULSE_WIDTH_200US) begin// the pulse width of ctrl_rst_in is larger than 200us
 			pulse_width_flag00_r <= 1'b1;
 			pulse_width_flag01_r <= 1'b1;
 			pulse_width_flag02_r <= 1'b1;
 		end
-		else if (pulse_width_cnt == PULSE_WIDTH_2_5MS) begin /// the pulse width of cntl_rst_in is large than 2.5ms
+		else if (pulse_width_cnt == PULSE_WIDTH_2_5MS) begin /// the pulse width of ctrl_rst_in is large than 2.5ms
 			pulse_width_flag10_r <= pulse_width_flag00_r;
 			pulse_width_flag11_r <= pulse_width_flag01_r;
 			pulse_width_flag12_r <= pulse_width_flag02_r;
@@ -71,11 +71,11 @@ begin
 	end
 end
 
-assign W_bp_rst_valid =  (pulse_width_flag10_r & pulse_width_flag11_r) 
+assign W_ctrl_rst_valid =  (pulse_width_flag10_r & pulse_width_flag11_r) 
                         | (pulse_width_flag10_r & pulse_width_flag12_r)
                         | (pulse_width_flag11_r & pulse_width_flag12_r) ;///tmr for the reset signal
-assign	rst_logic_out_N = ~(W_bp_rst_valid | cmd_rst_in);
-assign	rst_intf_out_N = ~W_bp_rst_valid;
+assign	rst_logic_out_N = ~(W_ctrl_rst_valid | cmd_rst_in);
+assign	rst_intf_out_N = ~W_ctrl_rst_valid;
 
 
 
