@@ -21,8 +21,7 @@ module TrgOutCtrl(
     output          trg_out_N_acd_a, trg_out_N_acd_b, //width = 500ns, 500us trigger signal with 1000us trigger id check signal
     output          trg_out_N_CsI_track_a, trg_out_N_CsI_track_b,
     output          trg_out_N_CsI_cal_a, trg_out_N_CsI_cal_b,
-    output          trg_out_N_Si_a, trg_out_N_Si_b,
-    output          daq_busy_out    // busy signal for the DAQ system, used for the beam test
+    output          trg_out_N_Si_a, trg_out_N_Si_b
 );
 
 parameter   TRG_PULSE_WIDTH = 20; 	//20ns*20 = 400ns
@@ -179,6 +178,6 @@ assign  trg_out_N_CsI_cal_a = ~trg_send_r;
 assign  trg_out_N_CsI_cal_b = ~trg_send_r;
 assign  trg_out_N_Si_a = ~trg_send_r;
 assign  trg_out_N_Si_b = ~trg_send_r;
-assign	daq_busy_out = daq_busy_r;
+
 
 endmodule
