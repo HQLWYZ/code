@@ -33,16 +33,16 @@ reg[15:0]   cycled_trg_cnt;
 ///  cycled_trg_oe_in = 2'b01: just send the cycled signal when receiving the command,  within defined trigger number in.
 
 reg cycled_trg_bgn_in_r;
-always@(posedge clk_in)
-    if(rst_in)
+always@(posedge clk_in or negedge rst_in)
+    if(!rst_in)
         cycled_trg_bgn_in_r <= 1'b0;
     else
         cycled_trg_bgn_in_r <= cycled_trg_bgn_in; 
 
 
-always @(posedge clk_in)
+always @(posedge clk_in or negedge rst_in)
 begin
-    if (rst_in) begin
+    if (!rst_in) begin
         cycled_trg_period_cnt <= 25'b0;
         cycled_trg_sig <= 1'b0;
         cycled_trg_end_sig <= 1'b0;
@@ -85,9 +85,9 @@ end
 
 //generate the cycled_trigger_out with about 1000ns width
 reg[4:0]	cycled_trg_expd_cnt;
-always @(posedge clk_in)
+always @(posedge clk_in or negedge rst_in)
 begin
-	if (rst_in) begin
+	if (!rst_in) begin
 		cycled_trg_1us_sig <= 1'b0;
 		cycled_trg_expd_cnt <= 5'b0;
 	end

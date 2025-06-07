@@ -44,9 +44,9 @@ parameter   IDLE = 0,
             SEND_TRG_CHK = 2, 
             WAIT_DEAD_TIME = 3;
 
-always @(posedge clk_in)
+always @(posedge clk_in or negedge rst_in)
 begin
-	if (rst_in) 
+	if (!rst_in) 
 		c_state <= IDLE;
 	else 
 		c_state <= n_state;
@@ -94,15 +94,15 @@ begin
     endcase
 end
 
-always @(posedge clk_in)
-    if(rst_in)
+always @(posedge clk_in or negedge rst_in)
+    if(!rst_in)
         coincid_trg_in_r <= 1'b0;
     else
         coincid_trg_in_r <= coincid_trg_in;
    
-always @(posedge clk_in)
+always @(posedge clk_in or negedge rst_in)
 begin
-    if (rst_in) begin
+    if (!rst_in) begin
         trg_send_r <= 1'b0;
         eff_trg_sig <= 1'b0;
         daq_busy_r <= 1'b0;
@@ -142,9 +142,9 @@ begin
             eff_trg_sig <= 1'b0; 
             trg_chksig_width_cnt <= trg_chksig_width_cnt + 1;
             trg_dead_time_cnt <= trg_dead_time_cnt + 1;
-            if (trg_chksig_width_cnt >= (5'd9 + CHK_PULSE_WIDTH))//0.5us+1us
+            if (trg_chksig_width_cnt >= (5'd9 + CHK_PULSE_WIDTH))//0.2us+1us
                 trg_send_r <= 1'b0; 
-            else if (trg_chksig_width_cnt >= 5'd9)//0.5us gap between the trigger signal and the trigger id check signal
+            else if (trg_chksig_width_cnt >= 5'd9)//0.2us gap between the trigger signal and the trigger id check signal
                 trg_send_r <= 1'b1;	// trigger id check signal
         end		
         WAIT_DEAD_TIME: begin
@@ -178,6 +178,5 @@ assign  trg_out_N_CsI_cal_a = ~trg_send_r;
 assign  trg_out_N_CsI_cal_b = ~trg_send_r;
 assign  trg_out_N_Si_a = ~trg_send_r;
 assign  trg_out_N_Si_b = ~trg_send_r;
-
 
 endmodule

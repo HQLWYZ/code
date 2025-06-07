@@ -11,7 +11,6 @@
 module TrgTop(
 	input	        clk_in,
     input			ctrl_rst_in,    //to ResetGen module
-    //input			ctrl_busy_in,    //to 
     input           wr_in,          //to ConFigReg module
     input	[7:0]   wr_addr_in,     //to ConFigReg module
     input   [15:0]  data_in,        //to ConFigReg module
@@ -55,7 +54,9 @@ module TrgTop(
     output			trg_out_N_Si_b,//trig to Si(backup B)
     
     output          trg_enb_sig,
+    output          data_trans_enb_sig,
     output          cmd_rst_sig
+	
 );
 	
 wire	[1:0]   logic_grp0_sel_sig;
@@ -87,7 +88,7 @@ wire	[3:0]   cal_fee_1_hit_align_sig;
 wire	[3:0]   cal_fee_2_hit_align_sig;
 wire	[3:0]   cal_fee_3_hit_align_sig;
 wire	[3:0]   cal_fee_4_hit_align_sig;
-wire	[7:0]   trg_match_win_sig;//wait time for trigger windows
+wire	[15:0]   trg_match_win_sig;//wait time for trigger windows
 wire	[7:0]   logic_grp_oe_sig;
 
 wire 			coincid_trg_sig;
@@ -142,6 +143,7 @@ wire	[15:0]	logic_match_cnt_sig;
 wire	[15:0]	eff_trg_cnt_sig;
 wire	[15:0]	coincid_trg_cnt_sig;
 wire	[15:0]	ext_trg_cnt_sig;
+wire    [7:0]   trg_delay_timer_sig;
 wire    		rst_logic_sig, rst_intf_sig;
 wire    [7:0]   trg_dead_time_sig;
 
@@ -151,7 +153,8 @@ ConfigReg ConfigReg_inst(
     .wr_in(wr_in),
     .wr_addr_in(wr_addr_in),
     .data_in(data_in),
-	.trg_enb_out(trg_enb_sig),//start work and generate trigger
+	.trg_enb_out(trg_enb_sig),//enable or disable trigger output
+	.data_trans_enb_out(data_trans_enb_sig),//enable or disable science and teldata transmission
 	.cmd_rst_out(cmd_rst_sig),
 	.cycled_trg_bgn_out(cycled_trg_bgn_sig),
     .ctrl_reg_out(ctrl_reg_sig),
@@ -243,7 +246,7 @@ Coincidence Coincidence_inst(
 	.cal_fee_2_hit_align_in(cal_fee_2_hit_align_sig),
 	.cal_fee_3_hit_align_in(cal_fee_3_hit_align_sig),
 	.cal_fee_4_hit_align_in(cal_fee_4_hit_align_sig),
-    .trg_match_win_in(trg_match_win_sig[5:0]),
+    .trg_match_win_in(trg_match_win_sig),
 	.logic_grp_oe_in(logic_grp_oe_sig[4:0]),
     .coincid_trg_out(coincid_trg_sig),
     .logic_match_out(logic_match_sig),
@@ -337,7 +340,8 @@ HitTrgCount HitTrgCount_inst(
 	.logic_match_cnt_out(logic_match_cnt_sig), 	
 	.eff_trg_cnt_out(eff_trg_cnt_sig), 		
 	.coincid_trg_cnt_out(coincid_trg_cnt_sig), 	
-	.ext_trg_cnt_out(ext_trg_cnt_sig)			
+	.ext_trg_cnt_out(ext_trg_cnt_sig),
+	.trg_delay_timer_out(trg_delay_timer_sig)			
 	);
 
 TrgMonData TrgMonData_inst(
@@ -376,7 +380,7 @@ TrgMonData TrgMonData_inst(
     .busy_ab_sel_in({14'b00_0000_0000_0000, busy_ab_sel_sig}),
     .hit_mask_in(hit_mask_sig),
     .busy_mask_in({14'b00_0000_0000_0000, busy_mask_sig}),
-    .trg_match_win_in({8'b00_0000_0000, trg_match_win_sig}),
+    .trg_match_win_in(trg_match_win_sig),
     .trg_dead_time_in({8'b0000_0000, trg_dead_time_sig}),
     .config_received_in(config_received_sig),
     .ext_trg_delay_in({8'b0000_0000, ext_trg_delay_sig}),
@@ -388,7 +392,7 @@ TrgSciData TrgSciData_inst
 (
 	.clk_in(clk_in),
 	.rst_in(rst_logic_sig),
-	.trg_enb_sig(trg_enb_sig),
+	.data_trans_enb_sig(data_trans_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
     .trg_mode_mip1_in(trg_mode_mip1_sig[7:0]),
@@ -400,19 +404,19 @@ TrgSciData TrgSciData_inst
     .hit_sig_stus_in(hit_sig_stus_sig), 
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .trg_busy_time_cnt_in(trg_busy_time_cnt_sig),
+    .trg_delay_timer_in(trg_delay_timer_sig),
     .trg_busy_timer_rdy_in(trg_busy_timer_rdy_sig),
-    .coincid_trg_in(coincid_trg_sig),
+    .eff_trg_in(eff_trg_sig),
     .fifo_data_out(fifo_data_out),
     .fifo_empty_out(fifo_empty_out)
 );
-
 
 ResetGen inst_ResetGen(
 	.clk_in(clk_in),
 	.ctrl_rst_in(ctrl_rst_in),
     .cmd_rst_in(cmd_rst_sig),
-    .rst_logic_out_N(rst_logic_sig),
-    .rst_intf_out_N(rst_intf_sig)
+    .rst_logic_out(rst_logic_sig),
+    .rst_intf_out(rst_intf_sig)
 	);
 
 endmodule
