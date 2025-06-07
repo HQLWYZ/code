@@ -15,6 +15,7 @@ module ConfigReg(
     input	[7:0]   wr_addr_in,
     input   [15:0]  data_in,
 	output			trg_enb_out,
+	output          data_trans_enb_out,
 	output  	   	cmd_rst_out,
 	output  	   	cycled_trg_bgn_out,
 
@@ -50,7 +51,7 @@ module ConfigReg(
 	output  [3:0]   cal_fee_2_hit_align_out,
 	output  [3:0]   cal_fee_3_hit_align_out,
 	output  [3:0]   cal_fee_4_hit_align_out,
-    output  [7:0]   trg_match_win_out,//wait time for trigger windows
+    output  [15:0]   trg_match_win_out,//wait time for trigger windows
 	output  [7:0]   trg_dead_time_out,//wait time for trigger windows
     output  [7:0]   logic_grp_oe_out,
 
@@ -60,7 +61,7 @@ module ConfigReg(
 	output  [15:0]  config_received_out
 	);
 	
-	reg		trg_enb_reg, cmd_rst_reg, cycled_trg_bgn_reg;
+	reg		trg_enb_reg, data_trans_enb_reg, cmd_rst_reg, cycled_trg_bgn_reg;
     reg     [15:0]	ctrl_reg, cmd_reg;
 	reg     [15:0]	hit_ab_sel_reg, hit_mask_reg, busy_set_reg, hit_delay_win_reg;
 	reg     [15:0]	hit_align_reg0, hit_align_reg1;
@@ -68,9 +69,9 @@ module ConfigReg(
 	reg     [15:0]	cycled_trg_period_reg, cycled_trg_num_reg;
 	reg     [15:0]	ext_trg_delay_reg;
 
-always @(posedge clk_in)
+always @(posedge clk_in or negedge rst_in)
 begin
-    if (rst_in) begin    	
+    if (!rst_in) begin    	
     	ctrl_reg <= `CTRL_REG;
 		cmd_reg <= `CMD_REG;
 		trg_mode_mip1_reg <= `TRG_MODE_MIP1_REG;
@@ -91,9 +92,8 @@ begin
 		cycled_trg_period_reg <= `CYCLE_TRG_PERIOD_REG;
 		cycled_trg_num_reg <= `CYCLE_TRG_NUM_REG;
 		ext_trg_delay_reg <= `EXT_TRG_DELAY;
-		cycled_trg_bgn_reg <= 1'b0;  
-		cmd_rst_reg <= 1'b0;
-		trg_enb_reg<=1'b0;  
+		trg_enb_reg<=1'b0;
+		data_trans_enb_reg<=1'b0;  
 	end
 	else if (wr_in) begin
 			case (wr_addr_in) //////* synthesis parallel_case */
@@ -102,15 +102,14 @@ begin
 					if(data_in==16'b0000_0000_0000_0001)
 					   trg_enb_reg<=1'b1;
 					else if(data_in==16'b0000_0000_0000_0000)
-					   trg_enb_reg<=1'b0;   
+					   trg_enb_reg<=1'b0; 
+					if(data_in==16'b0000_0000_0000_0010)
+					   data_trans_enb_reg<=1'b1;
+					else if(data_in==16'b0000_0000_0000_0011)  
+					   data_trans_enb_reg<=1'b0; 
 				end
-				8'b0000_0001: begin
+				8'b0000_0001: 
 					cmd_reg <= data_in;
-					if(data_in==16'b0000_0000_0110_0000)
-						cycled_trg_bgn_reg<=1'b1;
-					else if(data_in==16'b0000_0000_0101_0101)
-						cmd_rst_reg<=1'b1;
-				end
 				8'b0000_0010: trg_mode_mip1_reg <= data_in;
 				8'b0000_0011: trg_mode_mip2_reg <= data_in;
 				8'b0000_0100: trg_mode_gm1_reg <= data_in;
@@ -133,12 +132,48 @@ begin
     end
 end
 
+reg     [3:0]      cmd_rst_cnt;
+
+always @(posedge clk_in or negedge rst_in)
+    if(!rst_in)
+    begin
+        cmd_rst_reg <= 1'b0;
+        cmd_rst_cnt <= 4'b0;
+    end
+    else if(cmd_rst_cnt == 4'd9)
+    begin
+        cmd_rst_cnt <= 4'd0;
+        cmd_rst_reg <= 1'b0;
+    end
+    else if(cmd_rst_reg)
+        cmd_rst_cnt <= cmd_rst_cnt + 1;
+    else if(wr_in & (wr_addr_in == 8'b0000_0001) & (data_in==16'b0000_0000_0101_0101))
+        cmd_rst_reg <= 1'b1;  
+    
+reg     [3:0]      cycled_trg_bgn_cnt;
+
+always @(posedge clk_in or negedge rst_in)
+    if(!rst_in)
+    begin
+        cycled_trg_bgn_reg <= 1'b0;
+        cycled_trg_bgn_cnt <= 4'd0;
+    end
+    else if(cycled_trg_bgn_cnt == 4'd9)
+    begin
+        cycled_trg_bgn_cnt <= 4'd0;
+        cycled_trg_bgn_reg <= 1'b0;
+    end
+    else if(cycled_trg_bgn_reg)
+        cycled_trg_bgn_cnt <= cycled_trg_bgn_cnt + 1;
+    else if(wr_in & (wr_addr_in == 8'b0000_0001) & (data_in==16'b0000_0000_0110_0000))
+        cycled_trg_bgn_reg <= 1'b1;
+       
 reg 			wr_in_r;//wr_addr_in_r
 reg 	[15:0]	config_received_cnt;
 
-always @(posedge clk_in)
+always @(posedge clk_in or negedge rst_in)
 begin
-    if (rst_in) begin
+    if (!rst_in) begin
         wr_in_r <= 1'b0;
     end
     else begin
@@ -146,9 +181,9 @@ begin
     end
 end
 
-always @(posedge clk_in) //Count the number of configuration received
+always @(posedge clk_in or negedge rst_in) //Count the number of configuration received
 begin
-	if (rst_in) begin
+	if (!rst_in) begin
 		config_received_cnt <= 16'b0;
 	end
 	else if (wr_in & ~wr_in_r) begin//leading edge of wr_addr_in
@@ -158,6 +193,7 @@ begin
 end
 
 assign	trg_enb_out = trg_enb_reg;
+assign  data_trans_enb_out = data_trans_enb_reg;
 assign	cmd_rst_out = cmd_rst_reg;
 assign	cycled_trg_bgn_out = cycled_trg_bgn_reg;
 
@@ -194,7 +230,7 @@ assign	cal_fee_2_hit_align_out 	= hit_align_reg1[11:8];
 assign	cal_fee_3_hit_align_out 	= hit_align_reg1[7:4];
 assign	cal_fee_4_hit_align_out 	= hit_align_reg1[3:0];
 
-assign	trg_match_win_out 			= trg_match_win_reg[7:0];
+assign	trg_match_win_out 			= trg_match_win_reg;
 assign	trg_dead_time_out 			= trg_dead_time_reg[7:0];
 assign	logic_grp_oe_out 			= trg_mode_oe_reg[7:0];
 
