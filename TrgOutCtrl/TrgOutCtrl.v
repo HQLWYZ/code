@@ -20,8 +20,11 @@ module TrgOutCtrl(
     output          eff_trg_out,    //width = 1 clock, signal for the other modules
     output          trg_out_N_acd_a, trg_out_N_acd_b, //width = 500ns, 500us trigger signal with 1000us trigger id check signal
     output          trg_out_N_CsI_track_a, trg_out_N_CsI_track_b,
-    output          trg_out_N_CsI_cal_a, trg_out_N_CsI_cal_b,
-    output          trg_out_N_Si_a, trg_out_N_Si_b
+    //output          trg_out_N_CsI_cal_a, trg_out_N_CsI_cal_b,
+    output          trg_out_N_Si1_a, trg_out_N_Si1_b,trg_out_N_Si2_a, trg_out_N_Si2_b,
+    output          trg_out_N_cal_fee_1_a, trg_out_N_cal_fee_1_b,trg_out_N_cal_fee_2_a, trg_out_N_cal_fee_2_b,
+    output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b 
+	 
 );
 
 parameter   TRG_PULSE_WIDTH = 20; 	//20ns*20 = 400ns
@@ -174,9 +177,19 @@ assign  trg_out_N_acd_a = ~trg_send_r;
 assign  trg_out_N_acd_b = ~trg_send_r;
 assign  trg_out_N_CsI_track_a = ~trg_send_r;
 assign  trg_out_N_CsI_track_b = ~trg_send_r;
-assign  trg_out_N_CsI_cal_a = ~trg_send_r;
-assign  trg_out_N_CsI_cal_b = ~trg_send_r;
-assign  trg_out_N_Si_a = ~trg_send_r;
-assign  trg_out_N_Si_b = ~trg_send_r;
+//assign  trg_out_N_CsI_cal_a = ~trg_send_r;
+//assign  trg_out_N_CsI_cal_b = ~trg_send_r;
+assign  trg_out_N_Si1_a = ~trg_send_r;   //////------xiugai bylxx
+assign  trg_out_N_Si1_b = ~trg_send_r;
+assign  trg_out_N_Si2_a = ~trg_send_r;
+assign  trg_out_N_Si2_b = ~trg_send_r;
+assign  trg_out_N_cal_fee_1_a = ~trg_send_r;
+assign  trg_out_N_cal_fee_1_b = ~trg_send_r;
+assign  trg_out_N_cal_fee_2_a = ~trg_send_r;
+assign  trg_out_N_cal_fee_2_b = ~trg_send_r;
+assign  trg_out_N_cal_fee_3_a = ~trg_send_r;
+assign  trg_out_N_cal_fee_3_b = ~trg_send_r;
+assign  trg_out_N_cal_fee_4_a = ~trg_send_r;
+assign  trg_out_N_cal_fee_4_b = ~trg_send_r;
 
 endmodule

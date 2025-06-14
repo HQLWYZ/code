@@ -102,7 +102,7 @@ module Coincidence(
                                         cal_fee_1_hit_b_in_N, cal_fee_2_hit_b_in_N, 
                                         cal_fee_3_hit_b_in_N, cal_fee_4_hit_b_in_N};
 
-    parameter   SI_DEAD_TIME_SET_NUM = 24'd15000; //20ns per cnt, set 600us = 30000
+    parameter   SI_DEAD_TIME_SET_NUM = 24'd50000; //20ns per cnt, set 1ms = 50000
 
 
 //synchonize the input of hit signal, if (ab_sel_in == 0) select  signal from channel A, 
