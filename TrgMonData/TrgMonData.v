@@ -13,7 +13,7 @@ module TrgMonData(
 	input			rst_in,
     input           rd_in,  
     input   [7:0]   rd_addr_in,
-    input           store_en,//when starting to transmit, store the transient register value 
+//    input           store_en,//when starting to transmit, store the transient register value 
     input   [15:0]  ctrl_reg_in,
     input   [15:0]  cmd_reg_in,
     input   [15:0]  trg_mode_mip1_in,
@@ -49,6 +49,7 @@ module TrgMonData(
     input   [15:0]  config_received_in,
     input   [15:0]  ext_trg_delay_in,
     input   [15:0]  cycled_trg_period_in,
+	input	[7:0]	logic_grp_oe_in,
     output  [15:0]  mon_data_out
 	);
 	
@@ -59,7 +60,14 @@ trg_mode_ubs_in_r, trg_mode_brst_in_r, eff_trg_cnt_in_r, coincid_trg_cnt_in_r, m
 hit_start_cnt_in_r, hit_monit_cnt_0_in_r1, hit_monit_cnt_0_in_r0, hit_monit_cnt_1_in_r1, hit_monit_cnt_1_in_r0, 
 busy_monit_fix_sel_in_r, busy_monit_err_cnt_in_r, busy_monit_cnt_in_r, coincid_MIP1_cnt_in_r, coincid_MIP2_cnt_in_r,
 coincid_GM1_cnt_in_r, coincid_GM2_cnt_in_r, coincid_UBS_cnt_in_r, logic_match_cnt_in_r, ext_trg_cnt_in_r,
-hit_busy_ab_sel_w_r, hit_busy_mask_w_r, trg_match_win_in_r, trg_dead_time_in_r, config_received_in_r, ext_trg_delay_in_r, cycled_trg_period_in_r;                
+hit_busy_ab_sel_w_r, hit_busy_mask_w_r, trg_match_win_in_r, trg_dead_time_in_r, config_received_in_r, ext_trg_delay_in_r, cycled_trg_period_in_r, logic_grp_oe_in_r;                
+
+reg rd_in_r;
+always@(posedge clk_in or negedge rst_in)
+    if(!rst_in)	
+		rd_in_r <= 1'b0;
+	else
+		rd_in_r <= rd_in;
 
 always@(posedge clk_in or negedge rst_in)
     if(!rst_in)
@@ -97,9 +105,11 @@ always@(posedge clk_in or negedge rst_in)
         config_received_in_r <= 16'd0;
         ext_trg_delay_in_r <= 16'd0;
         cycled_trg_period_in_r <= 16'd0;
+		logic_grp_oe_in_r <= 16'd0;
     end
     else
-        if(store_en)
+        //if(store_en)
+		if(rd_in & ~rd_in_r & (rd_addr_in == 8'b0001_1001))
         begin//when starting to transmit teldata, store the transient vlaue of the register 
             status_w_r <= status_w;
             trg_mode_mip1_in_r <= trg_mode_mip1_in;
@@ -134,6 +144,7 @@ always@(posedge clk_in or negedge rst_in)
             config_received_in_r <= config_received_in;
             ext_trg_delay_in_r <= ext_trg_delay_in;
             cycled_trg_period_in_r <= cycled_trg_period_in;
+			logic_grp_oe_in_r <= {8'd0, logic_grp_oe_in};
         end
             
 always @(posedge clk_in or negedge rst_in)
@@ -144,41 +155,41 @@ begin
 	else if (rd_in) begin
 			case (rd_addr_in) ///* synthesis parallel_case */
 				//8'b0000_0000: 
-				8'b0000_0010: mon_data_reg <= status_w_r;                 //from ConfigReg module
-				8'b0000_0011: mon_data_reg <= trg_mode_mip1_in_r;        //from ConfigReg module
-                8'b0000_0100: mon_data_reg <= trg_mode_mip2_in_r;         //from ConfigReg module
-                8'b0000_0101: mon_data_reg <= trg_mode_gm1_in_r;          //from ConfigReg module
-                8'b0000_0110: mon_data_reg <= trg_mode_gm2_in_r;          //from ConfigReg module
-                8'b0000_0111: mon_data_reg <= trg_mode_ubs_in_r;          //from ConfigReg module
-                8'b0000_1000: mon_data_reg <= trg_mode_brst_in_r;         //from ConfigReg module
-                8'b0000_1001: mon_data_reg <= eff_trg_cnt_in_r;           //from HitTrgCount module
-                8'b0000_1010: mon_data_reg <= coincid_trg_cnt_in_r;       //from HitTrgCount module
-                8'b0000_1011: mon_data_reg <= monit_hit_sel_w_r;          //from HitTrgCount module
-                8'b0000_1100: mon_data_reg <= hit_monit_err_cnt_in_r;     //from HitTrgCount module
-                8'b0000_1101: mon_data_reg <= hit_start_cnt_in_r;         //from HitTrgCount module
-                8'b0000_1110: mon_data_reg <= hit_monit_cnt_0_in_r1;//from HitTrgCount module
-                8'b0000_1111: mon_data_reg <= hit_monit_cnt_0_in_r0; //from HitTrgCount module
-                8'b0001_0000: mon_data_reg <= hit_monit_cnt_1_in_r1;//from HitTrgCount module
-                8'b0001_0001: mon_data_reg <= hit_monit_cnt_1_in_r0; //from HitTrgCount module
-                8'b0001_0010: mon_data_reg <= busy_monit_fix_sel_in_r;    //from HitTrgCount module
-                8'b0001_0011: mon_data_reg <= busy_monit_err_cnt_in_r;    //from HitTrgCount module
-                8'b0001_0100: mon_data_reg <= busy_monit_cnt_in_r;        //from HitTrgCount module
-                8'b0001_0101: mon_data_reg <= coincid_MIP1_cnt_in_r;      //from Coincidence module
-                8'b0001_0110: mon_data_reg <= coincid_MIP2_cnt_in_r;      //from Coincidence module
-                8'b0001_0111: mon_data_reg <= coincid_GM1_cnt_in_r;       //from Coincidence module
-                8'b0001_1000: mon_data_reg <= coincid_GM2_cnt_in_r;       //from Coincidence module
-                8'b0001_1001: mon_data_reg <= coincid_UBS_cnt_in_r;       //from Coincidence module
-                8'b0001_1010: mon_data_reg <= logic_match_cnt_in_r;       //from HitTrgCount module
-                8'b0001_1011: mon_data_reg <= ext_trg_cnt_in_r;           //from HitTrgCount module
-                8'b0001_1100: mon_data_reg <= hit_busy_ab_sel_w_r;        //from ConfigReg module
-                8'b0001_1101: mon_data_reg <= hit_busy_mask_w_r;          //from ConfigReg module
-                8'b0001_1110: mon_data_reg <= trg_match_win_in_r;         //from ConfigReg module
-                8'b0001_1111: mon_data_reg <= trg_dead_time_in_r;         //from ConfigReg module
-                8'b0010_0000: mon_data_reg <= config_received_in_r;       //from ConfigReg module
-                8'b0010_0001: mon_data_reg <= ext_trg_delay_in_r;         //from ConfigReg module
-                8'b0010_0010: mon_data_reg <= cycled_trg_period_in_r;      //from ConfigReg module
-                8'b0010_0011: mon_data_reg <= 16'h5aa5;                 //backup 1
-                8'b0010_0100: mon_data_reg <= 16'heb90;                 //backup 2
+				8'b0001_1001: mon_data_reg <= status_w_r;                 //from ConfigReg module
+				8'b0001_1010: mon_data_reg <= trg_mode_mip1_in_r;        //from ConfigReg module
+                8'b0001_1011: mon_data_reg <= trg_mode_mip2_in_r;         //from ConfigReg module
+                8'b0001_1100: mon_data_reg <= trg_mode_gm1_in_r;          //from ConfigReg module
+                8'b0001_1101: mon_data_reg <= trg_mode_gm2_in_r;          //from ConfigReg module
+                8'b0001_1110: mon_data_reg <= trg_mode_ubs_in_r;          //from ConfigReg module
+                8'b0001_1111: mon_data_reg <= trg_mode_brst_in_r;         //from ConfigReg module
+                8'b0010_0000: mon_data_reg <= eff_trg_cnt_in_r;           //from HitTrgCount module
+                8'b0010_0001: mon_data_reg <= coincid_trg_cnt_in_r;       //from HitTrgCount module
+                8'b0010_0010: mon_data_reg <= monit_hit_sel_w_r;          //from HitTrgCount module
+                8'b0010_0011: mon_data_reg <= hit_monit_err_cnt_in_r;     //from HitTrgCount module
+                8'b0010_0100: mon_data_reg <= hit_start_cnt_in_r;         //from HitTrgCount module
+                8'b0010_0101: mon_data_reg <= hit_monit_cnt_0_in_r1;//from HitTrgCount module
+                8'b0010_0110: mon_data_reg <= hit_monit_cnt_0_in_r0; //from HitTrgCount module
+                8'b0010_0111: mon_data_reg <= hit_monit_cnt_1_in_r1;//from HitTrgCount module
+                8'b0010_1000: mon_data_reg <= hit_monit_cnt_1_in_r0; //from HitTrgCount module
+                8'b0010_1001: mon_data_reg <= busy_monit_fix_sel_in_r;    //from HitTrgCount module
+                8'b0010_1010: mon_data_reg <= busy_monit_err_cnt_in_r;    //from HitTrgCount module
+                8'b0010_1011: mon_data_reg <= busy_monit_cnt_in_r;        //from HitTrgCount module
+                8'b0010_1100: mon_data_reg <= coincid_MIP1_cnt_in_r;      //from Coincidence module
+                8'b0010_1101: mon_data_reg <= coincid_MIP2_cnt_in_r;      //from Coincidence module
+                8'b0010_1110: mon_data_reg <= coincid_GM1_cnt_in_r;       //from Coincidence module
+                8'b0010_1111: mon_data_reg <= coincid_GM2_cnt_in_r;       //from Coincidence module
+                8'b0011_0000: mon_data_reg <= coincid_UBS_cnt_in_r;       //from Coincidence module
+                8'b0011_0001: mon_data_reg <= logic_match_cnt_in_r;       //from HitTrgCount module
+                8'b0011_0010: mon_data_reg <= ext_trg_cnt_in_r;           //from HitTrgCount module
+                8'b0011_0011: mon_data_reg <= hit_busy_ab_sel_w_r;        //from ConfigReg module
+                8'b0011_0100: mon_data_reg <= hit_busy_mask_w_r;          //from ConfigReg module
+                8'b0011_0101: mon_data_reg <= trg_match_win_in_r;         //from ConfigReg module
+                8'b0011_0110: mon_data_reg <= trg_dead_time_in_r;         //from ConfigReg module
+                8'b0011_0111: mon_data_reg <= config_received_in_r;       //from ConfigReg module
+                8'b0011_1000: mon_data_reg <= ext_trg_delay_in_r;         //from ConfigReg module
+                8'b0011_1001: mon_data_reg <= cycled_trg_period_in_r;      //from ConfigReg module
+                8'b0011_1010: mon_data_reg <= logic_grp_oe_in_r;                 //backup 1
+                8'b0011_1011: mon_data_reg <= 16'heb90;                 //backup 2
 				default: ;
 			endcase
     end

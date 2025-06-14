@@ -97,7 +97,7 @@ begin
 	end
 	else if (wr_in) begin
 			case (wr_addr_in) //////* synthesis parallel_case */
-				8'b0000_0000: begin
+				8'b0000_0010: begin
 					ctrl_reg <= data_in;
 					if(data_in==16'b0000_0000_0000_0001)
 					   trg_enb_reg<=1'b1;
@@ -108,64 +108,64 @@ begin
 					else if(data_in==16'b0000_0000_0000_0011)  
 					   data_trans_enb_reg<=1'b0; 
 				end
-				8'b0000_0001: 
+				8'b0000_0011: 
 					cmd_reg <= data_in;
-				8'b0000_0010: trg_mode_mip1_reg <= data_in;
-				8'b0000_0011: trg_mode_mip2_reg <= data_in;
-				8'b0000_0100: trg_mode_gm1_reg <= data_in;
-				8'b0000_0101: trg_mode_gm2_reg <= data_in;
-				8'b0000_0110: trg_mode_ubs_reg <= data_in;
-				8'b0000_0111: trg_mode_brst_reg <= data_in;
-				8'b0000_1000: hit_ab_sel_reg <= data_in;
-				8'b0000_1001: hit_mask_reg <= data_in;
-				8'b0000_1010: busy_set_reg <= data_in;
-				8'b0000_1011: hit_delay_win_reg <= data_in;
-				8'b0000_1100: hit_align_reg0 <= data_in;
-				8'b0000_1101: hit_align_reg1 <= data_in;
-				8'b0000_1110: trg_match_win_reg <= data_in;
-				8'b0000_1111: trg_dead_time_reg <= data_in;
-				8'b0001_0000: trg_mode_oe_reg <= data_in;
-				8'b0001_0001: cycled_trg_period_reg <= data_in;
-				8'b0001_0010: cycled_trg_num_reg <= data_in;
-				8'b0001_0011: ext_trg_delay_reg <= data_in;
+				8'b0000_0100: trg_mode_mip1_reg <= data_in;
+				8'b0000_0101: trg_mode_mip2_reg <= data_in;
+				8'b0000_0110: trg_mode_gm1_reg <= data_in;
+				8'b0000_0111: trg_mode_gm2_reg <= data_in;
+				8'b0000_1000: trg_mode_ubs_reg <= data_in;
+				8'b0000_1001: trg_mode_brst_reg <= data_in;
+				8'b0000_1010: hit_ab_sel_reg <= data_in;
+				8'b0000_1011: hit_mask_reg <= data_in;
+				8'b0000_1100: busy_set_reg <= data_in;
+				8'b0000_1101: hit_delay_win_reg <= data_in;
+				8'b0000_1110: hit_align_reg0 <= data_in;
+				8'b0000_1111: hit_align_reg1 <= data_in;
+				8'b0001_0000: trg_match_win_reg <= data_in;
+				8'b0001_0001: trg_dead_time_reg <= data_in;
+				8'b0001_0010: trg_mode_oe_reg <= data_in;
+				8'b0001_0011: cycled_trg_period_reg <= data_in;
+				8'b0001_0100: cycled_trg_num_reg <= data_in;
+				8'b0001_0101: ext_trg_delay_reg <= data_in;
 			endcase
     end
 end
 
-reg     [3:0]      cmd_rst_cnt;
+reg     [5:0]      cmd_rst_cnt;
 
 always @(posedge clk_in or negedge rst_in)
     if(!rst_in)
     begin
         cmd_rst_reg <= 1'b0;
-        cmd_rst_cnt <= 4'b0;
+        cmd_rst_cnt <= 6'b0;
     end
-    else if(cmd_rst_cnt == 4'd9)
+    else if(cmd_rst_cnt == 6'd50)
     begin
-        cmd_rst_cnt <= 4'd0;
+        cmd_rst_cnt <= 6'd0;
         cmd_rst_reg <= 1'b0;
     end
     else if(cmd_rst_reg)
         cmd_rst_cnt <= cmd_rst_cnt + 1;
-    else if(wr_in & (wr_addr_in == 8'b0000_0001) & (data_in==16'b0000_0000_0101_0101))
+    else if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0101_0101))
         cmd_rst_reg <= 1'b1;  
     
-reg     [3:0]      cycled_trg_bgn_cnt;
+reg     [5:0]      cycled_trg_bgn_cnt;
 
 always @(posedge clk_in or negedge rst_in)
     if(!rst_in)
     begin
         cycled_trg_bgn_reg <= 1'b0;
-        cycled_trg_bgn_cnt <= 4'd0;
+        cycled_trg_bgn_cnt <= 6'd0;
     end
-    else if(cycled_trg_bgn_cnt == 4'd9)
+    else if(cycled_trg_bgn_cnt == 6'd50)
     begin
-        cycled_trg_bgn_cnt <= 4'd0;
+        cycled_trg_bgn_cnt <= 6'd0;
         cycled_trg_bgn_reg <= 1'b0;
     end
     else if(cycled_trg_bgn_reg)
         cycled_trg_bgn_cnt <= cycled_trg_bgn_cnt + 1;
-    else if(wr_in & (wr_addr_in == 8'b0000_0001) & (data_in==16'b0000_0000_0110_0000))
+    else if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0110_0000))
         cycled_trg_bgn_reg <= 1'b1;
        
 reg 			wr_in_r;//wr_addr_in_r
@@ -186,7 +186,7 @@ begin
 	if (!rst_in) begin
 		config_received_cnt <= 16'b0;
 	end
-	else if (wr_in & ~wr_in_r) begin//leading edge of wr_addr_in
+	else if  (wr_in & ~wr_in_r & (wr_addr_in >= 8'h02) & (wr_addr_in <= 8'h15)) begin//leading edge of wr_addr_in
 		config_received_cnt <= config_received_cnt+ 1'b1;
 	end	
 
