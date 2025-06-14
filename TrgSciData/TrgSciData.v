@@ -29,6 +29,7 @@ module TrgSciData
     input           trg_busy_timer_rdy_in,
     input           eff_trg_in,// trigger sources, when trigger happens, trigger sci-data will be written into the FIFO
     output  [7:0]  fifo_data_out,
+    output          fifo_prog_full_out,
     output          fifo_empty_out
 );
 
@@ -192,17 +193,21 @@ crc_16 crc_16_inst(
 
 fifo_generator_0 fifo_generator_0_inst
 (
+	.rst(rst_in),
 	.wr_clk(clk_in),
 	.rd_clk(fifo_rd_clk),
 	.din(sci_data_in),
 	.rd_en(fifo_rd_in),
 	.wr_en(fifo_wr_in),
+	.prog_full_thresh(9'h14),
 	.dout(sci_data_out),
 	.empty(fifo_empty),
-	.full(fifo_full)
+	.full(fifo_full),
+	.prog_full(fifo_prog_full)
 );
 
 assign fifo_data_out = sci_data_out;
 assign fifo_empty_out = fifo_empty;
+assign fifo_prog_full_out = fifo_prog_full;
 
 endmodule

@@ -16,7 +16,7 @@ module TrgTop(
     input   [15:0]  data_in,        //to ConFigReg module
     input           rd_in,          //to TrgMonData module
     input   [7:0]   rd_addr_in,     //to TrgMonData module
-	input 			store_en,       //when starting to transmit, store the transient register value 
+//	input 			store_en,       //when starting to transmit, store the transient register value 
 	input           fifo_rd_clk,    //to TrgSciData module
     input           fifo_rd_in,     //to TrgSciData module
     input           ext_trg_test_in, //to GroundTestGen module
@@ -48,12 +48,17 @@ module TrgTop(
     output			trg_out_N_acd_b,//trig to acd(backup B)
     output			trg_out_N_CsI_track_a,//trig to CsI_track(primary A)
     output			trg_out_N_CsI_track_b,//trig to CsI_track(backup B)
-    output			trg_out_N_CsI_cal_a,//trig to CsI_cal(primary A)
-    output			trg_out_N_CsI_cal_b,//trig to CsI_cal(backup B)
-    output			trg_out_N_Si_a,//trig to Si(primary A)
-    output			trg_out_N_Si_b,//trig to Si(backup B)
+  //  output			trg_out_N_CsI_cal_a,//trig to CsI_cal(primary A)
+ //   output			trg_out_N_CsI_cal_b,//trig to CsI_cal(backup B)
+    output			trg_out_N_Si1_a,//trig to Si(primary A)
+    output			trg_out_N_Si1_b,//trig to Si(backup B)
+	 output			trg_out_N_Si2_a, 
+    output			trg_out_N_Si2_b,
+    output          trg_out_N_cal_fee_1_a, trg_out_N_cal_fee_1_b,trg_out_N_cal_fee_2_a, trg_out_N_cal_fee_2_b,
+    output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b,
     
     output          trg_enb_sig,
+    output          fifo_prog_full_out,
     output          data_trans_enb_sig,
     output          cmd_rst_sig
 	
@@ -311,10 +316,21 @@ TrgOutCtrl TrgOutCtrl_inst(
     .trg_out_N_acd_b(trg_out_N_acd_b),//trig to acd(backup B)
     .trg_out_N_CsI_track_a(trg_out_N_CsI_track_a),//trig to CsI_track(primary A)
     .trg_out_N_CsI_track_b(trg_out_N_CsI_track_b),//trig to CsI_track(backup B)
-    .trg_out_N_CsI_cal_a(trg_out_N_CsI_cal_a),//trig to CsI_cal(primary A)
-    .trg_out_N_CsI_cal_b(trg_out_N_CsI_cal_b),//trig to CsI_cal(backup B)
-    .trg_out_N_Si_a(trg_out_N_Si_a),//trig to Si(primary A)
-    .trg_out_N_Si_b(trg_out_N_Si_b)//trig to Si(backup B)
+    //.trg_out_N_CsI_cal_a(trg_out_N_CsI_cal_a),//trig to CsI_cal(primary A)
+    //.trg_out_N_CsI_cal_b(trg_out_N_CsI_cal_b),//trig to CsI_cal(backup B)
+    .trg_out_N_Si1_a(trg_out_N_Si1_a),//trig to Si(primary A)
+    .trg_out_N_Si1_b(trg_out_N_Si1_b), 
+	 .trg_out_N_Si2_a(trg_out_N_Si2_a),
+	 .trg_out_N_Si2_b(trg_out_N_Si2_b),
+	 .trg_out_N_cal_fee_1_a(trg_out_N_cal_fee_1_a), 
+	 .trg_out_N_cal_fee_1_b(trg_out_N_cal_fee_1_b),
+	 .trg_out_N_cal_fee_2_a(trg_out_N_cal_fee_2_a), 
+	 .trg_out_N_cal_fee_2_b(trg_out_N_cal_fee_2_b),
+    .trg_out_N_cal_fee_3_a(trg_out_N_cal_fee_3_a), 
+	 .trg_out_N_cal_fee_3_b(trg_out_N_cal_fee_3_b),
+	 .trg_out_N_cal_fee_4_a(trg_out_N_cal_fee_4_a), 
+	 .trg_out_N_cal_fee_4_b(trg_out_N_cal_fee_4_b) 
+	 
 );
 
 HitTrgCount HitTrgCount_inst(
@@ -349,7 +365,7 @@ TrgMonData TrgMonData_inst(
 	.rst_in(rst_logic_sig),
     .rd_in(rd_in),  
     .rd_addr_in(rd_addr_in),
-    .store_en(store_en),
+//    .store_en(store_en),
     .ctrl_reg_in(ctrl_reg_sig),
     .cmd_reg_in(cmd_reg_sig),
     .trg_mode_mip1_in(trg_mode_mip1_sig),
@@ -385,6 +401,7 @@ TrgMonData TrgMonData_inst(
     .config_received_in(config_received_sig),
     .ext_trg_delay_in({8'b0000_0000, ext_trg_delay_sig}),
     .cycled_trg_period_in({8'b0000_0000, cycled_trg_period_sig}),
+	.logic_grp_oe_in(logic_grp_oe_sig),
     .mon_data_out(mon_data_out)
 	);
 
@@ -408,6 +425,7 @@ TrgSciData TrgSciData_inst
     .trg_busy_timer_rdy_in(trg_busy_timer_rdy_sig),
     .eff_trg_in(eff_trg_sig),
     .fifo_data_out(fifo_data_out),
+    .fifo_prog_full_out(fifo_prog_full_out),
     .fifo_empty_out(fifo_empty_out)
 );
 
