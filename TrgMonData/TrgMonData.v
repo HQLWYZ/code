@@ -63,14 +63,14 @@ coincid_GM1_cnt_in_r, coincid_GM2_cnt_in_r, coincid_UBS_cnt_in_r, logic_match_cn
 hit_busy_ab_sel_w_r, hit_busy_mask_w_r, trg_match_win_in_r, trg_dead_time_in_r, config_received_in_r, ext_trg_delay_in_r, cycled_trg_period_in_r, logic_grp_oe_in_r;                
 
 reg rd_in_r;
-always@(posedge clk_in or negedge rst_in)
-    if(!rst_in)	
+always@(posedge clk_in)
+    if(rst_in)	
 		rd_in_r <= 1'b0;
 	else
 		rd_in_r <= rd_in;
 
-always@(posedge clk_in or negedge rst_in)
-    if(!rst_in)
+always@(posedge clk_in)
+    if(rst_in)
     begin
         status_w_r <= 16'd0;
         trg_mode_mip1_in_r <= 16'd0;
@@ -147,9 +147,9 @@ always@(posedge clk_in or negedge rst_in)
 			logic_grp_oe_in_r <= {8'd0, logic_grp_oe_in};
         end
             
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin    	
+    if (rst_in) begin    	
     	mon_data_reg <= 16'b0;
 	end
 	else if (rd_in) begin

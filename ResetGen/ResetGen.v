@@ -12,8 +12,8 @@ module ResetGen(
 	input			clk_in,
 	input			ctrl_rst_in, //from FPGA:high 
     input           cmd_rst_in,//from ConfigReg:high
-    output          rst_logic_out_N,//"rst_logic_out_N": reset other modules,except ConfigReg 
-    output          rst_intf_out_N//"rst_intf_out_N": reset the modules of ConfigReg 
+    output          rst_logic_out,//"rst_logic_out": reset other modules,except ConfigReg 
+    output          rst_intf_out//"rst_intf_out": reset the modules of ConfigReg 
 	);
 	
 reg     [16:0]	    pulse_width_cnt;////use to counter the width of the "ctrl_rst_in", and fliter the short width pulse
@@ -74,8 +74,8 @@ end
 assign W_ctrl_rst_valid =  (pulse_width_flag10_r & pulse_width_flag11_r) 
                         | (pulse_width_flag10_r & pulse_width_flag12_r)
                         | (pulse_width_flag11_r & pulse_width_flag12_r) ;///tmr for the reset signal
-assign	rst_logic_out_N = ~(W_ctrl_rst_valid | cmd_rst_in);
-assign	rst_intf_out_N = ~W_ctrl_rst_valid;
+assign	rst_logic_out = W_ctrl_rst_valid | cmd_rst_in;
+assign	rst_intf_out = W_ctrl_rst_valid;
 
 
 

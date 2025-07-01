@@ -47,9 +47,9 @@ parameter   IDLE = 0,
             SEND_TRG_CHK = 2, 
             WAIT_DEAD_TIME = 3;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) 
+	if (rst_in) 
 		c_state <= IDLE;
 	else 
 		c_state <= n_state;
@@ -97,15 +97,15 @@ begin
     endcase
 end
 
-always @(posedge clk_in or negedge rst_in)
-    if(!rst_in)
+always @(posedge clk_in)
+    if(rst_in)
         coincid_trg_in_r <= 1'b0;
     else
         coincid_trg_in_r <= coincid_trg_in;
    
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         trg_send_r <= 1'b0;
         eff_trg_sig <= 1'b0;
         daq_busy_r <= 1'b0;

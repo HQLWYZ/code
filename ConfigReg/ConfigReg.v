@@ -69,9 +69,9 @@ module ConfigReg(
 	reg     [15:0]	cycled_trg_period_reg, cycled_trg_num_reg;
 	reg     [15:0]	ext_trg_delay_reg;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin    	
+    if (rst_in) begin    	
     	ctrl_reg <= `CTRL_REG;
 		cmd_reg <= `CMD_REG;
 		trg_mode_mip1_reg <= `TRG_MODE_MIP1_REG;
@@ -134,8 +134,8 @@ end
 
 reg     [5:0]      cmd_rst_cnt;
 
-always @(posedge clk_in or negedge rst_in)
-    if(!rst_in)
+always @(posedge clk_in)
+    if(rst_in)
     begin
         cmd_rst_reg <= 1'b0;
         cmd_rst_cnt <= 6'b0;
@@ -152,8 +152,8 @@ always @(posedge clk_in or negedge rst_in)
     
 reg     [5:0]      cycled_trg_bgn_cnt;
 
-always @(posedge clk_in or negedge rst_in)
-    if(!rst_in)
+always @(posedge clk_in)
+    if(rst_in)
     begin
         cycled_trg_bgn_reg <= 1'b0;
         cycled_trg_bgn_cnt <= 6'd0;
@@ -171,9 +171,9 @@ always @(posedge clk_in or negedge rst_in)
 reg 			wr_in_r;//wr_addr_in_r
 reg 	[15:0]	config_received_cnt;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         wr_in_r <= 1'b0;
     end
     else begin
@@ -181,9 +181,9 @@ begin
     end
 end
 
-always @(posedge clk_in or negedge rst_in) //Count the number of configuration received
+always @(posedge clk_in) //Count the number of configuration received
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		config_received_cnt <= 16'b0;
 	end
 	else if  (wr_in & ~wr_in_r & (wr_addr_in >= 8'h02) & (wr_addr_in <= 8'h15)) begin//leading edge of wr_addr_in
