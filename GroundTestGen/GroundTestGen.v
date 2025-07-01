@@ -36,9 +36,9 @@ reg             ext_trg_tmp0_r, ext_trg_tmp1_r, ext_trg_tmp2_r, ext_trg_enb_r;
 reg     [7:0]	ext_trg_delay_cnt;
 wire            ext_trg_oe;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         ext_trg_tmp0_r <= 1'b0;
         ext_trg_tmp1_r <= 1'b0;
         ext_trg_tmp2_r <= 1'b0;
@@ -51,9 +51,9 @@ begin
 end
 
 //delay the ext trigger, and send the syn trigger (1 clock width)
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		ext_trg_syn_r <= 1'b0;
 		ext_trg_enb_r <= 1'b0;
 		ext_trg_delay_cnt <= 8'b0;
@@ -81,9 +81,9 @@ end
 
 //expand the external trigger to 1us width, before output enable
 reg     [5:0]	ext_trg_raw_expd_cnt;
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		ext_trg_raw_1us_sig <= 1'b0;
 		ext_trg_raw_expd_cnt <= 6'b0;
 	end
@@ -104,9 +104,9 @@ end
 //expand the width of coincided trigger pulse to 500ns
 reg     [4:0]   coincid_trg_width_cnt;
 reg             coincid_trg_etd_r;
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		coincid_trg_width_cnt <= 5'b0;
 		coincid_trg_etd_r <= 1'b0;
 	end

@@ -37,8 +37,8 @@ module crc_16(
     lfsr_c[15] = lfsr_q[7] ^ lfsr_q[8] ^ lfsr_q[9] ^ lfsr_q[10] ^ lfsr_q[11] ^ lfsr_q[12] ^ lfsr_q[13] ^ lfsr_q[14] ^ lfsr_q[15] ^ data_in[0] ^ data_in[1] ^ data_in[2] ^ data_in[3] ^ data_in[4] ^ data_in[5] ^ data_in[6] ^ data_in[7];
   end
 
-  always @(posedge clk or negedge rst) begin
-    if(!rst) begin
+  always @(posedge clk) begin
+    if(rst) begin
       lfsr_q <= {16{1'b1}};
     end
     else begin
@@ -73,8 +73,8 @@ module crc_8(
 
   end // always
 
-  always @(posedge clk or negedge rst) begin
-    if(!rst) begin
+  always @(posedge clk) begin
+    if(rst) begin
       lfsr_q <= {8{1'b0}};
     end
     else begin

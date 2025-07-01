@@ -70,18 +70,18 @@ wire[15:0]	W_eff_trg_cnt;
 assign	W_eff_trg_cnt_terr = !((eff_trg_cnt0 == eff_trg_cnt1) && (eff_trg_cnt0 == eff_trg_cnt2));
 assign	W_eff_trg_cnt = (eff_trg_cnt0 & eff_trg_cnt1) | (eff_trg_cnt0 & eff_trg_cnt2) | (eff_trg_cnt1 & eff_trg_cnt2);
 
-always @(posedge clk_in or negedge rst_in) ////for good timing
+always @(posedge clk_in) ////for good timing
 begin
-	if (!rst_in)
+	if (rst_in)
 		eff_trg_cnt <= 16'd0;//16'b1111_1111_1111_1111
 	else
 		eff_trg_cnt <= W_eff_trg_cnt;
 end
 	
 //eff_trg_cnt is TMR,eff_trg_cnt is equal to trigger id
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         eff_trg_cnt0 <= 16'd0;//16'b1111_1111_1111_1111
         eff_trg_cnt1 <= 16'd0;//16'b1111_1111_1111_1111
         eff_trg_cnt2 <= 16'd0;//16'b1111_1111_1111_1111
@@ -104,17 +104,17 @@ end
 reg		[7:0] 	hit_tmp_r;
 reg		[1:0]	busy_tmp_r;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		hit_tmp_r <= 8'b0;
 	else 
 		hit_tmp_r <= hit_syn_in;	
 end
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		busy_tmp_r <= 2'b0;
 	else 
 		busy_tmp_r <= busy_syn_in;	
@@ -128,9 +128,9 @@ assign W_busy_pulse = busy_syn_in & (~busy_tmp_r);
 ////monitor the selected hit signal 
 ///check the width of the hit select hit signal, if the width is between [120ns to 200ns], the logic will think it is a right pulse
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		update_end_in_r <= 1'b0;
 	else 
 		update_end_in_r <= update_end_in;	
@@ -138,9 +138,9 @@ end
 
 assign W_update_end_pulse = update_end_in & (~update_end_in_r); //leading edge of update_end_in  
 
-always @(posedge clk_in or negedge rst_in)	//Which hit signal is monitored
+always @(posedge clk_in)	//Which hit signal is monitored
 begin
-    if (!rst_in) begin            
+    if (rst_in) begin            
         hit_monit_sel_r <= 3'b0;
     end
     else begin
@@ -151,9 +151,9 @@ begin
 end
 
 //count the selected hit signal 0
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		hit_monit_cnt_0 <= 32'b0;
 	else if (update_end_in)
 		hit_monit_cnt_0 <= 32'b0;
@@ -162,9 +162,9 @@ begin
 end
 
 //count the selected hit signal 1
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		hit_monit_cnt_1 <= 32'b0;
 	else if (update_end_in)
 		hit_monit_cnt_1 <= 32'b0;
@@ -173,9 +173,9 @@ begin
 end
 
 //count the selected busy signal
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		busy_monit_cnt <= 16'b0;
 	else if (update_end_in)
 		busy_monit_cnt <= 16'b0;
@@ -191,9 +191,9 @@ reg				hit_monit_err_r_0;
 reg c_hit_0_monit_state, n_hit_0_monit_state;  //monitor the hit signal
 parameter MONIT_HIT_0_IDLE = 0, MONIT_HIT_0_WIDTH_CHECK = 1;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		c_hit_0_monit_state <= MONIT_HIT_0_IDLE;
 	else 
 		c_hit_0_monit_state <= n_hit_0_monit_state;
@@ -220,9 +220,9 @@ begin
 		endcase
 end
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         hit_monit_width_cnt_0 <= 3'b0;
         hit_monit_err_r_0 <= 1'b0;// flag of the error of hit pulse width, hit_monit_err_r
     end
@@ -259,9 +259,9 @@ reg				 hit_monit_err_r_1;
 reg c_hit_1_monit_state, n_hit_1_monit_state;  //monitor the hit signal
 parameter MONIT_HIT_1_IDLE = 0, MONIT_HIT_1_WIDTH_CHECK = 1;
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		c_hit_1_monit_state <= MONIT_HIT_1_IDLE;
 	else 
 		c_hit_1_monit_state <= n_hit_1_monit_state;
@@ -288,9 +288,9 @@ begin
 		endcase
 end
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         hit_monit_width_cnt_1 <= 3'b0;
         hit_monit_err_r_1 <= 1'b0;// flag of the error of hit pulse width, hit_monit_err_r
     end
@@ -328,9 +328,9 @@ reg 			c_busy_monit_state, n_busy_monit_state;  //monitor the busy signal
 parameter 		MONIT_BUSY_IDLE = 0, MONIT_BUSY_WIDTH_CHECK = 1;
 
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in)
+	if (rst_in)
 		c_busy_monit_state <= MONIT_BUSY_IDLE;
 	else 
 		c_busy_monit_state <= n_busy_monit_state;
@@ -356,9 +356,9 @@ begin
 		endcase
 end
 
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
 		busy_monit_width_cnt <= 3'b0;
         busy_monit_err_r <= 1'b0;// flag of the error of hit pulse width
     end
@@ -388,9 +388,9 @@ end
 
 
 //------>>	Hit width error counter; when the "hit_monit_sel_r" point to next hit signal, the counter will be cleared
-always @(posedge clk_in or negedge rst_in) 
+always @(posedge clk_in) 
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         hit_monit_err_cnt <= 8'b0;
     end
     else if (update_end_in) begin////monitor the next hit signal
@@ -403,9 +403,9 @@ end
 
 
 //------>>	Busy width error counter; when the "busy_monit_sel_r" point to next hit signal, the counter will be cleared
-always @(posedge clk_in or negedge rst_in) 
+always @(posedge clk_in) 
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         busy_monit_err_cnt <= 8'b0;
     end
     else if (update_end_in) begin////monitor the next hit signal
@@ -419,9 +419,9 @@ end
 
 //------>>	Count the hit_start signal, monitor the hit_start signal
 reg	hit_start_tmp_r;
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		hit_start_tmp_r <= 1'b0;
 		hit_start_cnt <= 16'b0;
 	end
@@ -434,9 +434,9 @@ end
 
 //------>>	monitor the coincidence trigger signal, coincidence trigger counter, coincid_trg_in is one clock width
 reg	coincid_trg_tmp_r;
-always @(posedge clk_in or negedge rst_in) 
+always @(posedge clk_in) 
 begin
-    if (!rst_in) begin
+    if (rst_in) begin
         coincid_trg_cnt <= 16'b0;
         coincid_trg_tmp_r <= 1'b0;
     end
@@ -449,9 +449,9 @@ end
 
 //------>>	logic_match  pulse counter
 reg	logic_match_tmp_r;//use a register to buffer the logic match pulse to get better timing
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		logic_match_tmp_r <= 1'b0;
 		logic_match_cnt <= 16'b0;
 	end
@@ -464,9 +464,9 @@ end
 
 //------>>	external trigger counter
 reg	ext_trg_syn_tmp_r;//use a register to buffer the logic match pulse to get better timing
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		ext_trg_syn_tmp_r <= 1'b0;
 		ext_trg_cnt <= 16'b0;
 	end
@@ -480,9 +480,9 @@ end
 //------>>	hit delay timer counter, W_hit_pulse[7], W_hit_pulse[4] are the leading edge signals from acd_fee_top_hit_in and csi_fee_hit_in, respectively
 // in Coincidence module, MIPS1 mode, case logic_grp0_sel_in=2'b00;
 reg [1:0]	work_state;
-always @(posedge clk_in or negedge rst_in)
+always @(posedge clk_in)
 begin
-	if (!rst_in) begin
+	if (rst_in) begin
 		trg_delay_timer_cnt <= 8'b0;
 		work_state <= 2'b0;
 	end
