@@ -433,8 +433,8 @@ ResetGen inst_ResetGen(
 	.clk_in(clk_in),
 	.ctrl_rst_in(ctrl_rst_in),
     .cmd_rst_in(cmd_rst_sig),
-    .rst_logic_out_N(rst_logic_sig),
-    .rst_intf_out_N(rst_intf_sig)
+    .rst_logic_out(rst_logic_sig),
+    .rst_intf_out(rst_intf_sig)
 	);
 
 endmodule
