@@ -509,29 +509,29 @@ begin
 		coincid_UBS_engine_enb_r <= 1'b1;
 	end
 	else begin
-		////divider for MIP trigger, 512, 256, 128, 64, 32, 4,2,1
+		////divider for MIP1 trigger, 1，2，4，8，16，32，64，128；
 		case (coincid_MIP1_div_in) ////* synthesis parallel_case */
 			6'b00_0000:  //no pre-scale
 				coincid_MIP1_engine_enb_r <= 1'b1;			
-			6'b00_0001: ////2
+			6'b00_0001: //2
 				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[0] == 1'b0);			
 			6'b00_0010: //4
 				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[1:0] == 2'b00);			
-			6'b00_0011: //32
-				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[4:0] == 5'b0_0000);			
-			6'b00_0100: //64
+			6'b00_0011: //8
+				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[2:0] == 3'b000);
+			6'b00_0100: //16 
+				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[3:0] == 4'b0000);	
+			6'b00_0101:  //32
+				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[4:0] == 5'b0_0000);		
+			6'b00_0110:  //64
 				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[5:0] == 6'b00_0000);			
-			6'b00_0101:  //128
-				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[6:0] == 7'b000_0000);			
-			6'b00_0110:  //256
-				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[7:0] == 8'b0000_0000);			
-			6'b00_0111: //512
-				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[8:0] == 9'b0_0000_0000);			
+			6'b00_0111: //128
+				coincid_MIP1_engine_enb_r <= (coincid_MIP1_cnt[6:0] == 7'b000_0000);				
 			default: begin//1
 				coincid_MIP1_engine_enb_r <= 1'b1;
 			end
 		endcase
-		////divider for MIP2 trigger, 512, 256, 128, 64, 32, 4,2,1
+		////divider for MIP2 trigger,  1，2，4，8，16，32，64，128；
 		case (coincid_MIP2_div_in) ////* synthesis parallel_case */
 			6'b00_0000:  //no pre-scale
 				coincid_MIP2_engine_enb_r <= 1'b1;			
@@ -539,40 +539,40 @@ begin
 				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[0] == 1'b0);			
 			6'b00_0010: //4
 				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[1:0] == 2'b00);			
-			6'b00_0011: //32
-				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[4:0] == 5'b0_0000);			
-			6'b00_0100: //64
+			6'b00_0011: //8
+				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[2:0] == 3'b000);
+			6'b00_0100: //16 
+				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[3:0] == 4'b0000);	
+			6'b00_0101:  //32
+				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[4:0] == 5'b0_0000);		
+			6'b00_0110:  //64
 				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[5:0] == 6'b00_0000);			
-			6'b00_0101:  //128
+			6'b00_0111: //128
 				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[6:0] == 7'b000_0000);			
-			6'b00_0110:  //256
-				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[7:0] == 8'b0000_0000);			
-			6'b00_0111: //512
-				coincid_MIP2_engine_enb_r <= (coincid_MIP2_cnt[8:0] == 9'b0_0000_0000);			
 			default: begin//1
 				coincid_MIP2_engine_enb_r <= 1'b1;
 			end
 		endcase
-		///divider for unbias trigger, 2048,1024,512,256, 128,64,32,1
+		///divider for unbias trigger, 1，16，32，64，128，256，512，1024
 		case (coincid_UBS_div_in) ////* synthesis parallel_case */
 			6'b00_0000: //no divider
 				coincid_UBS_engine_enb_r <= 1'b1;
-			6'b00_0001://32
+			6'b00_0001://16
+				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[3:0] == 4'b0000);
+			6'b00_0010://32
 				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[4:0] == 5'b0_0000);
-			6'b00_0010://64
+			6'b00_0011://64
 				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[5:0] == 6'b00_0000);
-			6'b00_0011://128
+			6'b00_0100://128
 				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[6:0] == 7'b000_0000);
-			6'b00_0100://256
+			6'b00_0101://256
 				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[7:0] == 8'b0000_0000);
-			6'b00_0101://512
+			6'b00_0110://512
 				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[8:0] == 9'b0_0000_0000);
-			6'b00_0110://1024
+			6'b00_0111://1024
 				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[9:0] == 10'b00_0000_0000);
-			6'b00_0111://2048
-				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[10:0] == 11'b000_0000_0000);
-			default://1024
-				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[9:0] == 10'b00_0000_0000);
+			default://32
+				coincid_UBS_engine_enb_r <= (coincid_UBS_cnt[4:0] == 5'b0_0000);
 		endcase
 		end
 end
