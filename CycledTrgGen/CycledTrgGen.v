@@ -4,7 +4,7 @@
 /* 	date:		2025/03/07									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
-/* 	note:		IN LINE 47&48, different words for SIMULATION  or real application.	*/
+/* 	note:		[cycled_trg_period_cnt], different settings for SIMULATION  or real application.	*/
 /* 															*/
 /*----------------------------------------------------------*/
 
@@ -13,11 +13,11 @@ module CycledTrgGen(
 	input			rst_in,
     input   [1:0]   cycled_trg_oe_in,//enable cycle trigger generator
     input           cycled_trg_bgn_in,
-    input   [7:0]	cycled_trg_period_in,//the Unit = 2^17* 20 nano-second, approximately 2.621ms. So the maximum period is 2.621ms*2^8 = 1.34s
-    input   [15:0]	cycled_trg_num_in,//////cycled trigger number
+    input   [7:0]	cycled_trg_period_in,//the Unit = 2^17* 20 nano-second, approximately 2.621ms. So the maximum period is 2.621ms*2^8 = 1.34s. Default 20ms.
+    input   [15:0]	cycled_trg_num_in,//cycled trigger number
     output          cycled_trg_out,
     output          cycled_trg_end_out,//width = 1 clock
-    output	        cycled_trg_1us_out////expanded pulse of the cycle trigger
+    output	        cycled_trg_1us_out//expanded pulse of the cycle trigger
 	);
 	
 
