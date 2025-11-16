@@ -4,6 +4,7 @@
 /* 	date:		2025/03/06									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
+/* 	email:		wangshen@pmo.ac.cn							*/
 /* 	note:													*/
 /* 															*/
 /*----------------------------------------------------------*/
@@ -24,7 +25,7 @@
 `define HIT_ALIGN_REG_0         16'b0000_0000_0000_1101
 `define HIT_ALIGN_REG_1         16'b0000_0000_0000_1101
 `define TRG_MATCH_WIN_REG       16'b0000_0000_0000_1101
-`define TRG_DEAD_TIME_REG       16'b0000_0000_0000_1101
+`define TRG_DEAD_TIME_REG       16'b0000_0000_0000_1101 //default: 50us
 `define TRG_MODE_OE_REG         16'b0000_0000_0000_1101
 `define CYCLE_TRG_PERIOD_REG    16'b0000_0000_0000_1101
 `define CYCLE_TRG_NUM_REG       16'b0000_0000_0000_1101

@@ -2,10 +2,10 @@
 /* 															*/
 /*	file name:	HitTrgCount.v			           			*/
 /* 	date:		2025/03/13									*/
-/* 	modified:	2025/05/20									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
-/* 	note:	system clock = 50MHz                            */
+/* 	email:		wangshen@pmo.ac.cn							*/
+/* 	note:		system clock = 50MHz                        */
 /* 															*/
 /*----------------------------------------------------------*/
 

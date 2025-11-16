@@ -1,9 +1,10 @@
 /*----------------------------------------------------------*/
 /* 															*/
-/*	file name:	TrgTop.v			           			*/
+/*	file name:	TrgTop.v			           			    */
 /* 	date:		2025/04/21									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
+/* 	email:		wangshen@pmo.ac.cn							*/
 /* 	note:		system clock = 50MHz	                    */
 /* 															*/
 /*----------------------------------------------------------*/
@@ -25,14 +26,14 @@ module TrgTop(
     input           si_trb_1_busy_b_in_N,
     input           si_trb_2_busy_a_in_N,
     input           si_trb_2_busy_b_in_N,
-    input           acd_fee_top_hit_a_in_N,
-    input           acd_fee_top_hit_b_in_N,
-    input           acd_fee_sec_hit_a_in_N,
-    input           acd_fee_sec_hit_b_in_N,
-    input           acd_fee_sid_hit_a_in_N,
-    input           acd_fee_sid_hit_b_in_N,
-    input           csi_fee_hit_a_in_N,
-    input           csi_fee_hit_b_in_N,
+    input           acd_fee_top_hit_a_in_N,// ACD_layer1_HIT(top1)
+    input           acd_fee_top_hit_b_in_N,// ACD_layer1_HIT_b(top1)
+    input           acd_fee_sec_hit_a_in_N,// ACD_layer2_HIT
+    input           acd_fee_sec_hit_b_in_N,// ACD_layer2_HIT_
+    input           acd_fee_sid_hit_a_in_N,// ACD_layer1_HIT(top2)
+    input           acd_fee_sid_hit_b_in_N,// ACD_layer1_HIT_(top2)
+    input           csi_fee_hit_a_in_N,     // CsI thresholds 1
+    input           csi_fee_hit_b_in_N,     // CsI thresholds 2(TBD)
     input           cal_fee_1_hit_a_in_N,
     input           cal_fee_1_hit_b_in_N,
     input           cal_fee_2_hit_a_in_N,
@@ -48,15 +49,12 @@ module TrgTop(
     output			trg_out_N_acd_b,//trig to acd(backup B)
     output			trg_out_N_CsI_track_a,//trig to CsI_track(primary A)
     output			trg_out_N_CsI_track_b,//trig to CsI_track(backup B)
-  //  output			trg_out_N_CsI_cal_a,//trig to CsI_cal(primary A)
- //   output			trg_out_N_CsI_cal_b,//trig to CsI_cal(backup B)
     output			trg_out_N_Si1_a,//trig to Si(primary A)
     output			trg_out_N_Si1_b,//trig to Si(backup B)
-	 output			trg_out_N_Si2_a, 
+	output			trg_out_N_Si2_a, 
     output			trg_out_N_Si2_b,
     output          trg_out_N_cal_fee_1_a, trg_out_N_cal_fee_1_b,trg_out_N_cal_fee_2_a, trg_out_N_cal_fee_2_b,
     output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b,
-    
     output          trg_enb_sig,
     output          fifo_prog_full_out,
     output          data_trans_enb_sig,

@@ -4,6 +4,7 @@
 /* 	date:		2025/03/27									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
+/* 	email:		wangshen@pmo.ac.cn							*/
 /* 	note:		system clock = 50MHz	                    */
 /* 															*/
 /*----------------------------------------------------------*/

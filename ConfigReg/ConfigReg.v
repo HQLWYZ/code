@@ -4,6 +4,7 @@
 /* 	date:		2025/03/06									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
+/* 	email:		wangshen@pmo.ac.cn							*/
 /* 	note:													*/
 /* 															*/
 /*----------------------------------------------------------*/
@@ -40,7 +41,7 @@ module ConfigReg(
 	output			busy_monit_fix_sel_out,
 	output  [1:0]   busy_ab_sel_out,
     output  [1:0]   busy_mask_out,
-    //output          busy_mask_set_out,//busy_mask_set_out = 1: ignore the TRB busy signal; 
+    output          busy_ignore_out,//busy_ignore_out = 1: ignore the TRB busy signal; 
     //output  [1:0]   busy_start_sel_out,
 	output  [7:0]   acd_csi_hit_tim_diff_out, //default set 4us, e.g. 4us/20ns = 200
 	output  [3:0]   acd_fee_top_hit_align_out,//default jitter is 40ns, 40ns/20ns = 2
@@ -218,7 +219,7 @@ assign	busy_monit_fix_sel_out 		= busy_set_reg[12];		//temperatory create this f
 
 assign	busy_ab_sel_out 			= busy_set_reg[7:6];
 assign	busy_mask_out 				= busy_set_reg[5:4];
-//assign	busy_mask_set_out 			= busy_set_reg[3];
+assign	busy_ignore_out 			= busy_set_reg[3];
 //assign	busy_start_sel_out 			= busy_set_reg[1:0];
 assign	acd_csi_hit_tim_diff_out 	= hit_delay_win_reg[7:0];
 assign	acd_fee_top_hit_align_out 	= hit_align_reg0[15:12];//
