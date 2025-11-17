@@ -20,8 +20,8 @@ reg   trg_enb_in                           = 0 ;
 reg   [7:0]  trg_dead_time_in              = 3 ;
 reg   [15:0]  eff_trg_cnt_in               = 12 ;
 reg   [1:0]  busy_syn_in                   = 0 ;   
-reg   busy_ignore_in                        = 0 ; 
-reg   [1:0]  logic_burst_sel_in             = 0 ;
+reg   busy_ignore_in                        = 1 ; 
+reg   [1:0]  logic_burst_sel_in             = 0 ;//2'b11: burst mode,
 reg   pmu_busy_in                           = 0 ; 
 
 
@@ -125,11 +125,11 @@ initial
 begin
     #202_000 eff_trg_cnt_in=0;
     #150_000 eff_trg_cnt_in=1;
-    #150_000 eff_trg_cnt_in=200;
-    #150_000 eff_trg_cnt_in=2000;
+    #150_000 eff_trg_cnt_in=2048;
     #150_000 eff_trg_cnt_in=4095;
     #150_000 eff_trg_cnt_in=4096;
     #150_000 eff_trg_cnt_in=4097;
+    #150_000 eff_trg_cnt_in=4098;
 end
 
 
