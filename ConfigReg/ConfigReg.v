@@ -23,12 +23,17 @@ module ConfigReg(
 	output  [15:0]   ctrl_reg_out,
 	output  [15:0]   cmd_reg_out,
 
+	output  [7:0]   logic_grp0_mux_out,
     output  [1:0]   logic_grp0_sel_out,
 	output  [5:0]   coincid_MIP1_div_out,
+	output  [7:0]   logic_grp1_mux_out,
     output  [1:0]   logic_grp1_sel_out,
 	output  [5:0]   coincid_MIP2_div_out,
+	output  [7:0]   logic_grp2_mux_out,
     output  [1:0]   logic_grp2_sel_out,
+	output  [7:0]   logic_grp3_mux_out,
     output  [1:0]   logic_grp3_sel_out,
+	output  [7:0]   logic_grp4_mux_out,
     output  [1:0]   logic_grp4_sel_out,
 	output  [5:0]   coincid_UBS_div_out,
 	output  [1:0]   logic_burst_sel_out,
@@ -54,7 +59,7 @@ module ConfigReg(
 	output  [3:0]   cal_fee_4_hit_align_out,
     output  [15:0]   trg_match_win_out,//wait time for trigger windows
 	output  [7:0]   trg_dead_time_out,//wait time for trigger windows
-    output  [7:0]   logic_grp_oe_out,
+    output  [4:0]   logic_grp_oe_out,
 
     output  [7:0]   cycled_trg_period_out,
 	output  [15:0]  cycled_trg_num_out,
@@ -201,14 +206,24 @@ assign	cycled_trg_bgn_out = cycled_trg_bgn_reg;
 assign	ctrl_reg_out = ctrl_reg[15:0];
 assign	cmd_reg_out = cmd_reg[15:0];
 
-assign	logic_grp0_sel_out 			= trg_mode_mip1_reg[7:6];//
+assign	logic_grp0_mux_out			= trg_mode_mip1_reg[15:8];
+assign	logic_grp0_sel_out 			= trg_mode_mip1_reg[7:6];
 assign	coincid_MIP1_div_out 		= trg_mode_mip1_reg[5:0];
-assign	logic_grp1_sel_out 			= trg_mode_mip2_reg[7:6];//
+
+assign	logic_grp1_mux_out			= trg_mode_mip2_reg[15:8];
+assign	logic_grp1_sel_out 			= trg_mode_mip2_reg[7:6];
 assign	coincid_MIP2_div_out 		= trg_mode_mip2_reg[5:0];
-assign	logic_grp2_sel_out 			= trg_mode_gm1_reg[7:6];//
-assign	logic_grp3_sel_out 			= trg_mode_gm2_reg[7:6];//
+
+assign	logic_grp2_mux_out			= trg_mode_gm1_reg[15:8];
+assign	logic_grp2_sel_out 			= trg_mode_gm1_reg[7:6];
+
+assign	logic_grp3_mux_out			= trg_mode_gm2_reg[15:8];
+assign	logic_grp3_sel_out 			= trg_mode_gm2_reg[7:6];
+
+assign	logic_grp4_mux_out			= trg_mode_ubs_reg[15:8];
 assign	logic_grp4_sel_out 			= trg_mode_ubs_reg[7:6];
 assign	coincid_UBS_div_out 		= trg_mode_ubs_reg[5:0];
+
 assign	logic_burst_sel_out 		= trg_mode_brst_reg[7:6];
                       
 assign	hit_ab_sel_out 				= hit_ab_sel_reg[15:0];
@@ -233,7 +248,7 @@ assign	cal_fee_4_hit_align_out 	= hit_align_reg1[3:0];
 
 assign	trg_match_win_out 			= trg_match_win_reg;
 assign	trg_dead_time_out 			= trg_dead_time_reg[7:0];
-assign	logic_grp_oe_out 			= trg_mode_oe_reg[7:0];
+assign	logic_grp_oe_out 			= trg_mode_oe_reg[4:0];
 
 assign	cycled_trg_period_out 		= cycled_trg_period_reg[7:0];
 assign	cycled_trg_num_out 			= cycled_trg_num_reg[15:0];

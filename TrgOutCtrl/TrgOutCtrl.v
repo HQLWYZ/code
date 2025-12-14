@@ -32,7 +32,7 @@ module TrgOutCtrl(
 
 parameter   TRG_PULSE_WIDTH = 20; 	//20ns*20 = 400ns
 parameter   CHK_PULSE_WIDTH = 50; 	// 20ns*50 = 1us
-parameter   DEADTIME_UNIT_10MS = 500; //500*20ns = 10us， 500=12'b0001_1111_0100
+parameter   DEADTIME_UNIT_10US = 500; //500*20ns = 10us， 500=12'b0001_1111_0100
 
 
 ///internal reg
@@ -176,7 +176,7 @@ end
 always @(*)begin
     trg_dead_time_temp=0;
     for(i=0; i<20; i=i+1)begin
-        if(DEADTIME_UNIT_10MS[i]==1'b1)
+        if(DEADTIME_UNIT_10US[i]==1'b1)
             trg_dead_time_temp = trg_dead_time_temp + (trg_dead_time_in << i);
     end
 end

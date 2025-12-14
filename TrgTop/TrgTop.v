@@ -26,14 +26,14 @@ module TrgTop(
     input           si_trb_1_busy_b_in_N,
     input           si_trb_2_busy_a_in_N,
     input           si_trb_2_busy_b_in_N,
-    input           acd_fee_top_hit_a_in_N,// ACD_layer1_HIT(top1)
-    input           acd_fee_top_hit_b_in_N,// ACD_layer1_HIT_b(top1)
-    input           acd_fee_sec_hit_a_in_N,// ACD_layer2_HIT
-    input           acd_fee_sec_hit_b_in_N,// ACD_layer2_HIT_
-    input           acd_fee_sid_hit_a_in_N,// ACD_layer1_HIT(top2)
-    input           acd_fee_sid_hit_b_in_N,// ACD_layer1_HIT_(top2)
-    input           csi_fee_hit_a_in_N,     // CsI thresholds 1
-    input           csi_fee_hit_b_in_N,     // CsI thresholds 2(TBD)
+    input           acd_fee_top1_hit_a_in_N, 
+    input           acd_fee_top1_hit_b_in_N,
+    input           acd_fee_sec_hit_a_in_N,
+    input           acd_fee_sec_hit_b_in_N,
+    input           acd_fee_top2_hit_a_in_N,
+    input           acd_fee_top2_hit_b_in_N,
+    input           csi_fee_hit_a_in_N,     
+    input           csi_fee_hit_b_in_N,     
     input           cal_fee_1_hit_a_in_N,
     input           cal_fee_1_hit_b_in_N,
     input           cal_fee_2_hit_a_in_N,
@@ -211,12 +211,12 @@ Coincidence Coincidence_inst(
     .si_trb_1_busy_b_in_N(si_trb_1_busy_b_in_N),
     .si_trb_2_busy_a_in_N(si_trb_2_busy_a_in_N),
     .si_trb_2_busy_b_in_N(si_trb_2_busy_b_in_N),
-    .acd_fee_top_hit_a_in_N(acd_fee_top_hit_a_in_N),
-    .acd_fee_top_hit_b_in_N(acd_fee_top_hit_b_in_N),
+    .acd_fee_top_hit_a_in_N(acd_fee_top1_hit_a_in_N),
+    .acd_fee_top_hit_b_in_N(acd_fee_top1_hit_b_in_N),
     .acd_fee_sec_hit_a_in_N(acd_fee_sec_hit_a_in_N),
     .acd_fee_sec_hit_b_in_N(acd_fee_sec_hit_b_in_N),
-    .acd_fee_sid_hit_a_in_N(acd_fee_sid_hit_a_in_N),
-    .acd_fee_sid_hit_b_in_N(acd_fee_sid_hit_b_in_N),
+    .acd_fee_sid_hit_a_in_N(acd_fee_top2_hit_a_in_N),
+    .acd_fee_sid_hit_b_in_N(acd_fee_top2_hit_b_in_N),
     .csi_fee_hit_a_in_N(csi_fee_hit_a_in_N),
     .csi_fee_hit_b_in_N(csi_fee_hit_b_in_N),
     .cal_fee_1_hit_a_in_N(cal_fee_1_hit_a_in_N),
