@@ -1,5 +1,5 @@
 $date
-	Mon Nov 17 20:12:31 2025
+	Sun Dec 28 22:13:15 2025
 $end
 $version
 	Icarus Verilog
@@ -76,7 +76,7 @@ $var wire 1 ! trg_out_N_cal_fee_4_b $end
 $var parameter 32 H BURST_MODE $end
 $var parameter 32 I CHECK_SI_BUSY $end
 $var parameter 32 J CHK_PULSE_WIDTH $end
-$var parameter 32 K DEADTIME_UNIT_10MS $end
+$var parameter 32 K DEADTIME_UNIT_10US $end
 $var parameter 32 L IDLE $end
 $var parameter 32 M IGNORE_SI_BUSY $end
 $var parameter 32 N SEND_TRG $end

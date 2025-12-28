@@ -12,6 +12,7 @@
 module TrgTop(
 	input	        clk_in,
     input			ctrl_rst_in,    //to ResetGen module
+    input			pmu_busy_in,    
     input           wr_in,          //to ConFigReg module
     input	[7:0]   wr_addr_in,     //to ConFigReg module
     input   [15:0]  data_in,        //to ConFigReg module
@@ -82,6 +83,7 @@ wire	[15:0]  hit_ab_sel_sig;
 wire	[15:0]  hit_mask_sig;
 wire	[1:0]   busy_ab_sel_sig;
 wire	[1:0]   busy_mask_sig;
+wire            busy_ignore_sig;
 wire	[7:0]   acd_csi_hit_tim_diff_sig; //default set 4us, e.g. 4us/20ns = 200 = 8'hC8
 wire	[3:0]   acd_fee_top_hit_align_sig;//default jitter is 20ns, 40ns/20ns = 2 = 4'h2
 wire	[3:0]   acd_fee_sec_hit_align_sig;
@@ -104,14 +106,14 @@ wire	[15:0]	coincid_MIP2_cnt_sig;
 wire	[15:0]	coincid_GM1_cnt_sig;
 wire	[15:0]	coincid_GM2_cnt_sig;
 wire	[15:0]	coincid_UBS_cnt_sig;
-wire          	coincid_trg_raw_1us_sig;
-wire    [4:0]   coincid_tag_raw_sig;
+//wire          	coincid_trg_raw_1us_sig;
+//wire    [4:0]   coincid_tag_raw_sig;
 wire    [23:0]  trg_busy_time_cnt_sig;
 wire			trg_busy_timer_rdy_sig;
 wire    [15:0]	hit_sig_stus_sig;
-wire            si_busy_tmp;
+//wire            si_busy_tmp;
 
-//wire			trg_enb_sig;
+wire			trg_enb_sig;
 wire  	   		cycled_trg_bgn_sig;
 wire    [15:0]  ctrl_reg_sig;
 wire    [15:0]  cmd_reg_sig;
@@ -130,7 +132,7 @@ wire          	daq_busy_sig;
 wire          	ext_trg_oe_sig;
 wire          	trg_test_sig;
 wire          	ext_trg_syn_sig;
-wire          	ext_trg_raw_1us_sig;
+//wire          	ext_trg_raw_1us_sig;
 wire			update_end_sig;
 wire			eff_trg_sig;
 wire	[2:0]	hit_monit_fix_sel_sig;
@@ -183,6 +185,7 @@ ConfigReg ConfigReg_inst(
     .busy_monit_fix_sel_out(busy_monit_fix_sel_sig),
 	.busy_ab_sel_out(busy_ab_sel_sig),
     .busy_mask_out(busy_mask_sig),
+    .busy_ignore_out(busy_ignore_sig),
     //.busy_mask_set_out(busy_set_reg),
     //.busy_start_sel_out(busy_start_sig),
 	.acd_csi_hit_tim_diff_out(acd_csi_hit_tim_diff_sig), 
@@ -262,12 +265,12 @@ Coincidence Coincidence_inst(
 	.coincid_GM1_cnt_out(coincid_GM1_cnt_sig),
     .coincid_GM2_cnt_out(coincid_GM2_cnt_sig),
     .coincid_UBS_cnt_out(coincid_UBS_cnt_sig),
-    .coincid_trg_raw_1us_out(coincid_trg_raw_1us_sig),
-    .coincid_tag_raw_out(coincid_tag_raw_sig),
+    //.coincid_trg_raw_1us_out(coincid_trg_raw_1us_sig),
+    //.coincid_tag_raw_out(coincid_tag_raw_sig),
 	.trg_busy_time_cnt_out(trg_busy_time_cnt_sig),
 	.trg_busy_timer_rdy_out(trg_busy_timer_rdy_sig),
-	.hit_sig_stus_out(hit_sig_stus_sig),
-	.si_busy_tmp(si_busy_tmp)
+	.hit_sig_stus_out(hit_sig_stus_sig)
+	//.si_busy_tmp(si_busy_tmp)
 	);
 
 CycledTrgGen CycledTrgGen_inst(
@@ -296,8 +299,8 @@ GroundTestGen GroundTestGen_inst(
     //.daq_busy_out_N(daq_busy_sig),
     .coincid_trg_test_out_N(coincid_trg_test_sig),
     //.trg_test_out_N(trg_test_sig),
-    .ext_trg_syn_out(ext_trg_syn_sig),
-    .ext_trg_raw_1us_out(ext_trg_raw_1us_sig)
+    .ext_trg_syn_out(ext_trg_syn_sig)
+    //.ext_trg_raw_1us_out(ext_trg_raw_1us_sig)
 );
 
 TrgOutCtrl TrgOutCtrl_inst(
@@ -306,6 +309,10 @@ TrgOutCtrl TrgOutCtrl_inst(
     .coincid_trg_in(coincid_trg_sig),
     .ext_trg_syn_in(ext_trg_syn_sig),
     .cycled_trg_in(cycled_trg_sig),
+    .busy_syn_in(busy_syn_sig),
+    .busy_ignore_in(busy_ignore_sig),
+    .logic_burst_sel_in(logic_burst_sel_sig),
+    .pmu_busy_in(pmu_busy_in),
     .trg_enb_in(trg_enb_sig),//start work and generate trigger
     .trg_dead_time_in(trg_dead_time_sig),
     .eff_trg_cnt_in(eff_trg_cnt_sig),

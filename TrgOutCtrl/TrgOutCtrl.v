@@ -97,7 +97,7 @@ begin
         WAIT_DEAD_TIME: begin////select different dead time type
             if (logic_burst_sel_in == 2'b11) //burst mode
                 n_state = BURST_MODE;
-            else if(busy_ignore_in == 1'b1) //ignore Si busy signal
+            else if(busy_ignore_in == 1'b1) //ignore Si busy signal, fixed busy eg 850us
                 n_state = IGNORE_SI_BUSY;
             else
                 n_state = CHECK_SI_BUSY;
