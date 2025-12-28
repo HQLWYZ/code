@@ -6,7 +6,7 @@ module tb_Coincidence;
 
 // Coincidence Parameters
 parameter PERIOD                = 20       ;
-parameter SI_DEAD_TIME_SET_NUM  = 24'd15000;
+//parameter SI_DEAD_TIME_SET_NUM  = 24'd15000;
 parameter IDLE                  = 0        ;
 
 // Coincidence Inputs
@@ -48,7 +48,7 @@ reg   [3:0]   cal_fee_2_hit_align_in        = 4'b10 ;//at least 1'b1
 reg   [3:0]   cal_fee_3_hit_align_in        = 4'b01 ;//at least 1'b1
 reg   [3:0]   cal_fee_4_hit_align_in        = 4'b11 ;//at least 1'b1
 reg   [4:0]  logic_grp_oe_in               = 5'b00011 ;
-reg   [7:0]  trg_dead_time_in              = 8'd5 ;// about 20ns*31=620ns
+reg   [7:0]  trg_dead_time_in              = 8'd50 ;// unit:10us 
 reg   [7:0]  logic_grp0_mux_in             = 8'b1111_1111 ;
 reg   [7:0]   logic_grp1_mux_in            = 8'b1111_1010 ;
 reg   [7:0]  logic_grp2_mux_in             = 8'b1110_1010 ;
@@ -130,8 +130,8 @@ initial//-----------PMU_busy------
 begin
 repeat(3000)
 	begin
-	#240_000 pmu_busy_in=1;
-	#160_000 pmu_busy_in=0;
+	#2200_000 pmu_busy_in=1;
+	#800_000 pmu_busy_in=0;
 	end
 pmu_busy_in=1'b1;
 end
@@ -315,7 +315,7 @@ end
 
 
 Coincidence #(
-    .SI_DEAD_TIME_SET_NUM ( SI_DEAD_TIME_SET_NUM ),
+    //.SI_DEAD_TIME_SET_NUM ( SI_DEAD_TIME_SET_NUM ),
     .IDLE                 ( IDLE                 ))
  u_Coincidence (
     .clk_in                   ( clk_in                          ),

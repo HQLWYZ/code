@@ -107,9 +107,8 @@ module Coincidence(
                                         cal_fee_1_hit_a_in_N, cal_fee_1_hit_b_in_N, cal_fee_2_hit_a_in_N, cal_fee_2_hit_b_in_N, 
                                         cal_fee_3_hit_a_in_N, cal_fee_3_hit_b_in_N, cal_fee_4_hit_a_in_N, cal_fee_4_hit_b_in_N};
 
-    //parameter   SI_DEAD_TIME_SET_NUM = 24'd50000; //20ns per cnt, set 1ms = 50000
 	parameter   DEADTIME_UNIT_10US = 500; //500*20ns = 10us， 500=12'b0001_1111_0100
-	//parameter   DEADTIME_50US = 2500; //
+
 
 //synchonize the input of hit signal, if (ab_sel_in == 0) select  signal from channel A, 
 always @(posedge clk_in)//two stage synchronizer, delay time {1CK, 2CK}, e.g. 20ns to 40ns
@@ -1076,9 +1075,9 @@ end
 reg	[15:0]	coincid_UBS_cnt, coincid_GM1_cnt, coincid_GM2_cnt, coincid_MIP1_cnt, coincid_MIP2_cnt;//////counter for the different coincide trigger source
 reg	coincid_UBS_engine_enb_r, coincid_MIP1_engine_enb_r, coincid_MIP2_engine_enb_r; ////trigger logic enable after prescale (divider)
 wire[4:0] W_coincid_engine_enb, W_logic_all_grp_result;
-reg	[4:0] coincid_result_stp0_r, coincid_result_r, coincid_tag_raw_r;// result of coincidence
+reg	[4:0] coincid_result_stp0_r, coincid_result_stp1_r, coincid_result_r, coincid_tag_raw_r;// result of coincidence
 reg	coincid_trg_raw_r, coincid_tag_raw_enb_r;///coincide trigger signal before logic masked(enable)
-reg si_fix_dead_time_cnt_start_tag;
+reg dead_time_cnt_start_tag;
 reg	[23:0]	dead_time_cnt;
 
 
@@ -1093,11 +1092,11 @@ begin
 		coincid_UBS_cnt <= 16'b0;
 	end
 	else if (coincid_tag_raw_enb_r) begin
-		coincid_MIP1_cnt <= coincid_result_r[0]? (coincid_MIP1_cnt + 1) : coincid_MIP1_cnt ;
-		coincid_MIP2_cnt <= coincid_result_r[1]? (coincid_MIP2_cnt + 1) : coincid_MIP2_cnt;
-		coincid_GM1_cnt <= coincid_result_r[2]? (coincid_GM1_cnt + 1): coincid_GM1_cnt;
-		coincid_GM2_cnt <= coincid_result_r[3]? (coincid_GM2_cnt + 1): coincid_GM2_cnt;
-		coincid_UBS_cnt <= coincid_result_r[4]? (coincid_UBS_cnt + 1): coincid_UBS_cnt;
+		coincid_MIP1_cnt <= coincid_result_stp1_r[0]? (coincid_MIP1_cnt + 1) : coincid_MIP1_cnt ;
+		coincid_MIP2_cnt <= coincid_result_stp1_r[1]? (coincid_MIP2_cnt + 1) : coincid_MIP2_cnt;
+		coincid_GM1_cnt <= coincid_result_stp1_r[2]? (coincid_GM1_cnt + 1): coincid_GM1_cnt;
+		coincid_GM2_cnt <= coincid_result_stp1_r[3]? (coincid_GM2_cnt + 1): coincid_GM2_cnt;
+		coincid_UBS_cnt <= coincid_result_stp1_r[4]? (coincid_UBS_cnt + 1): coincid_UBS_cnt;
 	end
 end
 
@@ -1182,9 +1181,9 @@ end
 
 ///////
 assign	W_coincid_engine_enb = {coincid_UBS_engine_enb_r, 1'b1, 1'b1, coincid_MIP2_engine_enb_r,
-																	 coincid_MIP1_engine_enb_r};////combine all the enable for different engine
+									 coincid_MIP1_engine_enb_r};//wire of all triggers after prescale
 assign	W_logic_all_grp_result = {logic_grp4_result_r, logic_grp3_result_r, 
-																			logic_grp2_result_r, logic_grp1_result_r, logic_grp0_result_r};////combine the results of all the logic engine
+									logic_grp2_result_r, logic_grp1_result_r, logic_grp0_result_r};//wire of all triggers before prescale
 assign	logic_match_out = |(W_logic_all_grp_result & logic_grp_oe_in);///the signal after trigger logic operation (no T0), for debug and test
 
 
@@ -1193,12 +1192,14 @@ assign	logic_match_out = |(W_logic_all_grp_result & logic_grp_oe_in);///the sign
 //////////////2, wait for the time (trg_match_wait_time_in), make sure other hit signal is valid and filter the noise (0-400ns)
 /////////////3, coincidence (400ns -TRG_MATCH_WIN)
 //////////in flight logic, add one clock delay for the trigger signal
-reg[2:0] c_state, n_state;
+reg[3:0] c_state, n_state;
 reg[7:0] trg_win_cnt;/////trigger match windows counter
 
 parameter   IDLE = 0, 
             COINCIDENCE_STAGE = 1, 
             COINCIDENCE_RESULT = 2, 
+			COINCIDENCE_RESULT_B = 8,
+			COINCIDENCE_RESULT_C = 9,
             COINCIDENCE_FIX_BUSY_GEN = 3, 
             COINCIDENCE_AUTO_BUSY_GEN = 4, 
             COINCIDENCE_BURST_GEN = 5, 
@@ -1236,7 +1237,16 @@ begin
 			else
 				n_state = COINCIDENCE_RESULT;
 		end
+
 		COINCIDENCE_RESULT: begin
+			n_state = COINCIDENCE_RESULT_B;
+		end
+
+		COINCIDENCE_RESULT_B: begin
+			n_state = COINCIDENCE_RESULT_C;
+		end
+
+		COINCIDENCE_RESULT_C: begin
             if(|logic_burst_sel_in)
 			    n_state = COINCIDENCE_BURST_GEN;
             else if(busy_mask_in==2'b11) //[TODO]:simulate 
@@ -1257,10 +1267,10 @@ begin
 		end
 
 		COINCIDENCE_BURST_GEN: begin  //////generate the coincidence trigger signal, check Si-Tracker Status
-            if(dead_time_cnt == trg_dead_time_prodcut)
+			if(dead_time_cnt == trg_dead_time_prodcut)
                 n_state = COINCIDENCE_END;
             else
-			n_state = COINCIDENCE_END;
+			n_state = COINCIDENCE_BURST_GEN;
 		end
 
 		COINCIDENCE_END: begin
@@ -1283,10 +1293,12 @@ begin
         coincid_trg_sig <= 1'b0;////the final result of the coincid trg
         coincid_trg_raw_r <= 1'b0;/////the coincide trigger before oe (mask)
         coincid_result_stp0_r <= 5'b0;///the coincide result after the wait window
+		coincid_result_stp1_r <= 5'b0;
         coincid_result_r <= 5'b0;////////the final result of the coincide 
         trg_win_cnt <= 8'b0;////counter of the match windows
         coincid_tag_raw_enb_r <= 1'b0;  //latch the coincid tag
-        si_fix_dead_time_cnt_start_tag<=1'b0;
+        //dead_time_cnt_start_tag<=1'b0;
+		dead_time_cnt <= 24'd0;
     end
     else begin
         case(c_state) 
@@ -1294,28 +1306,41 @@ begin
             coincid_trg_sig <= 1'b0;
             coincid_trg_raw_r <= 1'b0;
             coincid_result_stp0_r <= 5'b0;
+			coincid_result_stp1_r <= 5'b0;
             coincid_result_r <= 5'b0;
             trg_win_cnt <= 8'b0;
             coincid_tag_raw_enb_r <= 1'b0; 
-            si_fix_dead_time_cnt_start_tag<=1'b0;
+            //dead_time_cnt_start_tag<=1'b0;
+			dead_time_cnt <= 24'd0;
          end
          COINCIDENCE_STAGE: begin
 			coincid_trg_sig <= 1'b0;
 			coincid_trg_raw_r <= 1'b0;
             trg_win_cnt <= trg_win_cnt + 1;           
             if (trg_win_cnt == {trg_match_win_in[15:8]}) //wait for other hit
+			begin
             	coincid_result_stp0_r <= W_logic_all_grp_result;
+				
+			end
          end
 		COINCIDENCE_CHECK_PMU_BUSY: begin
-
+			//coincid_result_stp1_r <=  coincid_result_stp0_r ;
          end
-        COINCIDENCE_RESULT: begin //
-         	coincid_tag_raw_enb_r <= 1'b1;////latch the coincidence tag, please attention the timing, normally LOGIC OR, e.g.logic_judge_mode_in=1'b0
-			coincid_result_r <=  coincid_result_stp0_r ;
+		COINCIDENCE_RESULT: begin //
+			coincid_tag_raw_enb_r <= 1'b1;
+			coincid_result_stp1_r <=  coincid_result_stp0_r ;
+         end
+        COINCIDENCE_RESULT_B: begin //
+			coincid_tag_raw_enb_r <= 1'b0;
+         end
+		COINCIDENCE_RESULT_C: begin //
+         	//coincid_tag_raw_enb_r <= 1'b1;////latch the coincidence tag, please attention the timing, normally LOGIC OR, e.g.logic_judge_mode_in=1'b0
+			coincid_result_r <=  coincid_result_stp1_r ;
          end
          COINCIDENCE_FIX_BUSY_GEN: begin //generate the trigger signal, the delay between the output trigger and the start_hit must be fixed
 			coincid_tag_raw_enb_r <= 1'b0;//
-            si_fix_dead_time_cnt_start_tag<=1'b1;
+            //dead_time_cnt_start_tag<=1'b1;
+			dead_time_cnt<= dead_time_cnt + 1'b1;
          	coincid_trg_sig <= |( (W_coincid_engine_enb & logic_grp_oe_in) & coincid_result_r);//coincide trigger after trigger selection
          	coincid_trg_raw_r <= |(W_coincid_engine_enb & coincid_result_r);//coincide trigger before trigger selection
          end
@@ -1326,6 +1351,8 @@ begin
          end
          COINCIDENCE_BURST_GEN: begin //generate the trigger signal, the delay between the output trigger and the start_hit must be fixed
 			coincid_tag_raw_enb_r <= 1'b0;//
+			//dead_time_cnt_start_tag<=1'b1;
+			dead_time_cnt<= dead_time_cnt + 1'b1;
          	coincid_trg_sig <= |( (W_coincid_engine_enb & logic_grp_oe_in) & coincid_result_r);//coincide trigger after trigger selection
          	coincid_trg_raw_r <= |(W_coincid_engine_enb & coincid_result_r);//coincide trigger before trigger selection
          end
@@ -1333,18 +1360,22 @@ begin
             coincid_trg_sig <= 1'b0;
             coincid_trg_raw_r <= 1'b0;
             coincid_result_stp0_r <= 5'b0;
+			coincid_result_stp1_r <= 5'b0;
             coincid_result_r <= 5'b0;
             trg_win_cnt <= 6'b0;
-            si_fix_dead_time_cnt_start_tag<=1'b0;
+            //dead_time_cnt_start_tag<=1'b0;
+			dead_time_cnt <= 24'd0;
          end
          default: begin
             coincid_trg_sig <= 1'b0;
             coincid_trg_raw_r <= 1'b0;
             coincid_result_stp0_r <= 5'b0;
+			coincid_result_stp1_r <= 5'b0;
             coincid_result_r <= 5'b0;
             trg_win_cnt <= 6'b0;
             coincid_tag_raw_enb_r <= 1'b0; 
-            si_fix_dead_time_cnt_start_tag<=1'b0;
+            dead_time_cnt_start_tag<=1'b0;
+			dead_time_cnt <= 24'd0;
          end
         endcase
     end
@@ -1364,19 +1395,6 @@ always @(*)begin
 end
 
 
-//SI_DEAD_TIME_SET_NUM
-always @(posedge clk_in)
-begin
-	if (rst_in) begin
-		dead_time_cnt <= 24'd0;//23'd0
-	end
-	else if (si_fix_dead_time_cnt_start_tag ) begin // start count
-        dead_time_cnt<= dead_time_cnt + 1'b1;
-    end
-	else if (dead_time_cnt == trg_dead_time_prodcut + 2) begin // re-triggerable //dead_time_cnt == SI_DEAD_TIME_SET_NUM
-        dead_time_cnt <= 24'd0;
-	end
-end
 
 
 ////latch the coincidence tag
