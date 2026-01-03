@@ -98,7 +98,7 @@ wire	[7:0]   logic_grp_oe_sig;
 
 wire 			coincid_trg_sig;
 wire			logic_match_sig;
-wire	[7:0]	hit_syn_sig;
+wire	[12:0]	hit_syn_sig;
 wire	[1:0]	busy_syn_sig;
 wire			hit_start_sig;
 wire	[15:0]	coincid_MIP1_cnt_sig;
@@ -127,17 +127,17 @@ wire  	[7:0]	cycled_trg_period_sig;
 wire  	[15:0]	cycled_trg_num_sig;
 wire          	cycled_trg_sig;
 wire          	cycled_trg_end_sig;
-wire	        cycled_trg_1us_sig;
+//wire	        cycled_trg_1us_sig;
 wire          	daq_busy_sig;
 wire          	ext_trg_oe_sig;
 wire          	trg_test_sig;
 wire          	ext_trg_syn_sig;
 //wire          	ext_trg_raw_1us_sig;
-wire			update_end_sig;
+//wire			update_end_sig;
 wire			eff_trg_sig;
 wire	[2:0]	hit_monit_fix_sel_sig;
 wire			busy_monit_fix_sel_sig;
-wire	[2:0]	hit_monit_sel_sig;
+wire	[7:0]	hit_monit_sel_sig;
 wire	[7:0]	hit_monit_err_cnt_sig;
 wire	[7:0]	busy_monit_err_cnt_sig;
 wire	[31:0]	hit_monit_cnt_0_sig;
@@ -276,31 +276,24 @@ Coincidence Coincidence_inst(
 CycledTrgGen CycledTrgGen_inst(
 	.clk_in(clk_in),
 	.rst_in(rst_logic_sig),
-    .cycled_trg_oe_in(2'b11),
+    //.cycled_trg_oe_in(2'b11),
     .cycled_trg_bgn_in(cycled_trg_bgn_sig),
     .cycled_trg_period_in(cycled_trg_period_sig),
     .cycled_trg_num_in(cycled_trg_num_sig),
     .cycled_trg_out(cycled_trg_sig),
-    .cycled_trg_end_out(cycled_trg_end_sig),
-    .cycled_trg_1us_out(cycled_trg_1us_sig)
+    .cycled_trg_end_out(cycled_trg_end_sig)
+    //.cycled_trg_1us_out(cycled_trg_1us_sig)
 	);
 
 GroundTestGen GroundTestGen_inst(
 	.clk_in(clk_in),
 	.rst_in(rst_logic_sig),
     .ext_trg_test_in(ext_trg_test_in),
-    //.trg_in_N(trg_in_N),
     .coincid_trg_in(coincid_trg_sig),
-    //.daq_busy_in(daq_busy_sig),
-    //.logic_match_in(logic_match_sig),
     .ext_trg_delay_in(ext_trg_delay_sig),
     .ext_trg_oe_in(ext_trg_enb_sig),
-    //.logic_match_out_N(logic_match_sig),
-    //.daq_busy_out_N(daq_busy_sig),
     .coincid_trg_test_out_N(coincid_trg_test_sig),
-    //.trg_test_out_N(trg_test_sig),
     .ext_trg_syn_out(ext_trg_syn_sig)
-    //.ext_trg_raw_1us_out(ext_trg_raw_1us_sig)
 );
 
 TrgOutCtrl TrgOutCtrl_inst(
@@ -341,10 +334,11 @@ TrgOutCtrl TrgOutCtrl_inst(
 HitTrgCount HitTrgCount_inst(
 	.clk_in(clk_in),
 	.rst_in(rst_logic_sig), 
+    .rd_in(rd_in), 
 	.hit_syn_in(hit_syn_sig),
 	.busy_syn_in(busy_syn_sig),
 	.hit_start_in(hit_start_sig),
-	.update_end_in(update_end_sig),
+	//.update_end_in(update_end_sig),
 	.eff_trg_in(eff_trg_sig),
 	.coincid_trg_in(coincid_trg_sig),
 	.logic_match_in(logic_match_sig),

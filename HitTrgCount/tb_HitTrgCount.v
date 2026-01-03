@@ -3,10 +3,17 @@
 
 module tb_HitTrgCount;
 
+
+initial
+    begin
+        $dumpfile("./tb_HitTrgCount.vcd");
+        $dumpvars(0,tb_HitTrgCount);
+        #3_000_000 $finish;
+end
+
 // HitTrgCount Parameters
 parameter PERIOD           = 20;
-parameter HIT_WIDTH        = 4;
-parameter BUSY_WIDTH       = 4;
+parameter HIT_WIDTH        = 8;
 parameter MONIT_HIT_0_IDLE   = 0;
 parameter MONIT_HIT_1_IDLE   = 0;
 parameter MONIT_BUSY_IDLE  = 0;
@@ -14,19 +21,19 @@ parameter MONIT_BUSY_IDLE  = 0;
 // HitTrgCount Inputs
 reg   clk_in                               = 0 ;
 reg   rst_in                             = 0 ;
-reg   [7:0]  hit_syn_in                    = 0 ;
+reg   rd_in                             = 0 ;
+reg   [12:0]  hit_syn_in                    = 0 ;
 reg   [1:0]  busy_syn_in                   = 0 ;
 reg   hit_start_in                         = 0 ;
-reg   update_end_in                        = 0 ;
 reg   eff_trg_in                           = 0 ;
 reg   coincid_trg_in                       = 0 ;
 reg   logic_match_in                       = 0 ;
 reg   ext_trg_syn_in                       = 0 ;
-reg   [2:0]  hit_monit_fix_sel_in          = 0 ;
-reg   busy_monit_fix_sel_in                = 0 ;
+reg   [3:0]  hit_monit_fix_sel_in          = 7 ;
+reg   busy_monit_fix_sel_in                = 1 ;
 
 // HitTrgCount Outputs
-wire  [2:0]  hit_monit_sel_out             ;
+wire  [7:0]  hit_monit_sel_out             ;
 wire  [7:0]  hit_monit_err_cnt_out         ;
 wire  [7:0]  busy_monit_err_cnt_out        ;
 wire  [31:0]  hit_monit_cnt_0_out          ;
@@ -37,7 +44,7 @@ wire  [15:0]  logic_match_cnt_out          ;
 wire  [15:0]  eff_trg_cnt_out              ;
 wire  [15:0]  coincid_trg_cnt_out          ;
 wire  [15:0]  ext_trg_cnt_out              ;
-wire  [7:0]  trg_delay_timer_out              ;
+wire  [7:0]   trg_delay_timer_out              ;
 
 
 initial
@@ -51,13 +58,47 @@ begin
     #(PERIOD*2) rst_in  =  0;
 end
 
+initial//-----------rd in------
+begin
+repeat(3000)
+	begin
+	#180_000 rd_in=1;
+	#1_60 rd_in=0;
+	#180_000 rd_in=1;
+	#1_60 rd_in=0;
+    #180_000 rd_in=1;
+	#1_60 rd_in=0;
+	end
+rd_in=1'b1;
+end
+
+
+initial//-----------HIT[12] IN------
+begin
+repeat(3000)
+	begin
+	#80_000 hit_syn_in[12]=1;
+	#160 hit_syn_in[12]=0;
+	end
+hit_syn_in[12]=1'b1;
+end
+
+initial//-----------HIT[9] IN------
+begin
+repeat(3000)
+	begin
+	#83_000 hit_syn_in[9]=1;
+	#160 hit_syn_in[9]=0;
+	end
+hit_syn_in[9]=1'b1;
+end
 
 initial//-----------HIT[7] IN------
 begin
 repeat(3000)
 	begin
-	#800_000 hit_syn_in[7]=1;
-	#160 hit_syn_in[7]=0;
+	#80_000 hit_syn_in[7]=1;
+	#60 hit_syn_in[7]=0;
 	end
 hit_syn_in[7]=1'b1;
 end
@@ -66,8 +107,8 @@ initial//-----------HIT[4] IN------
 begin
 repeat(3000)
 	begin
-	#803_000 hit_syn_in[4]=1;
-	#160 hit_syn_in[4]=0;
+	#83_000 hit_syn_in[4]=1;
+	#360 hit_syn_in[4]=0;
 	end
 hit_syn_in[4]=1'b1;
 end
@@ -126,17 +167,53 @@ repeat(3000)
 hit_start_in=1'b1;
 end
 
-
-initial//-----------update_end_in IN------each 1ms per cnt
+initial//-----------logic_match_in------
 begin
 repeat(3000)
 	begin
-	#990_000 update_end_in=1;
-	#10_000 update_end_in=0;
+	#19_000 logic_match_in=0;
+	#4_000 logic_match_in=1;
+    #9_000 logic_match_in=0;
+	#4_000 logic_match_in=1;
 	end
-update_end_in=1;
+logic_match_in=1'b1;
 end
 
+initial//-----------eff_trg_in------
+begin
+repeat(3000)
+	begin
+	#29_000 eff_trg_in=1;
+	#20 eff_trg_in=0;
+    #9_000 eff_trg_in=1;
+	#20 eff_trg_in=0;
+	end
+eff_trg_in=1'b0;
+end
+
+initial//-----------coincid_trg_in------
+begin
+repeat(3000)
+	begin
+	#39_000 coincid_trg_in=0;
+	#4_000 coincid_trg_in=1;
+    #9_000 coincid_trg_in=0;
+	#4_000 coincid_trg_in=1;
+	end
+coincid_trg_in=1'b1;
+end
+
+initial//-----------ext_trg_syn_in------
+begin
+repeat(3000)
+	begin
+	#49_000 ext_trg_syn_in=0;
+	#4_000 ext_trg_syn_in=1;
+    #9_000 ext_trg_syn_in=0;
+	#4_000 ext_trg_syn_in=1;
+	end
+ext_trg_syn_in=1'b1;
+end
 
 initial
 begin
@@ -152,36 +229,34 @@ end
 
 HitTrgCount #(
     .HIT_WIDTH       ( HIT_WIDTH       ),
-    .BUSY_WIDTH      ( BUSY_WIDTH      ),
     .MONIT_HIT_0_IDLE  ( MONIT_HIT_0_IDLE  ),
-    .MONIT_HIT_1_IDLE  ( MONIT_HIT_1_IDLE  ),
-    .MONIT_BUSY_IDLE ( MONIT_BUSY_IDLE ))
+    .MONIT_HIT_1_IDLE  ( MONIT_HIT_1_IDLE  ))
  u_HitTrgCount (
     .clk_in                  ( clk_in                         ),
     .rst_in                ( rst_in                       ),
-    .hit_syn_in              ( hit_syn_in              [7:0]  ),
+    .rd_in                  ( rd_in                       ),
+    .hit_syn_in              ( hit_syn_in              [12:0]  ),
     .busy_syn_in             ( busy_syn_in             [1:0]  ),
     .hit_start_in            ( hit_start_in                   ),
-    .update_end_in           ( update_end_in                  ),
     .eff_trg_in              ( eff_trg_in                     ),
     .coincid_trg_in          ( coincid_trg_in                 ),
     .logic_match_in          ( logic_match_in                 ),
     .ext_trg_syn_in          ( ext_trg_syn_in                 ),
-    .hit_monit_fix_sel_in    ( hit_monit_fix_sel_in    [2:0]  ),
+    .hit_monit_fix_sel_in    ( hit_monit_fix_sel_in    [3:0]  ),
     .busy_monit_fix_sel_in   ( busy_monit_fix_sel_in          ),
 
-    .hit_monit_sel_out       ( hit_monit_sel_out       [2:0]  ),
-    .hit_monit_err_cnt_out   ( hit_monit_err_cnt_out   [7:0]  ),
-    .busy_monit_err_cnt_out  ( busy_monit_err_cnt_out  [7:0]  ),
-    .hit_monit_cnt_0_out     ( hit_monit_cnt_0_out     [31:0] ),
-    .hit_monit_cnt_1_out     ( hit_monit_cnt_1_out     [31:0] ),
-    .busy_monit_cnt_out      ( busy_monit_cnt_out      [15:0] ),
-    .hit_start_cnt_out       ( hit_start_cnt_out       [15:0] ),
-    .logic_match_cnt_out     ( logic_match_cnt_out     [15:0] ),
-    .eff_trg_cnt_out         ( eff_trg_cnt_out         [15:0] ),
-    .coincid_trg_cnt_out     ( coincid_trg_cnt_out     [15:0] ),
-    .ext_trg_cnt_out         ( ext_trg_cnt_out         [15:0] ),
-    .trg_delay_timer_out       (  trg_delay_timer_out    [7:0]  )
+    .hit_monit_sel_out       ( hit_monit_sel_out       [7:0]  ),//OK
+    .hit_monit_err_cnt_out   ( hit_monit_err_cnt_out   [7:0]  ),//OK
+    .busy_monit_err_cnt_out  ( busy_monit_err_cnt_out  [7:0]  ),//OK
+    .hit_monit_cnt_0_out     ( hit_monit_cnt_0_out     [31:0] ),//OK
+    .hit_monit_cnt_1_out     ( hit_monit_cnt_1_out     [31:0] ),//OK
+    .busy_monit_cnt_out      ( busy_monit_cnt_out      [15:0] ),//OK
+    .hit_start_cnt_out       ( hit_start_cnt_out       [15:0] ),//OK
+    .logic_match_cnt_out     ( logic_match_cnt_out     [15:0] ),//OK
+    .eff_trg_cnt_out         ( eff_trg_cnt_out         [15:0] ),//OK
+    .coincid_trg_cnt_out     ( coincid_trg_cnt_out     [15:0] ),//OK
+    .ext_trg_cnt_out         ( ext_trg_cnt_out         [15:0] ),//OK
+    .trg_delay_timer_out       (  trg_delay_timer_out    [7:0]  )//OK
 );
 
 

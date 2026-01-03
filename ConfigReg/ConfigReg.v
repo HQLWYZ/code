@@ -2,9 +2,11 @@
 /* 															*/
 /*	file name:	ConfigReg.v				           			*/
 /* 	date:		2025/03/06									*/
+/* 	modified:	2026/01/02								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
+/* 	note1:		system clock = 50MHz						*/
 /* 	note:													*/
 /* 															*/
 /*----------------------------------------------------------*/
@@ -47,7 +49,6 @@ module ConfigReg(
 	output  [1:0]   busy_ab_sel_out,
     output  [1:0]   busy_mask_out,
     output          busy_ignore_out,//busy_ignore_out = 1: ignore the TRB busy signal; 
-    //output  [1:0]   busy_start_sel_out,
 	output  [7:0]   acd_csi_hit_tim_diff_out, //default set 4us, e.g. 4us/20ns = 200
 	output  [3:0]   acd_fee_top_hit_align_out,//default jitter is 40ns, 40ns/20ns = 2
 	output  [3:0]   acd_fee_sec_hit_align_out,
@@ -59,7 +60,7 @@ module ConfigReg(
 	output  [3:0]   cal_fee_4_hit_align_out,
     output  [15:0]   trg_match_win_out,//wait time for trigger windows
 	output  [7:0]   trg_dead_time_out,//wait time for trigger windows
-    output  [4:0]   logic_grp_oe_out,
+    output  [7:0]   logic_grp_oe_out,
 
     output  [7:0]   cycled_trg_period_out,
 	output  [15:0]  cycled_trg_num_out,
@@ -146,7 +147,7 @@ always @(posedge clk_in)
         cmd_rst_reg <= 1'b0;
         cmd_rst_cnt <= 6'b0;
     end
-    else if(cmd_rst_cnt == 6'd50)
+    else if(cmd_rst_cnt == 6'd50)//20ns*50=1us
     begin
         cmd_rst_cnt <= 6'd0;
         cmd_rst_reg <= 1'b0;
@@ -192,7 +193,8 @@ begin
 	if (rst_in) begin
 		config_received_cnt <= 16'b0;
 	end
-	else if  (wr_in & ~wr_in_r & (wr_addr_in >= 8'h02) & (wr_addr_in <= 8'h15)) begin//leading edge of wr_addr_in
+	else if  (~wr_in & wr_in_r & (wr_addr_in >= 8'h02) & (wr_addr_in <= 8'h15)) begin//falling edge of wr_in
+	//else if  (wr_in & ~wr_in_r ) begin//leading edge of wr_in
 		config_received_cnt <= config_received_cnt+ 1'b1;
 	end	
 
@@ -231,28 +233,31 @@ assign	hit_mask_out 				= hit_mask_reg[15:0];
 
 assign	hit_monit_fix_sel_out 		= busy_set_reg[15:13]; 	//temperatory create this for fixed channel
 assign	busy_monit_fix_sel_out 		= busy_set_reg[12];		//temperatory create this for fixed channel
-
 assign	busy_ab_sel_out 			= busy_set_reg[7:6];
 assign	busy_mask_out 				= busy_set_reg[5:4];
 assign	busy_ignore_out 			= busy_set_reg[3];
-//assign	busy_start_sel_out 			= busy_set_reg[1:0];
+
 assign	acd_csi_hit_tim_diff_out 	= hit_delay_win_reg[7:0];
-assign	acd_fee_top_hit_align_out 	= hit_align_reg0[15:12];//
+
+assign	acd_fee_top_hit_align_out 	= hit_align_reg0[15:12];
 assign	acd_fee_sec_hit_align_out 	= hit_align_reg0[11:8];
 assign	acd_fee_sid_hit_align_out 	= hit_align_reg0[7:4];
-assign	csi_hit_align_out 			= hit_align_reg0[3:0];//
-assign	cal_fee_1_hit_align_out 	= hit_align_reg1[15:12];//
+assign	csi_hit_align_out 			= hit_align_reg0[3:0];
+
+assign	cal_fee_1_hit_align_out 	= hit_align_reg1[15:12];
 assign	cal_fee_2_hit_align_out 	= hit_align_reg1[11:8];
 assign	cal_fee_3_hit_align_out 	= hit_align_reg1[7:4];
 assign	cal_fee_4_hit_align_out 	= hit_align_reg1[3:0];
 
 assign	trg_match_win_out 			= trg_match_win_reg;
 assign	trg_dead_time_out 			= trg_dead_time_reg[7:0];
-assign	logic_grp_oe_out 			= trg_mode_oe_reg[4:0];
+
+assign	logic_grp_oe_out 			= trg_mode_oe_reg[7:0];
 
 assign	cycled_trg_period_out 		= cycled_trg_period_reg[7:0];
 assign	cycled_trg_num_out 			= cycled_trg_num_reg[15:0];
 assign	ext_trg_delay_out 			= ext_trg_delay_reg[7:0];
+
 assign	config_received_out 		= config_received_cnt[15:0];
 
 

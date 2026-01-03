@@ -2,33 +2,32 @@
 /* 															*/
 /*	file name:	CycledTrgGen.v			           			*/
 /* 	date:		2025/03/07									*/
+/* 	modified:	2026/01/02								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
-/* 	note:		[cycled_trg_period_cnt], different settings for SIMULATION  or real application.	*/
-/* 	clk:        50MHz										*/
+/* 	note:		                                            */
+/* 	note1:		system clock = 50MHz						*/
 /* 															*/
 /*----------------------------------------------------------*/
 
 module CycledTrgGen(
 	input			clk_in,
 	input			rst_in,
-    input   [1:0]   cycled_trg_oe_in,//enable cycle trigger generator. [2'b10]: non-stop, to send the cycled trigger signal; [2'b01]: just send the cycled signal when receiving the command,  within defined trigger number in.
     input           cycled_trg_bgn_in,
     input   [7:0]	cycled_trg_period_in,//the Unit = 2ms. So the maximum period is 2ms*2^8 = 512ms. Default: 10ms[baseline mode], 20ms[normal cali mode], 50ms[waveform cali mode]
     input   [15:0]	cycled_trg_num_in,//cycled trigger number
     output          cycled_trg_out,
-    output          cycled_trg_end_out,//width = 1 clock
-    output	        cycled_trg_1us_out//expanded pulse of the cycle trigger
+    output          cycled_trg_end_out//width = 1 clock
 	);
 	
-parameter   TRG_PERIOD_UNIT_2MS = 100000; //200000*20ns = 2ms
+parameter   TRG_PERIOD_UNIT_2MS = 100000; //100000*20ns = 2ms
 
 //register the output signal
-reg  cycled_trg_end_sig, cycled_trg_1us_sig;
+reg  cycled_trg_end_sig;
 
 //cycled trigger 
-reg cycled_trg_enb_r, cycled_trg_sig;///
+reg  cycled_trg_sig;
 reg[27:0]   cycled_trg_period_cnt;//the clk is 50Mhz
 reg[15:0]   cycled_trg_cnt;
 
@@ -40,75 +39,105 @@ always@(posedge clk_in)
     else
         cycled_trg_bgn_in_r <= cycled_trg_bgn_in; 
 
+reg[2:0] c_state, n_state;
+
+parameter   IDLE = 0, 
+            CYCLED_TRG_CHECK = 1, 
+            CYCLED_TRG_GEN = 2, 
+			CYCLED_TRG_END = 3;
 
 always @(posedge clk_in)
 begin
-    if (rst_in) begin
+	if (rst_in)
+		c_state <= IDLE;
+	else 
+		c_state <= n_state;	
+end
+
+always @(c_state or cycled_trg_bgn_in or cycled_trg_cnt or cycled_trg_period_cnt or cycled_trg_num_in)
+begin
+	n_state = IDLE; //default value
+	case(c_state)
+		IDLE: begin
+			if (cycled_trg_bgn_in & ~cycled_trg_bgn_in_r)   ///detect the START OF cycled_trg_bgn_in signal 
+				n_state = CYCLED_TRG_CHECK;
+			else 
+				n_state = IDLE;			
+		end
+
+		CYCLED_TRG_CHECK: begin
+			if (cycled_trg_cnt >= cycled_trg_num_in)   // 
+				n_state = CYCLED_TRG_END;
+			else 
+				n_state = CYCLED_TRG_GEN;			
+		end
+
+		CYCLED_TRG_GEN: begin
+			if (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_2MS}) //
+            //if (cycled_trg_period_cnt == {cycled_trg_period_in, 2'b0})//[ONLY FOR SIMULATION]
+				n_state = CYCLED_TRG_CHECK;
+			else 
+				n_state = CYCLED_TRG_GEN;			
+		end
+
+		CYCLED_TRG_END: begin
+				n_state = IDLE;			
+		end
+
+		default: begin
+			n_state = IDLE;			
+		end
+	endcase	
+end
+
+always @(posedge clk_in)
+begin
+	   if (rst_in) begin
         cycled_trg_period_cnt <= 28'b0;
         cycled_trg_sig <= 1'b0;
         cycled_trg_end_sig <= 1'b0;
         cycled_trg_cnt <= 16'b0;
-        cycled_trg_enb_r <= 1'b0;
     end
-    else if ( (cycled_trg_oe_in[1] == 1'b1) &  (cycled_trg_oe_in[0] == 1'b1) && cycled_trg_enb_r && (cycled_trg_cnt < cycled_trg_num_in) )  begin//
-       if (cycled_trg_period_cnt >= {cycled_trg_period_in * TRG_PERIOD_UNIT_2MS}) begin //
-       //if (cycled_trg_period_cnt >= {cycled_trg_period_in, 2'b0}) begin //the time step is 2 to 2th power, ONLY FOR SIMULATION
+    else begin
+        case(c_state) 
+         IDLE: begin
             cycled_trg_period_cnt <= 28'b0;
-            cycled_trg_sig <= 1'b1;//
-            cycled_trg_cnt <= cycled_trg_cnt + 1;
+            cycled_trg_sig <= 1'b0;
+            cycled_trg_end_sig <= 1'b0;
+            cycled_trg_cnt <= 16'b0;
+         end
+        CYCLED_TRG_CHECK: begin
+            cycled_trg_cnt <= cycled_trg_cnt+1'b1;
         end
-        else  begin
-        	cycled_trg_period_cnt <= cycled_trg_period_cnt + 1;
-        	cycled_trg_sig <= 1'b0;
+
+        CYCLED_TRG_GEN: begin
+            cycled_trg_period_cnt <= cycled_trg_period_cnt + 1'b1;
+            //if( (cycled_trg_period_cnt == {cycled_trg_period_in, 2'b0}) ) begin //[ONLY FOR SIMULATION]
+            if( (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_2MS}) ) begin 
+                cycled_trg_sig <= 1'b1;//
+                cycled_trg_period_cnt <= 28'b0;
+            end
+            else begin
+                cycled_trg_sig <= 1'b0;
+            end
+         end
+
+        CYCLED_TRG_END: begin
+            cycled_trg_end_sig <= 1'b1;        
+            cycled_trg_sig <= 1'b0; //self_trg is pulse, width = 1/clk
         end
-    end  
-    else if ( (cycled_trg_oe_in[0] == 1'b1) & cycled_trg_enb_r & (cycled_trg_cnt >= cycled_trg_num_in) )  begin
-        cycled_trg_end_sig <= 1'b1;        
-        cycled_trg_sig <= 1'b0; //self_trg is pulse, width = 1/clk
-        cycled_trg_enb_r <= 1'b0;
-    end
-    else if (cycled_trg_bgn_in & ~cycled_trg_bgn_in_r) begin ///when receive the command, set the cycle_trg_enb_r = 1
-    	cycled_trg_enb_r <= 1'b1;
-    	cycled_trg_period_cnt <= 28'b0;
-        cycled_trg_sig <= 1'b0;
-        cycled_trg_end_sig <= 1'b0;
-        cycled_trg_cnt <= 16'b0;
-		end    	
-    else begin  // 
-        cycled_trg_period_cnt <= 28'b0;
-        cycled_trg_sig <= 1'b0;
-        cycled_trg_end_sig <= 1'b0;
-        cycled_trg_cnt <= 16'b0;
-        cycled_trg_enb_r <= 1'b0;
+
+         default: begin
+            cycled_trg_period_cnt <= 28'b0;
+            cycled_trg_sig <= 1'b0;
+            cycled_trg_end_sig <= 1'b0;
+            cycled_trg_cnt <= 16'b0;
+         end
+        endcase
     end
 end
-
-
-//generate the cycled_trigger_out with about 1000ns width
-reg[4:0]	cycled_trg_expd_cnt;
-always @(posedge clk_in)
-begin
-	if (rst_in) begin
-		cycled_trg_1us_sig <= 1'b0;
-		cycled_trg_expd_cnt <= 5'b0;
-	end
-	else if (cycled_trg_sig) begin // re-triggerable
-		cycled_trg_1us_sig <= 1'b1;
-		cycled_trg_expd_cnt <= 5'b0;
-	end
-	else if (cycled_trg_1us_sig && (cycled_trg_expd_cnt < 6'd50)) begin //less than 1us, 20ns*50 = 1us
-		cycled_trg_expd_cnt <= cycled_trg_expd_cnt + 1;
-		cycled_trg_1us_sig <= 1'b1;
-	end
-	else if (cycled_trg_expd_cnt >= 5'b1_1001) begin
-		cycled_trg_expd_cnt <= 5'b0;
-		cycled_trg_1us_sig <= 1'b0;
-	end
-end
-
 
 assign	cycled_trg_out = cycled_trg_sig;
 assign  cycled_trg_end_out = cycled_trg_end_sig;
-assign  cycled_trg_1us_out = cycled_trg_1us_sig;
 
 endmodule

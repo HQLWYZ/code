@@ -10,7 +10,7 @@
 /*----------------------------------------------------------*/
 
 `timescale	1ns / 1ns
-`define	CTRL_REG                16'b0000_0000_0000_1101  // control register default value[2:0]
+`define	CTRL_REG                16'b0000_0000_0000_0000  // control register default value[2:0]
 `define	CMD_REG                 16'b0000_0000_0000_1101
 `define TRG_MODE_MIP1_REG       16'b0000_0000_0000_1101 // trigger mode register0 value
 `define TRG_MODE_MIP2_REG       16'b0000_0000_0000_1101 // trigger mode register1 value
