@@ -6,15 +6,21 @@ module tb_TrgMonData;
 // TrgMonData Parameters
 parameter PERIOD  = 10;
 
+initial
+    begin
+        $dumpfile("./tb_TrgMonData.vcd");
+        $dumpvars(0,tb_TrgMonData);
+        #3_000_000 $finish;
+end
 
 // TrgMonData Inputs
 reg   clk_in                               = 0 ;
-reg   rst_in_N                             = 0 ;
+reg   rst_in                             = 0 ;
 reg   rd_in                                = 0 ;
 reg   [7:0]  rd_addr_in                    = 0 ;
 reg   [15:0]  ctrl_reg_in                  = 0 ;
 reg   [15:0]  cmd_reg_in                   = 0 ;
-reg   [15:0]  trig_mode_mip1_in            = 0 ;
+reg   [15:0]  trg_mode_mip1_in            = 0 ;
 reg   [15:0]  trg_mode_mip2_in             = 0 ;
 reg   [15:0]  trg_mode_gm1_in              = 0 ;
 reg   [15:0]  trg_mode_gm2_in              = 0 ;
@@ -35,7 +41,7 @@ reg   [15:0]  coincid_MIP1_cnt_in          = 0 ;
 reg   [15:0]  coincid_MIP2_cnt_in          = 0 ;
 reg   [15:0]  coincid_GM1_cnt_in           = 0 ;
 reg   [15:0]  coincid_GM2_cnt_in           = 0 ;
-reg   [15:0]  coincid_UBS_cnt_in           = 0 ;
+reg   [31:0]  coincid_UBS_cnt_in           = 0 ;
 reg   [15:0]  logic_match_cnt_in           = 0 ;
 reg   [15:0]  ext_trg_cnt_in               = 0 ;
 reg   [15:0]  hit_ab_sel_in                = 0 ;
@@ -46,7 +52,8 @@ reg   [15:0]  trg_match_win_in             = 0 ;
 reg   [15:0]  trg_dead_time_in             = 0 ;
 reg   [15:0]  config_received_in           = 0 ;
 reg   [15:0]  ext_trg_delay_in             = 0 ;
-reg   [15:0]  cycle_trg_period_in          = 0 ;
+reg   [15:0]  cycled_trg_period_in          = 0 ;
+reg   [7:0]  logic_grp_oe_in          = 0 ;
 
 // TrgMonData Outputs
 wire  [15:0]  mon_data_out                 ;
@@ -59,45 +66,21 @@ end
 
 initial
 begin
-    #(PERIOD*2) rst_in_N  =  1;
+    #(PERIOD*2) rst_in  =  1;
+    #(PERIOD*2) rst_in  =  0;
 end
 
 
 initial//
 begin
-    #90_000     rd_in=1;  //90us
+    #100_100     rd_in=1;  //100.1us
 	#10_000_000 rd_in=0;//10ms
 end
 
 initial//
 begin
-    #100_000    rd_addr_in=8'd0;  //100us
-	#100_000    rd_addr_in=8'd1;  //100us
-    #100_000    rd_addr_in=8'd2;  //100us
-    #100_000    rd_addr_in=8'd3;  //100us
-    #100_000    rd_addr_in=8'd4;  //100us
-    #100_000    rd_addr_in=8'd5;  //100us
-    #100_000    rd_addr_in=8'd6;  //100us
-    #100_000    rd_addr_in=8'd7;  //100us
-    #100_000    rd_addr_in=8'd8;  //100us
-    #100_000    rd_addr_in=8'd9;  //100us
-    #100_000    rd_addr_in=8'd10;  //100us
-    #100_000    rd_addr_in=8'd11;  //100us
-    #100_000    rd_addr_in=8'd12;  //100us
-    #100_000    rd_addr_in=8'd13;  //100us
-    #100_000    rd_addr_in=8'd14;  //100us
-    #100_000    rd_addr_in=8'd15;  //100us
-    #100_000    rd_addr_in=8'd16;  //100us
-    #100_000    rd_addr_in=8'd17;  //100us
-    #100_000    rd_addr_in=8'd18;  //100us
-    #100_000    rd_addr_in=8'd19;  //100us
-    #100_000    rd_addr_in=8'd20;  //100us
-    #100_000    rd_addr_in=8'd21;  //100us
-    #100_000    rd_addr_in=8'd22;  //100us
-    #100_000    rd_addr_in=8'd23;  //100us
-    #100_000    rd_addr_in=8'd24;  //100us
     #100_000    rd_addr_in=8'd25;  //100us
-    #100_000    rd_addr_in=8'd26;  //100us
+	#100_000    rd_addr_in=8'd26;  //100us
     #100_000    rd_addr_in=8'd27;  //100us
     #100_000    rd_addr_in=8'd28;  //100us
     #100_000    rd_addr_in=8'd29;  //100us
@@ -109,13 +92,39 @@ begin
     #100_000    rd_addr_in=8'd35;  //100us
     #100_000    rd_addr_in=8'd36;  //100us
     #100_000    rd_addr_in=8'd37;  //100us
+    #100_000    rd_addr_in=8'd38;  //100us
+    #100_000    rd_addr_in=8'd39;  //100us
+    #100_000    rd_addr_in=8'd40;  //100us
+    #100_000    rd_addr_in=8'd41;  //100us
+    #100_000    rd_addr_in=8'd42;  //100us
+    #100_000    rd_addr_in=8'd43;  //100us
+    #100_000    rd_addr_in=8'd44;  //100us
+    #100_000    rd_addr_in=8'd45;  //100us
+    #100_000    rd_addr_in=8'd46;  //100us
+    #100_000    rd_addr_in=8'd47;  //100us
+    #100_000    rd_addr_in=8'd48;  //100us
+    #100_000    rd_addr_in=8'd49;  //100us
+    #100_000    rd_addr_in=8'd50;  //100us
+    #100_000    rd_addr_in=8'd51;  //100us
+    #100_000    rd_addr_in=8'd52;  //100us
+    #100_000    rd_addr_in=8'd53;  //100us
+    #100_000    rd_addr_in=8'd54;  //100us
+    #100_000    rd_addr_in=8'd55;  //100us
+    #100_000    rd_addr_in=8'd56;  //100us
+    #100_000    rd_addr_in=8'd57;  //100us
+    #100_000    rd_addr_in=8'd58;  //100us
+    #100_000    rd_addr_in=8'd59;  //100us
+    #100_000    rd_addr_in=8'd60;  //100us
+    #100_000    rd_addr_in=8'd61;  //100us
+    #100_000    rd_addr_in=8'd62;  //100us
+
 end
 
 initial//
 begin
     ctrl_reg_in                  = 16'h3553 ;
     cmd_reg_in                   = 16'h0003 ;
-    trig_mode_mip1_in            = 16'h3553 ;
+    trg_mode_mip1_in            = 16'h3553 ;
     trg_mode_mip2_in             = 16'h0003 ;
     trg_mode_gm1_in              = 16'h3553 ;
     trg_mode_gm2_in              = 16'h3553 ;
@@ -136,7 +145,7 @@ begin
     coincid_MIP2_cnt_in          = 16'h3553 ;
     coincid_GM1_cnt_in           = 16'h3553 ;
     coincid_GM2_cnt_in           = 16'h3553 ;
-    coincid_UBS_cnt_in           = 16'h0003 ;
+    coincid_UBS_cnt_in           = 32'h33330003 ;
     logic_match_cnt_in           = 16'h3553 ;
     ext_trg_cnt_in               = 16'h3553 ;
     hit_ab_sel_in                = 16'h3553 ;
@@ -147,18 +156,19 @@ begin
     trg_dead_time_in             = 16'h3553 ;
     config_received_in           = 16'h0003 ;
     ext_trg_delay_in             = 16'h3553 ;
-    cycle_trg_period_in          = 16'h0003 ;
+    cycled_trg_period_in          = 16'h0003 ;
+    logic_grp_oe_in                  = 8'h13 ;
 end
 
 
 TrgMonData  u_TrgMonData (
     .clk_in                  ( clk_in                        ),
-    .rst_in_N                ( rst_in_N                      ),
+    .rst_in                ( rst_in                      ),
     .rd_in                   ( rd_in                         ),
     .rd_addr_in              ( rd_addr_in             [7:0]  ),
     .ctrl_reg_in             ( ctrl_reg_in            [15:0] ),
     .cmd_reg_in              ( cmd_reg_in             [15:0] ),
-    .trig_mode_mip1_in       ( trig_mode_mip1_in      [15:0] ),
+    .trg_mode_mip1_in        ( trg_mode_mip1_in       [15:0] ),
     .trg_mode_mip2_in        ( trg_mode_mip2_in       [15:0] ),
     .trg_mode_gm1_in         ( trg_mode_gm1_in        [15:0] ),
     .trg_mode_gm2_in         ( trg_mode_gm2_in        [15:0] ),
@@ -170,8 +180,8 @@ TrgMonData  u_TrgMonData (
     .hit_monit_sel_in        ( hit_monit_sel_in       [15:0] ),
     .hit_monit_err_cnt_in    ( hit_monit_err_cnt_in   [15:0] ),
     .hit_start_cnt_in        ( hit_start_cnt_in       [15:0] ),
-    .hit_monit_cnt_0_in      ( hit_monit_cnt_0_in     [15:0] ),
-    .hit_monit_cnt_1_in      ( hit_monit_cnt_1_in     [15:0] ),
+    .hit_monit_cnt_0_in      ( hit_monit_cnt_0_in     [31:0] ),
+    .hit_monit_cnt_1_in      ( hit_monit_cnt_1_in     [31:0] ),
     .busy_monit_fix_sel_in   ( busy_monit_fix_sel_in  [15:0] ),
     .busy_monit_err_cnt_in   ( busy_monit_err_cnt_in  [15:0] ),
     .busy_monit_cnt_in       ( busy_monit_cnt_in      [15:0] ),
@@ -179,7 +189,7 @@ TrgMonData  u_TrgMonData (
     .coincid_MIP2_cnt_in     ( coincid_MIP2_cnt_in    [15:0] ),
     .coincid_GM1_cnt_in      ( coincid_GM1_cnt_in     [15:0] ),
     .coincid_GM2_cnt_in      ( coincid_GM2_cnt_in     [15:0] ),
-    .coincid_UBS_cnt_in      ( coincid_UBS_cnt_in     [15:0] ),
+    .coincid_UBS_cnt_in      ( coincid_UBS_cnt_in     [31:0] ),
     .logic_match_cnt_in      ( logic_match_cnt_in     [15:0] ),
     .ext_trg_cnt_in          ( ext_trg_cnt_in         [15:0] ),
     .hit_ab_sel_in           ( hit_ab_sel_in          [15:0] ),
@@ -190,8 +200,8 @@ TrgMonData  u_TrgMonData (
     .trg_dead_time_in        ( trg_dead_time_in       [15:0] ),
     .config_received_in      ( config_received_in     [15:0] ),
     .ext_trg_delay_in        ( ext_trg_delay_in       [15:0] ),
-    .cycle_trg_period_in     ( cycle_trg_period_in    [15:0] ),
-
+    .cycled_trg_period_in     ( cycled_trg_period_in    [15:0] ),
+    .logic_grp_oe_in          ( logic_grp_oe_in      [15:0] ),
     .mon_data_out            ( mon_data_out           [15:0] )
 );
 

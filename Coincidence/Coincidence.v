@@ -72,7 +72,7 @@ module Coincidence(
     output	[15:0]	coincid_MIP2_cnt_out,
 	output	[15:0]	coincid_GM1_cnt_out,
     output	[15:0]	coincid_GM2_cnt_out,
-    output	[15:0]	coincid_UBS_cnt_out,
+    output	[31:0]	coincid_UBS_cnt_out,
 	output [15:0]	hit_sig_stus_out
 	);
 	
@@ -1063,7 +1063,8 @@ end
 
 
 //
-reg	[15:0]	coincid_UBS_cnt, coincid_GM1_cnt, coincid_GM2_cnt, coincid_MIP1_cnt, coincid_MIP2_cnt;//////counter for the different coincide trigger source
+reg	[31:0]	coincid_UBS_cnt;
+reg	[15:0]	 coincid_GM1_cnt, coincid_GM2_cnt, coincid_MIP1_cnt, coincid_MIP2_cnt;//////counter for the different coincide trigger source
 reg	coincid_UBS_engine_enb_r, coincid_MIP1_engine_enb_r, coincid_MIP2_engine_enb_r; ////trigger logic enable after prescale (divider)
 wire[4:0] W_coincid_engine_enb, W_logic_all_grp_result;
 reg	[4:0] coincid_result_r, coincid_tag_raw_r;// result of coincidence
@@ -1078,7 +1079,7 @@ begin
         coincid_MIP2_cnt <= 16'b0;
 		coincid_GM1_cnt <= 16'b0;
 		coincid_GM2_cnt <= 16'b0;
-		coincid_UBS_cnt <= 16'b0;
+		coincid_UBS_cnt <= 32'b0;
 	end
 	else if (coincid_tag_raw_enb_r) begin
 		coincid_MIP1_cnt <= coincid_result_r[0]? (coincid_MIP1_cnt + 1) : coincid_MIP1_cnt ;

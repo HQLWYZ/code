@@ -105,7 +105,7 @@ wire	[15:0]	coincid_MIP1_cnt_sig;
 wire	[15:0]	coincid_MIP2_cnt_sig;
 wire	[15:0]	coincid_GM1_cnt_sig;
 wire	[15:0]	coincid_GM2_cnt_sig;
-wire	[15:0]	coincid_UBS_cnt_sig;
+wire	[31:0]	coincid_UBS_cnt_sig;
 //wire          	coincid_trg_raw_1us_sig;
 //wire    [4:0]   coincid_tag_raw_sig;
 wire    [23:0]  trg_busy_time_cnt_sig;
@@ -429,7 +429,6 @@ TrgSciData TrgSciData_inst
 );
 
 ResetGen inst_ResetGen(
-	.clk_in(clk_in),
 	.ctrl_rst_in(ctrl_rst_in),
     .cmd_rst_in(cmd_rst_sig),
     .rst_logic_out(rst_logic_sig),
