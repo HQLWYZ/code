@@ -21,22 +21,26 @@ module ConfigReg(
 	output          data_trans_enb_out,
 	output  	   	cmd_rst_out,
 	output  	   	cycled_trg_bgn_out,
-
 	output  [15:0]   ctrl_reg_out,
 	output  [15:0]   cmd_reg_out,
 
 	output  [7:0]   logic_grp0_mux_out,
     output  [1:0]   logic_grp0_sel_out,
+
 	output  [5:0]   coincid_MIP1_div_out,
 	output  [7:0]   logic_grp1_mux_out,
     output  [1:0]   logic_grp1_sel_out,
+
 	output  [5:0]   coincid_MIP2_div_out,
 	output  [7:0]   logic_grp2_mux_out,
     output  [1:0]   logic_grp2_sel_out,
+
 	output  [7:0]   logic_grp3_mux_out,
     output  [1:0]   logic_grp3_sel_out,
+
 	output  [7:0]   logic_grp4_mux_out,
     output  [1:0]   logic_grp4_sel_out,
+
 	output  [5:0]   coincid_UBS_div_out,
 	output  [1:0]   logic_burst_sel_out,
 	output  reg[15:0]	trg_mode_mip1_reg, trg_mode_mip2_reg, trg_mode_gm1_reg,
@@ -61,7 +65,6 @@ module ConfigReg(
     output  [15:0]   trg_match_win_out,//wait time for trigger windows
 	output  [7:0]   trg_dead_time_out,//wait time for trigger windows
     output  [7:0]   logic_grp_oe_out,
-
     output  [7:0]   cycled_trg_period_out,
 	output  [15:0]  cycled_trg_num_out,
 	output  [7:0]   ext_trg_delay_out,

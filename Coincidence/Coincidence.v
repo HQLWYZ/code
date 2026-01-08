@@ -62,10 +62,9 @@ module Coincidence(
 	input   [3:0]   cal_fee_4_hit_align_in,
     input   [15:0]  trg_match_win_in,//wait time for trigger windows
 	input   [4:0]   logic_grp_oe_in,
-
     output          coincid_trg_out,
     output          logic_match_out,
-    output	[7:0]	hit_syn_out,
+    output	[12:0]	hit_syn_out,
 	output	[1:0]	busy_syn_out,
     output          hit_start_out,
     output	[15:0]	coincid_MIP1_cnt_out,
@@ -73,7 +72,8 @@ module Coincidence(
 	output	[15:0]	coincid_GM1_cnt_out,
     output	[15:0]	coincid_GM2_cnt_out,
     output	[31:0]	coincid_UBS_cnt_out,
-	output [15:0]	hit_sig_stus_out
+	output 	[15:0]	hit_sig_stus_out,
+	output  [4:0]	W_logic_all_grp_result_out
 	);
 	
 
@@ -1302,7 +1302,8 @@ assign	coincid_GM2_cnt_out = coincid_GM2_cnt;
 assign	coincid_UBS_cnt_out = coincid_UBS_cnt;
 assign	hit_syn_out = hit_syn_r;
 assign  busy_syn_out = busy_syn_r;
-assign	hit_sig_stus_out = {8'b0000_0000, trg_seed_reg};//orig:shift_reg -- after trg_match_win_in[15:8], coincid_trg_sig = 1, so we use trg_seed_reg to transmit
+assign	hit_sig_stus_out = {3'b000, trg_seed_reg};//orig:shift_reg -- after trg_match_win_in[15:8], coincid_trg_sig = 1, so we use trg_seed_reg to transmit
+assign	W_logic_all_grp_result_out = W_logic_all_grp_result_out;
 
 
 endmodule

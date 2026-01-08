@@ -1,6 +1,0 @@
-CommandLine
-C:\Xilinx\10.1\ISE\bin\nt64\unwrapped\xst.exe -ise Z:/TrgSciData/xlnx_auto_0.ise -intstyle ise -ifn Z:/TrgSciData/sci_fifo.xst -ofn Z:/TrgSciData/sci_fifo.syr -finalclean 1
-s
-FormatString
-xst [-ifn <InputFile>] [-ofn <OutputFile>] [-ise <iseProjectFile>] [--quiet] [-intstyle <Style>] [--deb <DebugLevel>] [--finalclean <Clean>] [--PcubeFlow] [--globOptFlow] [--XstNtrc]
-s

@@ -2,6 +2,7 @@
 /* 															*/
 /*	file name:	TrgTop.v			           			    */
 /* 	date:		2025/04/21									*/
+/* 	modified:	2026/01/08								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
@@ -18,7 +19,6 @@ module TrgTop(
     input   [15:0]  data_in,        //to ConFigReg module
     input           rd_in,          //to TrgMonData module
     input   [7:0]   rd_addr_in,     //to TrgMonData module
-//	input 			store_en,       //when starting to transmit, store the transient register value 
 	input           fifo_rd_clk,    //to TrgSciData module
     input           fifo_rd_in,     //to TrgSciData module
     input           ext_trg_test_in, //to GroundTestGen module
@@ -62,7 +62,11 @@ module TrgTop(
     output          cmd_rst_sig
 	
 );
-	
+wire	[7:0]   logic_grp0_mux_sig;	
+wire	[7:0]   logic_grp1_mux_sig;	
+wire	[7:0]   logic_grp2_mux_sig;
+wire	[7:0]   logic_grp3_mux_sig;
+wire	[7:0]   logic_grp4_mux_sig;
 wire	[1:0]   logic_grp0_sel_sig;
 wire	[5:0]   coincid_MIP1_div_sig;
 wire	[1:0]   logic_grp1_sel_sig;
@@ -111,7 +115,7 @@ wire	[31:0]	coincid_UBS_cnt_sig;
 wire    [23:0]  trg_busy_time_cnt_sig;
 wire			trg_busy_timer_rdy_sig;
 wire    [15:0]	hit_sig_stus_sig;
-//wire            si_busy_tmp;
+wire    [4:0]       W_logic_all_grp_result_sig;
 
 wire			trg_enb_sig;
 wire  	   		cycled_trg_bgn_sig;
@@ -164,12 +168,17 @@ ConfigReg ConfigReg_inst(
 	.cycled_trg_bgn_out(cycled_trg_bgn_sig),
     .ctrl_reg_out(ctrl_reg_sig),
     .cmd_reg_out(cmd_reg_sig),
+    .logic_grp0_mux_out(logic_grp0_mux_sig),
     .logic_grp0_sel_out(logic_grp0_sel_sig),
 	.coincid_MIP1_div_out(coincid_MIP1_div_sig),
+    .logic_grp1_mux_out(logic_grp1_mux_sig),
     .logic_grp1_sel_out(logic_grp1_sel_sig),
 	.coincid_MIP2_div_out(coincid_MIP2_div_sig),
+    .logic_grp2_mux_out(logic_grp2_mux_sig),
     .logic_grp2_sel_out(logic_grp2_sel_sig),
+    .logic_grp3_mux_out(logic_grp3_mux_sig),
     .logic_grp3_sel_out(logic_grp3_sel_sig),
+    .logic_grp4_mux_out(logic_grp4_mux_sig),
     .logic_grp4_sel_out(logic_grp4_sel_sig),
 	.coincid_UBS_div_out(coincid_UBS_div_sig),
 	.logic_burst_sel_out(logic_burst_sel_sig),
@@ -186,8 +195,6 @@ ConfigReg ConfigReg_inst(
 	.busy_ab_sel_out(busy_ab_sel_sig),
     .busy_mask_out(busy_mask_sig),
     .busy_ignore_out(busy_ignore_sig),
-    //.busy_mask_set_out(busy_set_reg),
-    //.busy_start_sel_out(busy_start_sig),
 	.acd_csi_hit_tim_diff_out(acd_csi_hit_tim_diff_sig), 
 	.acd_fee_top_hit_align_out(acd_fee_top_hit_align_sig),
 	.acd_fee_sec_hit_align_out(acd_fee_sec_hit_align_sig),
@@ -230,12 +237,17 @@ Coincidence Coincidence_inst(
     .cal_fee_3_hit_b_in_N(cal_fee_3_hit_b_in_N),
     .cal_fee_4_hit_a_in_N(cal_fee_4_hit_a_in_N),
     .cal_fee_4_hit_b_in_N(cal_fee_4_hit_b_in_N),
+    .logic_grp0_mux_in(logic_grp0_mux_sig),
     .logic_grp0_sel_in(logic_grp0_sel_sig),
 	.coincid_MIP1_div_in(coincid_MIP1_div_sig),
+    .logic_grp1_mux_in(logic_grp1_mux_sig),
     .logic_grp1_sel_in(logic_grp1_sel_sig),
 	.coincid_MIP2_div_in(coincid_MIP2_div_sig),
+    .logic_grp2_mux_in(logic_grp2_mux_sig),
     .logic_grp2_sel_in(logic_grp2_sel_sig),
+    .logic_grp3_mux_in(logic_grp3_mux_sig),
     .logic_grp3_sel_in(logic_grp3_sel_sig),
+    .logic_grp4_mux_in(logic_grp4_mux_sig),
     .logic_grp4_sel_in(logic_grp4_sel_sig),
 	.coincid_UBS_div_in(coincid_UBS_div_sig),
 	.logic_burst_sel_in(logic_burst_sel_sig),
@@ -259,30 +271,23 @@ Coincidence Coincidence_inst(
     .hit_syn_out(hit_syn_sig),
 	.busy_syn_out(busy_syn_sig),
     .hit_start_out(hit_start_sig),
-	//.busy_start_out(busy_start_sig),
     .coincid_MIP1_cnt_out(coincid_MIP1_cnt_sig),
     .coincid_MIP2_cnt_out(coincid_MIP2_cnt_sig),
 	.coincid_GM1_cnt_out(coincid_GM1_cnt_sig),
     .coincid_GM2_cnt_out(coincid_GM2_cnt_sig),
     .coincid_UBS_cnt_out(coincid_UBS_cnt_sig),
-    //.coincid_trg_raw_1us_out(coincid_trg_raw_1us_sig),
-    //.coincid_tag_raw_out(coincid_tag_raw_sig),
-	.trg_busy_time_cnt_out(trg_busy_time_cnt_sig),
-	.trg_busy_timer_rdy_out(trg_busy_timer_rdy_sig),
-	.hit_sig_stus_out(hit_sig_stus_sig)
-	//.si_busy_tmp(si_busy_tmp)
+	.hit_sig_stus_out(hit_sig_stus_sig),
+	.W_logic_all_grp_result_out(W_logic_all_grp_result_sig)
 	);
 
 CycledTrgGen CycledTrgGen_inst(
 	.clk_in(clk_in),
 	.rst_in(rst_logic_sig),
-    //.cycled_trg_oe_in(2'b11),
     .cycled_trg_bgn_in(cycled_trg_bgn_sig),
     .cycled_trg_period_in(cycled_trg_period_sig),
     .cycled_trg_num_in(cycled_trg_num_sig),
     .cycled_trg_out(cycled_trg_sig),
     .cycled_trg_end_out(cycled_trg_end_sig)
-    //.cycled_trg_1us_out(cycled_trg_1us_sig)
 	);
 
 GroundTestGen GroundTestGen_inst(
@@ -314,20 +319,18 @@ TrgOutCtrl TrgOutCtrl_inst(
     .trg_out_N_acd_b(trg_out_N_acd_b),//trig to acd(backup B)
     .trg_out_N_CsI_track_a(trg_out_N_CsI_track_a),//trig to CsI_track(primary A)
     .trg_out_N_CsI_track_b(trg_out_N_CsI_track_b),//trig to CsI_track(backup B)
-    //.trg_out_N_CsI_cal_a(trg_out_N_CsI_cal_a),//trig to CsI_cal(primary A)
-    //.trg_out_N_CsI_cal_b(trg_out_N_CsI_cal_b),//trig to CsI_cal(backup B)
     .trg_out_N_Si1_a(trg_out_N_Si1_a),//trig to Si(primary A)
     .trg_out_N_Si1_b(trg_out_N_Si1_b), 
-	 .trg_out_N_Si2_a(trg_out_N_Si2_a),
-	 .trg_out_N_Si2_b(trg_out_N_Si2_b),
-	 .trg_out_N_cal_fee_1_a(trg_out_N_cal_fee_1_a), 
-	 .trg_out_N_cal_fee_1_b(trg_out_N_cal_fee_1_b),
-	 .trg_out_N_cal_fee_2_a(trg_out_N_cal_fee_2_a), 
-	 .trg_out_N_cal_fee_2_b(trg_out_N_cal_fee_2_b),
+    .trg_out_N_Si2_a(trg_out_N_Si2_a),
+    .trg_out_N_Si2_b(trg_out_N_Si2_b),
+    .trg_out_N_cal_fee_1_a(trg_out_N_cal_fee_1_a), 
+    .trg_out_N_cal_fee_1_b(trg_out_N_cal_fee_1_b),
+    .trg_out_N_cal_fee_2_a(trg_out_N_cal_fee_2_a), 
+    .trg_out_N_cal_fee_2_b(trg_out_N_cal_fee_2_b),
     .trg_out_N_cal_fee_3_a(trg_out_N_cal_fee_3_a), 
-	 .trg_out_N_cal_fee_3_b(trg_out_N_cal_fee_3_b),
-	 .trg_out_N_cal_fee_4_a(trg_out_N_cal_fee_4_a), 
-	 .trg_out_N_cal_fee_4_b(trg_out_N_cal_fee_4_b) 
+    .trg_out_N_cal_fee_3_b(trg_out_N_cal_fee_3_b),
+    .trg_out_N_cal_fee_4_a(trg_out_N_cal_fee_4_a), 
+    .trg_out_N_cal_fee_4_b(trg_out_N_cal_fee_4_b) 
 	 
 );
 
@@ -338,7 +341,6 @@ HitTrgCount HitTrgCount_inst(
 	.hit_syn_in(hit_syn_sig),
 	.busy_syn_in(busy_syn_sig),
 	.hit_start_in(hit_start_sig),
-	//.update_end_in(update_end_sig),
 	.eff_trg_in(eff_trg_sig),
 	.coincid_trg_in(coincid_trg_sig),
 	.logic_match_in(logic_match_sig),
@@ -364,7 +366,6 @@ TrgMonData TrgMonData_inst(
 	.rst_in(rst_logic_sig),
     .rd_in(rd_in),  
     .rd_addr_in(rd_addr_in),
-//    .store_en(store_en),
     .ctrl_reg_in(ctrl_reg_sig),
     .cmd_reg_in(cmd_reg_sig),
     .trg_mode_mip1_in(trg_mode_mip1_sig),
@@ -376,7 +377,7 @@ TrgMonData TrgMonData_inst(
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .coincid_trg_cnt_in(coincid_trg_cnt_sig),
     .hit_monit_fix_sel_in({13'b0_0000_0000_0000, hit_monit_fix_sel_sig}), 
-    .hit_monit_sel_in({13'b0_0000_0000_0000, hit_monit_sel_sig}),
+    .hit_monit_sel_in({8'b0000_0000, hit_monit_sel_sig}),
     .hit_monit_err_cnt_in({8'b0000_0000, hit_monit_err_cnt_sig}),
     .hit_start_cnt_in(hit_start_cnt_sig),
     .hit_monit_cnt_0_in(hit_monit_cnt_0_sig),
@@ -411,17 +412,15 @@ TrgSciData TrgSciData_inst
 	.data_trans_enb_sig(data_trans_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
+    .logic_grp_oe_in(logic_grp_oe_sig),
+    .hit_sig_stus_in(hit_sig_stus_sig), 
+    .W_logic_all_grp_result_in(W_logic_all_grp_result_sig),
     .trg_mode_mip1_in(trg_mode_mip1_sig[7:0]),
     .trg_mode_mip2_in(trg_mode_mip2_sig[7:0]),
     .trg_mode_gm1_in(trg_mode_gm1_sig[7:0]),
     .trg_mode_gm2_in(trg_mode_gm2_sig[7:0]),
     .trg_mode_ubs_in(trg_mode_ubs_sig[7:0]),
-    .trg_mode_brst_in(trg_mode_brst_sig[7:0]),
-    .hit_sig_stus_in(hit_sig_stus_sig), 
     .eff_trg_cnt_in(eff_trg_cnt_sig),
-    .trg_busy_time_cnt_in(trg_busy_time_cnt_sig),
-    .trg_delay_timer_in(trg_delay_timer_sig),
-    .trg_busy_timer_rdy_in(trg_busy_timer_rdy_sig),
     .eff_trg_in(eff_trg_sig),
     .fifo_data_out(fifo_data_out),
     .fifo_prog_full_out(fifo_prog_full_out),

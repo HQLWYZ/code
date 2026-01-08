@@ -21,7 +21,7 @@ module HitTrgCount(
 	input			coincid_trg_in,			//from Coincidence module
 	input			logic_match_in,			//from Coincidence module
 	input			ext_trg_syn_in,			//from GroundTestGen module
-	input	[3:0]	hit_monit_fix_sel_in,	// Selected hit signal for monitoring
+	input	[2:0]	hit_monit_fix_sel_in,	// Selected hit signal for monitoring
 	input			busy_monit_fix_sel_in,	// Selected busy signal for monitoring
 	output	[7:0]	hit_monit_sel_out,		// Which hit signal is monitored
 	output	[7:0]	hit_monit_err_cnt_out,	// Hit signal width error count
@@ -428,7 +428,7 @@ assign	hit_start_cnt_out = hit_start_cnt;
 assign	hit_monit_err_cnt_out = hit_monit_err_cnt;
 assign	logic_match_cnt_out = logic_match_cnt;
 assign	coincid_trg_cnt_out = coincid_trg_cnt;
-assign	hit_monit_sel_out = { hit_monit_fix_sel_in,  hit_monit_sel_r};
+assign	hit_monit_sel_out = { 1'b0, hit_monit_fix_sel_in,  hit_monit_sel_r};
 assign	hit_monit_cnt_0_out = hit_monit_cnt_0;
 assign	hit_monit_cnt_1_out = hit_monit_cnt_1;
 assign	ext_trg_cnt_out = ext_trg_cnt;

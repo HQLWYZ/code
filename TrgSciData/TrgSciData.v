@@ -2,11 +2,14 @@
 /* 															*/
 /*	file name:	TrgSciData.v			           			*/
 /* 	date:		2025/04/11									*/
+/* 	modified:	2026/01/08								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
+/* 	email:		wangshen@pmo.ac.cn							*/
 /* 	note:		system clock = 50MHz	                    */
 /* 															*/
 /*----------------------------------------------------------*/
+//`include "crc16_ccitt.v"
 
 module TrgSciData
 (
@@ -15,60 +18,75 @@ module TrgSciData
 	input           data_trans_enb_sig,
 	input           fifo_rd_clk,
     input           fifo_rd_in,  
-    //----select one mode that drive the trigger signal
-    input   [7:0]  trg_mode_mip1_in, 
-    input   [7:0]  trg_mode_mip2_in,
-    input   [7:0]  trg_mode_gm1_in,
-    input   [7:0]  trg_mode_gm2_in,
-    input   [7:0]  trg_mode_ubs_in,
-    input   [7:0]  trg_mode_brst_in,
-    input   [15:0]  hit_sig_stus_in, //hit status when raw trigger generated, new
+    input   [7:0]   logic_grp_oe_in,    //TrgModeOEReg
+    input   [15:0]  hit_sig_stus_in,     //hit status when raw trigger generated
+    input   [4:0]   W_logic_all_grp_result_in,
+    input   [7:0]   trg_mode_mip1_in, 
+    input   [7:0]   trg_mode_mip2_in,
+    input   [7:0]   trg_mode_gm1_in,
+    input   [7:0]   trg_mode_gm2_in,
+    input   [7:0]   trg_mode_ubs_in,
     input   [15:0]  eff_trg_cnt_in,
-    input   [23:0]  trg_busy_time_cnt_in,
-    input   [7:0]   trg_delay_timer_in,
-    input           trg_busy_timer_rdy_in,
     input           eff_trg_in,// trigger sources, when trigger happens, trigger sci-data will be written into the FIFO
-    output  [7:0]  fifo_data_out,
+    output  [7:0]   fifo_data_out,
     output          fifo_prog_full_out,
     output          fifo_empty_out
 );
 
-reg [223:0]  sci_data_reg;
-reg [15:0]  logic_grp_sel_reg;
-reg [15:0]  sel_bit_reg; //select which trigger settings was enabled
+reg [223:0]     sci_data_reg;
+reg [15:0]      logic_grp_sel_reg;
+reg [15:0]      sel_bit_reg; //select which trigger settings was enabled
+reg  [15:0]     frame_cnt_reg; 
+wire [15:0]     frame_length;
+wire [47:0]     time_code;
+wire [7:0]      sci_data_tag;
+wire [3:0]      module_tag, sci_data_type;
+
+assign frame_length = 16'd32, time_code = 48'h00_0000; 
+assign sci_data_tag = 8'h00, module_tag = 4'h0,  sci_data_type = 4'h0;
+
+reg [23:0] trg_busy_time_cnt_reg;
+
+
+
+//generate trg_logic_out_reg
+reg [7:0]   trg_logic_out_reg;
+reg [5:0]   coincid_div_reg;
 
 always @(posedge clk_in)
 begin
 	if (rst_in) begin
-        sel_bit_reg<= 16'b0;
+        trg_logic_out_reg<= 8'b0;
+        coincid_div_reg<= 6'b0;
 	end
 	else  begin 
-        sel_bit_reg[15:14] <= trg_mode_mip1_in[7:6];
-        sel_bit_reg[13:12] <= trg_mode_mip2_in[7:6];
-        sel_bit_reg[11:10] <= trg_mode_gm1_in[7:6];
-        sel_bit_reg[9:8] <= trg_mode_gm2_in[7:6];
-        sel_bit_reg[7:6] <= trg_mode_ubs_in[7:6];
-        sel_bit_reg[5:4] <= trg_mode_brst_in[7:6];
+        if(W_logic_all_grp_result_in[4]&& eff_trg_in)   begin
+            trg_logic_out_reg<= 8'b0001_0000;
+            coincid_div_reg<=trg_mode_ubs_in[5:0];
+        end
+        else if(W_logic_all_grp_result_in[3]&& eff_trg_in) begin
+            trg_logic_out_reg<= 8'b0000_1000;
+            coincid_div_reg<=trg_mode_gm2_in[5:0];
+        end
+        else if(W_logic_all_grp_result_in[2]&& eff_trg_in)  begin
+            trg_logic_out_reg<= 8'b0000_0100;
+            coincid_div_reg<=trg_mode_gm1_in[5:0];
+        end
+        else if(W_logic_all_grp_result_in[1]&& eff_trg_in) begin
+            trg_logic_out_reg<= 8'b0000_0010;
+            coincid_div_reg<=trg_mode_mip2_in[5:0];
+        end
+        else if(W_logic_all_grp_result_in[0]&& eff_trg_in) begin
+            trg_logic_out_reg<= 8'b0000_0001;
+            coincid_div_reg<=trg_mode_mip1_in[5:0];
+        end
+        else    begin
+            trg_logic_out_reg<= 8'b0000_0000;
+            coincid_div_reg<= 6'b0;
+        end
 	end
 end
 
-always @(posedge clk_in) //select which trigger settings was enabled
-begin
-	if (rst_in) begin
-        logic_grp_sel_reg<= 16'b0;
-	end
-	else  begin 
-       casex (sel_bit_reg)
-            16'b01xx_xxxx_xxxx_xxxx: logic_grp_sel_reg <= {8'b1000_0000, trg_mode_mip1_in};
-            16'bxx01_xxxx_xxxx_xxxx: logic_grp_sel_reg <= {8'b0100_0000, trg_mode_mip2_in}; 
-            16'bxxxx_01xx_xxxx_xxxx: logic_grp_sel_reg <= {8'b0010_0000, trg_mode_gm1_in};
-            16'bxxxx_xx01_xxxx_xxxx: logic_grp_sel_reg <= {8'b0001_0000, trg_mode_gm2_in};
-            16'bxxxx_xxxx_01xx_xxxx: logic_grp_sel_reg <= {8'b0000_1000, trg_mode_ubs_in};
-            16'bxxxx_xxxx_xx01_xxxx: logic_grp_sel_reg <= {8'b0000_0100, trg_mode_brst_in};
-        default: logic_grp_sel_reg <= 16'b0;
-    endcase
-	end
-end
 
 reg[2:0] c_state, n_state;
 reg [4:0] wr_fifo_cnt; //count the number of data written into the FIFO
@@ -85,9 +103,10 @@ wire crc_rst_en;
 wire[15:0] crc_out;
 reg [15:0]  sum_reg;
 
-parameter  IDLE = 0, 
-            WRITE_FIFO_START = 1, 
-            WRITE_DONE = 2;
+parameter   IDLE = 0, 
+            TRIG_IN=1,
+            WRITE_FIFO_START = 2, 
+            WRITE_DONE = 3;
 
 always @(posedge clk_in)
 begin
@@ -103,9 +122,15 @@ begin
 	case(c_state)
 		IDLE: begin
 			if (eff_trg_in & data_trans_enb_sig)   
-				n_state = WRITE_FIFO_START;
+				n_state = TRIG_IN;
 			else 
 				n_state = IDLE;			
+		end
+        TRIG_IN: begin
+			if (~fifo_full)   
+				n_state = WRITE_FIFO_START;
+			else 
+				n_state = TRIG_IN;			
 		end
 		WRITE_FIFO_START: begin
 			if ((wr_fifo_cnt ==5'd31) && (!fifo_full))   
@@ -128,43 +153,57 @@ begin
         wr_fifo_cnt<= 5'b0;
         crc_en <= 1'b0;
         sum_reg <= 16'd0;
+        frame_cnt_reg <= 16'd0;
+        trg_busy_time_cnt_reg <= 24'd0;
     end
     else begin
         case(c_state) 
          IDLE: begin
             sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
-            sci_data_reg<={16'hEB90, eff_trg_cnt_in, 16'd24, 48'h0, 16'h0090, logic_grp_sel_reg, hit_sig_stus_in, 16'h0000, eff_trg_cnt_in, trg_busy_time_cnt_in, 
-            trg_delay_timer_in, 16'h000000};
+            sum_reg <= 16'd0;
+            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
+         end
+
+         TRIG_IN: begin
+            frame_cnt_reg <= frame_cnt_reg + 1'b1;
+            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
+            sci_data_reg<= 224'd0;
+            wr_fifo_cnt<= 5'b0;
+            sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, sci_data_tag, module_tag, sci_data_type,
+                        8'b0, logic_grp_oe_in, hit_sig_stus_in, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
+                        trg_busy_time_cnt_reg, 2'b0, coincid_div_reg, 16'b0};
             sum_reg <= 16'd0;
          end
+
          WRITE_FIFO_START: begin
-            if(~fifo_full) begin
-                sci_data_reg<=(sci_data_reg<<8);
-                wr_fifo_cnt<=wr_fifo_cnt+1'b1;
-                if((wr_fifo_cnt == 5'd11) | (wr_fifo_cnt == 5'd13) | (wr_fifo_cnt == 5'd15) | (wr_fifo_cnt == 5'd17) | (wr_fifo_cnt == 5'd19) | (wr_fifo_cnt == 5'd21) | (wr_fifo_cnt == 5'd23) | (wr_fifo_cnt == 5'd25))
-                    crc_en <= 1'b1;
-                else
-                    crc_en <= 1'b0;
-                if((wr_fifo_cnt[0] == 1'b0) & (wr_fifo_cnt <= 5'd26))
-                    sum_reg <= sum_reg + sci_data_reg[223:208];
-                if(wr_fifo_cnt == 5'd28)   
-                    sum_reg <= sum_reg + crc_out;
-            end
+            sci_data_reg<=(sci_data_reg<<8);
+            wr_fifo_cnt<=wr_fifo_cnt+1'b1;
+            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
+            if((wr_fifo_cnt == 5'd11) | (wr_fifo_cnt == 5'd13) | (wr_fifo_cnt == 5'd15) | (wr_fifo_cnt == 5'd17) 
+            | (wr_fifo_cnt == 5'd19) | (wr_fifo_cnt == 5'd21) | (wr_fifo_cnt == 5'd23) | (wr_fifo_cnt == 5'd25))
+                crc_en <= 1'b1;
             else
-            begin
                 crc_en <= 1'b0;
-            end
+            if((wr_fifo_cnt[0] == 1'b0) & (wr_fifo_cnt <= 5'd26))
+                sum_reg <= sum_reg + sci_data_reg[223:208];
+            if(wr_fifo_cnt == 5'd28)   
+                sum_reg <= sum_reg + crc_out;
          end
          WRITE_DONE: begin
             sci_data_reg<= 224'b0;
             wr_fifo_cnt<= 5'b0;
             crc_en <= 1'b0;
+            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
          end
          default: begin
-            sci_data_reg<= 224'b0;
+            sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
-         end
+            crc_en <= 1'b0;
+            sum_reg <= 16'd0;
+            frame_cnt_reg <= 16'd0;
+            trg_busy_time_cnt_reg <= 24'd0;
+            end
         endcase
     end
 end
@@ -203,20 +242,36 @@ crc16_ccitt crc16_ccitt_inst(
   .clk(clk_in)
 );
 
-fifo_generator_0 fifo_generator_0_inst
+// fifo_generator_0 fifo_generator_0_inst
+// (
+// //	.rst(rst_in),
+// 	.wr_clk(clk_in),
+// 	.rd_clk(fifo_rd_clk),
+// 	.din(sci_data_in),
+// 	.rd_en(fifo_rd_in),
+// 	.wr_en(fifo_wr_in),
+// 	.prog_full_thresh(9'h14),
+// 	.dout(sci_data_out),
+// 	.empty(fifo_empty),
+// 	.full(fifo_full),
+// 	.prog_full(fifo_prog_full)
+// );
+
+fifo fifo_inst
 (
-//	.rst(rst_in),
-	.wr_clk(clk_in),
-	.rd_clk(fifo_rd_clk),
-	.din(sci_data_in),
-	.rd_en(fifo_rd_in),
-	.wr_en(fifo_wr_in),
-	.prog_full_thresh(9'h14),
-	.dout(sci_data_out),
-	.empty(fifo_empty),
-	.full(fifo_full),
-	.prog_full(fifo_prog_full)
+    .wr_clk(clk_in),
+    .wr_rst_n(~rst_in),
+    .wr_en(fifo_wr_in),
+    .wr_data(sci_data_in),
+    .full(fifo_full),
+    .fifo_prog_full(fifo_prog_full),
+    .rd_clk(fifo_rd_clk),
+    .rd_rst_n(~rst_in),
+    .rd_en(fifo_rd_in),
+    .rd_data(sci_data_out),
+    .empty(fifo_empty)
 );
+
 
 assign fifo_data_out = sci_data_out;
 assign fifo_empty_out = fifo_empty;
