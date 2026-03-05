@@ -15,6 +15,7 @@ reg   clk_in                               = 0 ;
 reg   rst_in                               = 1 ;
 reg   coincid_trg_in                       = 0 ;
 reg   ext_trg_syn_in                       = 0 ;
+reg   [15:0]  cmd_reg_in                   = 16'b0000_0000_0000_0000 ;
 reg   cycled_trg_in                        = 0 ;
 reg   trg_enb_in                           = 0 ;
 reg   [7:0]  trg_dead_time_in              = 3 ;
@@ -52,6 +53,20 @@ initial
 begin
     #(PERIOD*2) rst_in  =  0;
 end
+
+
+initial
+begin
+    #202_000 cmd_reg_in=16'b0000_0000_1001_0000;//logic
+    #150_000 cmd_reg_in=16'b0000_0000_1010_0000;//ext
+    #150_000 cmd_reg_in=16'b0000_0000_1100_0000;//cycled
+    #250_000 cmd_reg_in=16'b0000_0000_1111_0000;
+    #150_000 cmd_reg_in=16'b0000_0000_1111_1100;
+    #450_000 cmd_reg_in=16'b0000_0000_1111_0000;
+    #150_000 cmd_reg_in=16'b0000_0000_1001_1100;
+end
+
+
 
 
 initial//-----------coincid_trg_in------
@@ -140,6 +155,7 @@ TrgOutCtrl #(
  u_TrgOutCtrl (
     .clk_in                  ( clk_in                   ),
     .rst_in                ( rst_in                 ),
+    .cmd_reg_in             ( cmd_reg_in              ),
     .coincid_trg_in          ( coincid_trg_in           ),
     .ext_trg_syn_in          ( ext_trg_syn_in           ),
     .cycled_trg_in           ( cycled_trg_in            ),

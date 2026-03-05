@@ -304,6 +304,7 @@ GroundTestGen GroundTestGen_inst(
 TrgOutCtrl TrgOutCtrl_inst(
     .clk_in(clk_in),
     .rst_in(rst_logic_sig),
+    .cmd_reg_in(cmd_reg_sig),
     .coincid_trg_in(coincid_trg_sig),
     .ext_trg_syn_in(ext_trg_syn_sig),
     .cycled_trg_in(cycled_trg_sig),

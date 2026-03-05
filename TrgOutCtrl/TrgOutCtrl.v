@@ -12,6 +12,7 @@
 module TrgOutCtrl(
     input			clk_in,
     input           rst_in,
+    input   [15:0]  cmd_reg_in,
     input           coincid_trg_in, //trigger sources
     input           ext_trg_syn_in, //trigger sources
     input           cycled_trg_in,  //trigger sources
@@ -35,12 +36,21 @@ parameter   CHK_PULSE_WIDTH = 50; 	// 20ns*50 = 1us
 parameter   DEADTIME_UNIT_10US = 500; //500*20ns = 10us， 500=12'b0001_1111_0100
 
 
+wire        coincid_trg_sig_valid, ext_trg_syn_sig_valid, cycled_trg_sig_valid; //
+wire        pmu_busy_sig_valid;
+
+assign  coincid_trg_sig_valid = coincid_trg_in & (cmd_reg_in[7]&&cmd_reg_in[4]);
+assign  ext_trg_syn_sig_valid = ext_trg_syn_in & (cmd_reg_in[7]&&cmd_reg_in[5]);
+assign  cycled_trg_sig_valid = cycled_trg_in & (cmd_reg_in[7]&&cmd_reg_in[6]);
+assign  pmu_busy_sig_valid = pmu_busy_in & (cmd_reg_in[3]&&cmd_reg_in[2]);
+
+
 ///internal reg
 reg                 trg_send_r;// trigger pulse output
 reg	                daq_busy_r;
 reg         [7:0]   trg_chksig_width_cnt;// trigger signal and TID check signal's width counter
 reg         [19:0]  trg_dead_time_cnt;//[MAX]=20'b1111_1111_1111_1111_1111 = 1_048_575, about 20ns*1048575=20.97ms
-reg                 coincid_trg_in_r;
+reg                 coincid_trg_sig_valid_r;
 wire                si_busy_sig;
 reg         [19:0]  trg_dead_time_temp;//[MAX]=20'b1111_1111_1111_1111_1111 = 1_048_575, about 20ns*1048575=20.97ms   
 wire        [19:0]  trg_dead_time_prodcut;
@@ -82,9 +92,9 @@ end
 //SEND_TRG:         send the trigger singal , the width is equal to 400ns
 //SEND_TRG_CHK:     send the trigger id check signal ,if the trigger id is equal to 2^12
 
-always @(c_state or trg_enb_in or cycled_trg_in or ext_trg_syn_in or coincid_trg_in or coincid_trg_in_r or
+always @(c_state or trg_enb_in or cycled_trg_sig_valid or ext_trg_syn_sig_valid or coincid_trg_sig_valid or coincid_trg_sig_valid_r or
 					trg_chksig_width_cnt or trg_dead_time_cnt or trg_dead_time_in or eff_trg_cnt_in or 
-                    busy_syn_in or busy_ignore_in or pmu_busy_in or logic_burst_sel_in)
+                    busy_syn_in or busy_ignore_in or pmu_busy_sig_valid or logic_burst_sel_in)
 begin
 	n_state = IDLE;
 	case (c_state)
@@ -121,26 +131,26 @@ begin
                 n_state = CHECK_SI_BUSY;
         end
         WAIT_PMU_BUSY_WITH_SI_BUSY: begin//wait for PMU busy signal to be free
-            if ( ~pmu_busy_in )  
+            if ( ~pmu_busy_sig_valid )  
                 n_state = WAIT_TRG_WITH_SI_BUSY;
             else 
                 n_state = WAIT_PMU_BUSY_WITH_SI_BUSY;
         end
         WAIT_PMU_BUSY_WITHOUT_SI_BUSY: begin//wait for PMU busy signal to be free
-            if ( ~pmu_busy_in )  
+            if ( ~pmu_busy_sig_valid )  
                 n_state = WAIT_TRG_WITHOUT_SI_BUSY;
             else 
                 n_state = WAIT_PMU_BUSY_WITHOUT_SI_BUSY;
         end
         WAIT_TRG_WITH_SI_BUSY: begin//wait for PMU busy signal to be free
-			if (trg_enb_in&&(~pmu_busy_in)&&(~si_busy_sig)) 
-				n_state = ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in)?  SEND_TRG : WAIT_TRG_WITH_SI_BUSY;//coincid_trg_in || ext_trg_syn_in || cycled_trg_in			
+			if (trg_enb_in&&(~pmu_busy_sig_valid)&&(~si_busy_sig)) 
+				n_state = ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid)?  SEND_TRG : WAIT_TRG_WITH_SI_BUSY;//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid			
 			else
 				n_state = WAIT_TRG_WITH_SI_BUSY;
         end
         WAIT_TRG_WITHOUT_SI_BUSY: begin//wait for PMU busy signal to be free
-			if (trg_enb_in&&(~pmu_busy_in)) 
-				n_state = ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in)?  SEND_TRG : WAIT_TRG_WITHOUT_SI_BUSY;//coincid_trg_in || ext_trg_syn_in || cycled_trg_in			
+			if (trg_enb_in&&(~pmu_busy_sig_valid)) 
+				n_state = ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid)?  SEND_TRG : WAIT_TRG_WITHOUT_SI_BUSY;//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid			
 			else
 				n_state = WAIT_TRG_WITHOUT_SI_BUSY;
         end
@@ -168,9 +178,9 @@ end
 
 always @(posedge clk_in) begin
     if(rst_in)
-        coincid_trg_in_r <= 1'b0;
+        coincid_trg_sig_valid_r <= 1'b0;
     else
-        coincid_trg_in_r <= coincid_trg_in;
+        coincid_trg_sig_valid_r <= coincid_trg_sig_valid;
 end
 
 always @(*)begin
@@ -242,10 +252,10 @@ begin
             trg_dead_time_cnt <= 20'b0;
         end
         WAIT_TRG_WITH_SI_BUSY: begin
-            if (trg_enb_in&&(~pmu_busy_in)&&(~si_busy_sig))  begin  //
-                trg_send_r <= ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in);//coincid_trg_in || ext_trg_syn_in || cycled_trg_in
-                eff_trg_sig <= ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in);//coincid_trg_in || ext_trg_syn_in || cycled_trg_in
-                daq_busy_r <= ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in);//coincid_trg_in || ext_trg_syn_in || cycled_trg_in           
+            if (trg_enb_in&&(~pmu_busy_sig_valid)&&(~si_busy_sig))  begin  //
+                trg_send_r <= ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid);//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid
+                eff_trg_sig <= ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid);//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid
+                daq_busy_r <= ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid);//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid           
             end
             else begin
                 trg_send_r <= 1'b0;
@@ -254,10 +264,10 @@ begin
             end
         end    
         WAIT_TRG_WITHOUT_SI_BUSY: begin
-            if (trg_enb_in&&(~pmu_busy_in))  begin  //
-                trg_send_r <= ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in);//coincid_trg_in || ext_trg_syn_in || cycled_trg_in
-                eff_trg_sig <= ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in);//coincid_trg_in || ext_trg_syn_in || cycled_trg_in
-                daq_busy_r <= ((coincid_trg_in & ~coincid_trg_in_r) || ext_trg_syn_in || cycled_trg_in);//coincid_trg_in || ext_trg_syn_in || cycled_trg_in           
+            if (trg_enb_in&&(~pmu_busy_sig_valid))  begin  //
+                trg_send_r <= ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid);//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid
+                eff_trg_sig <= ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid);//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid
+                daq_busy_r <= ((coincid_trg_sig_valid & ~coincid_trg_sig_valid_r) || ext_trg_syn_sig_valid || cycled_trg_sig_valid);//coincid_trg_sig_valid || ext_trg_syn_sig_valid || cycled_trg_sig_valid           
             end
             else begin
                 trg_send_r <= 1'b0;
