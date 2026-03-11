@@ -117,7 +117,7 @@ wire			trg_busy_timer_rdy_sig;
 wire    [15:0]	hit_sig_stus_sig;
 wire    [4:0]       W_logic_all_grp_result_sig;
 
-wire			trg_enb_sig;
+//wire			trg_enb_sig;
 wire  	   		cycled_trg_bgn_sig;
 wire    [15:0]  ctrl_reg_sig;
 wire    [15:0]  cmd_reg_sig;

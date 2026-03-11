@@ -1303,7 +1303,7 @@ assign	coincid_UBS_cnt_out = coincid_UBS_cnt;
 assign	hit_syn_out = hit_syn_r;
 assign  busy_syn_out = busy_syn_r;
 assign	hit_sig_stus_out = {3'b000, trg_seed_reg};//orig:shift_reg -- after trg_match_win_in[15:8], coincid_trg_sig = 1, so we use trg_seed_reg to transmit
-assign	W_logic_all_grp_result_out = W_logic_all_grp_result_out;
+assign	W_logic_all_grp_result_out = W_logic_all_grp_result;
 
 
 endmodule
