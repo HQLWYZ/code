@@ -24,6 +24,7 @@ module TrgOutCtrl(
     input   [7:0]   trg_dead_time_in, //dead time for trigger signal 
     input   [15:0]  eff_trg_cnt_in, //equal to trigger id
     output          eff_trg_out,    //width = 1 clock, signal for the other modules
+    output [23:0]   trg_busy_time_cnt_out, //unit is 100ns, max time is about 16.77s
     output          trg_out_N_acd_a, trg_out_N_acd_b, //width = 400ns, 400us trigger signal with 1000us trigger id check signal
     output          trg_out_N_CsI_track_a, trg_out_N_CsI_track_b,
     output          trg_out_N_Si1_a, trg_out_N_Si1_b,trg_out_N_Si2_a, trg_out_N_Si2_b,
@@ -38,11 +39,13 @@ parameter   DEADTIME_UNIT_10US = 500; //500*20ns = 10us， 500=12'b0001_1111_010
 
 wire        coincid_trg_sig_valid, ext_trg_syn_sig_valid, cycled_trg_sig_valid; //
 wire        pmu_busy_sig_valid;
+wire        total_busy;
 
 assign  coincid_trg_sig_valid = coincid_trg_in & (cmd_reg_in[7]&&cmd_reg_in[4]);
 assign  ext_trg_syn_sig_valid = ext_trg_syn_in & (cmd_reg_in[7]&&cmd_reg_in[5]);
 assign  cycled_trg_sig_valid = cycled_trg_in & (cmd_reg_in[7]&&cmd_reg_in[6]);
 assign  pmu_busy_sig_valid = pmu_busy_in & (cmd_reg_in[3]&&cmd_reg_in[2]);
+assign  total_busy = pmu_busy_sig_valid || si_busy_sig;
 
 
 ///internal reg
@@ -56,6 +59,9 @@ reg         [19:0]  trg_dead_time_temp;//[MAX]=20'b1111_1111_1111_1111_1111 = 1_
 wire        [19:0]  trg_dead_time_prodcut;
 integer             i;
 reg                 eff_trg_sig; //register the output signal
+
+reg         [23:0]  trg_busy_time_cnt_reg;//count the busy time of the trigger, 
+
 
 
 //------------>  state machine for generating trigger signal, which will be sent to the output of FPGA
@@ -191,6 +197,7 @@ always @(*)begin
     end
 end
 
+
 always @(posedge clk_in)
 begin
     if (rst_in) begin
@@ -207,7 +214,7 @@ begin
             trg_dead_time_cnt <= 20'b0;
             trg_send_r <= 1'b0;
             eff_trg_sig <= 1'b0;
-            daq_busy_r <= 1'b0;            
+            daq_busy_r <= 1'b0;      
         end
         WAIT_DEAD_TIME: begin
             eff_trg_sig <= 1'b0; 
@@ -308,6 +315,127 @@ begin
     end
 end
 
+
+
+
+
+reg [5:0] cycle_timer_cnt;
+
+
+
+reg [3:0]   busy_time_work_flow;
+
+always @(posedge clk_in ) begin
+    if (rst_in) begin
+        trg_busy_time_cnt_reg<= 24'd0;
+        busy_time_work_flow <= 4'b0;
+        cycle_timer_cnt <= 6'b0;
+    end 
+    else begin
+        if (busy_time_work_flow==4'd0) begin
+            trg_busy_time_cnt_reg<= 24'd0;  
+            if(trg_enb_in)   begin
+                busy_time_work_flow <= 4'd1;
+            end            
+            else
+                busy_time_work_flow <= 4'd0;
+        end
+
+        if(busy_time_work_flow==4'd1) begin
+            if((logic_burst_sel_in == 2'b11)||(busy_ignore_in == 1'b1)) begin
+                    busy_time_work_flow <= 4'd2;
+            end
+            else begin
+                busy_time_work_flow <= 4'd3;
+            end
+        end
+
+        if(busy_time_work_flow==4'd2) begin
+            if(pmu_busy_sig_valid&&(~pmu_busy_sig_valid_r)) begin
+                busy_time_work_flow <= 4'd4;
+            end
+            else if(c_state==SEND_TRG) begin
+                busy_time_work_flow <= 4'd0;
+                //trg_busy_time_cnt_reg<= 24'd0;
+            end
+                
+            else
+                busy_time_work_flow <= 4'd2;
+        end
+
+
+        if(busy_time_work_flow==4'd3) begin
+                if((total_busy&&(~total_busy_r))) begin
+                    busy_time_work_flow <= 4'd5;
+                end
+                else if(c_state==SEND_TRG) begin
+                    busy_time_work_flow <= 4'd0;
+                    //trg_busy_time_cnt_reg<= 24'd0;
+                end
+                else
+                    busy_time_work_flow <= 4'd3;                
+        end
+        
+
+
+
+
+        if(busy_time_work_flow==4'd4) begin
+            if(~pmu_busy_sig_valid) begin
+                busy_time_work_flow <= 4'd6;
+            end
+            else begin
+                busy_time_work_flow <= 4'd4;
+                cycle_timer_cnt <= cycle_timer_cnt + 1'b1;
+                if(cycle_timer_cnt == 6'd4) begin
+                    cycle_timer_cnt <= 6'd0;
+                    trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
+                end
+            end
+        end
+
+        if(busy_time_work_flow==4'd5) begin
+            if(~total_busy) begin
+                busy_time_work_flow <= 4'd6;
+            end
+            else begin
+                busy_time_work_flow <= 4'd5;
+                cycle_timer_cnt <= cycle_timer_cnt + 1'b1;
+                if(cycle_timer_cnt == 6'd4) begin
+                    cycle_timer_cnt <= 6'd0;
+                    trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
+                end
+            end
+        end
+
+
+        if(busy_time_work_flow==4'd6) begin
+            if(c_state==SEND_TRG) begin
+                busy_time_work_flow <= 4'd0;
+                cycle_timer_cnt <= 6'd0;
+                //trg_busy_time_cnt_reg<= 24'd0;  
+            end
+                  
+
+        end
+        
+    end
+end
+
+
+reg total_busy_r, pmu_busy_sig_valid_r;
+always @(posedge clk_in) begin
+    if (rst_in) begin
+        total_busy_r <= 1'b0;
+        pmu_busy_sig_valid_r <= 1'b0;
+    end
+    else begin
+        total_busy_r <= total_busy;
+        pmu_busy_sig_valid_r <= pmu_busy_sig_valid;
+    end
+end
+
+assign  trg_busy_time_cnt_out = trg_busy_time_cnt_reg;
 assign  trg_dead_time_prodcut = trg_dead_time_temp;
 assign  si_busy_sig=busy_syn_in[1]||busy_syn_in[0];//Si1_busy || Si2_busy
 assign  eff_trg_out = eff_trg_sig;

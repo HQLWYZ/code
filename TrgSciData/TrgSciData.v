@@ -28,6 +28,7 @@ module TrgSciData
     input   [7:0]   trg_mode_ubs_in,
     input   [15:0]  eff_trg_cnt_in,
     input           eff_trg_in,// trigger sources, when trigger happens, trigger sci-data will be written into the FIFO
+    input   [23:0]  trg_busy_time_cnt_in,
     output  [7:0]   fifo_data_out,
     output          fifo_prog_full_out,
     output          fifo_empty_out
@@ -42,10 +43,16 @@ wire [47:0]     time_code;
 wire [7:0]      sci_data_tag;
 wire [3:0]      module_tag, sci_data_type;
 
+
+parameter   TRG_TIME_TAG_UNIT_1US = 50; //50*20ns = 1us
+
+//----------TBD, 20260312-------------
 assign frame_length = 16'd32, time_code = 48'h00_0000; 
 assign sci_data_tag = 8'h00, module_tag = 4'h0,  sci_data_type = 4'h0;
+//----------TBD, 20260312-------------
 
-reg [23:0] trg_busy_time_cnt_reg;
+//reg [23:0] trg_busy_time_cnt_reg;//count the busy time of the trigger, 
+reg [15:0] trg_time_tag_cnt_reg;//count the time interval between two triggers, unit is 1us, max time interval is about 65ms
 
 
 
@@ -60,23 +67,23 @@ begin
         coincid_div_reg<= 6'b0;
 	end
 	else  begin 
-        if(W_logic_all_grp_result_in[4]&& eff_trg_in)   begin
+        if(W_logic_all_grp_result_in[4]&&(logic_grp_oe_in[4])&& eff_trg_in)   begin
             trg_logic_out_reg<= 8'b0001_0000;
             coincid_div_reg<=trg_mode_ubs_in[5:0];
         end
-        else if(W_logic_all_grp_result_in[3]&& eff_trg_in) begin
+        else if(W_logic_all_grp_result_in[3]&&(logic_grp_oe_in[3])&& eff_trg_in) begin
             trg_logic_out_reg<= 8'b0000_1000;
             coincid_div_reg<=trg_mode_gm2_in[5:0];
         end
-        else if(W_logic_all_grp_result_in[2]&& eff_trg_in)  begin
+        else if(W_logic_all_grp_result_in[2]&&(logic_grp_oe_in[2])&& eff_trg_in)  begin
             trg_logic_out_reg<= 8'b0000_0100;
             coincid_div_reg<=trg_mode_gm1_in[5:0];
         end
-        else if(W_logic_all_grp_result_in[1]&& eff_trg_in) begin
+        else if(W_logic_all_grp_result_in[1]&&(logic_grp_oe_in[1])&& eff_trg_in) begin
             trg_logic_out_reg<= 8'b0000_0010;
             coincid_div_reg<=trg_mode_mip2_in[5:0];
         end
-        else if(W_logic_all_grp_result_in[0]&& eff_trg_in) begin
+        else if(W_logic_all_grp_result_in[0]&&(logic_grp_oe_in[0])&& eff_trg_in) begin
             trg_logic_out_reg<= 8'b0000_0001;
             coincid_div_reg<=trg_mode_mip1_in[5:0];
         end
@@ -102,6 +109,26 @@ reg crc_en;
 wire crc_rst_en;
 wire[15:0] crc_out;
 reg [15:0]  sum_reg;
+
+
+reg [5:0] cycle_cnt;
+
+always @(posedge clk_in ) begin
+        if (rst_in) begin
+            cycle_cnt <= 6'd0;
+            trg_time_tag_cnt_reg    <= 16'd0;
+        end 
+        else begin
+            if (cycle_cnt == 6'd49) begin
+                cycle_cnt <= 6'd0;       // 
+                trg_time_tag_cnt_reg    <= trg_time_tag_cnt_reg + 1'b1; // 
+            end 
+            else begin
+                cycle_cnt <= cycle_cnt + 1'b1;
+            end
+        end
+    end
+
 
 parameter   IDLE = 0, 
             TRIG_IN=1,
@@ -154,7 +181,6 @@ begin
         crc_en <= 1'b0;
         sum_reg <= 16'd0;
         frame_cnt_reg <= 16'd0;
-        trg_busy_time_cnt_reg <= 24'd0;
     end
     else begin
         case(c_state) 
@@ -162,24 +188,23 @@ begin
             sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
             sum_reg <= 16'd0;
-            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
+            crc_en <= 1'b0;
+            frame_cnt_reg <= 16'd0;
          end
 
          TRIG_IN: begin
             frame_cnt_reg <= frame_cnt_reg + 1'b1;
-            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
             sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
             sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, sci_data_tag, module_tag, sci_data_type,
                         8'b0, logic_grp_oe_in, hit_sig_stus_in, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
-                        trg_busy_time_cnt_reg, 2'b0, coincid_div_reg, 16'b0};
+                        trg_busy_time_cnt_in, 2'b0, coincid_div_reg, trg_time_tag_cnt_reg};
             sum_reg <= 16'd0;
          end
 
          WRITE_FIFO_START: begin
             sci_data_reg<=(sci_data_reg<<8);
             wr_fifo_cnt<=wr_fifo_cnt+1'b1;
-            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
             if((wr_fifo_cnt == 5'd11) | (wr_fifo_cnt == 5'd13) | (wr_fifo_cnt == 5'd15) | (wr_fifo_cnt == 5'd17) 
             | (wr_fifo_cnt == 5'd19) | (wr_fifo_cnt == 5'd21) | (wr_fifo_cnt == 5'd23) | (wr_fifo_cnt == 5'd25))
                 crc_en <= 1'b1;
@@ -194,7 +219,6 @@ begin
             sci_data_reg<= 224'b0;
             wr_fifo_cnt<= 5'b0;
             crc_en <= 1'b0;
-            trg_busy_time_cnt_reg<= trg_busy_time_cnt_reg+1'b1;
          end
          default: begin
             sci_data_reg<= 224'd0;
@@ -202,7 +226,6 @@ begin
             crc_en <= 1'b0;
             sum_reg <= 16'd0;
             frame_cnt_reg <= 16'd0;
-            trg_busy_time_cnt_reg <= 24'd0;
             end
         endcase
     end

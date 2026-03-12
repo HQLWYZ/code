@@ -18,7 +18,7 @@ reg   rst_in                             = 0 ;
 reg   data_trans_enb_sig                     = 0 ;
 reg   fifo_rd_clk                           = 0 ;
 reg   fifo_rd_in                            = 0 ;
-reg   [7:0]   logic_grp_oe_sig = 0 ;
+reg   [7:0]   logic_grp_oe_in = 0 ;
 reg   [15:0]  hit_sig_stus_in = 0 ;
 reg   [4:0]   W_logic_all_grp_result_in = 0 ;
 reg   [7:0] trg_mode_mip1_in                           = 0 ;
@@ -27,6 +27,7 @@ reg   [7:0]  trg_mode_gm1_in = 0 ;
 reg   [7:0]  trg_mode_gm2_in = 0 ;
 reg   [7:0]  trg_mode_ubs_in = 0 ;
 reg   [15:0]  eff_trg_cnt_in = 0 ;
+reg [23:0] trg_busy_time_cnt_in = 24'd0;
 reg           eff_trg_in = 0 ;// trigger sources, when trigger happens, trigger sci-data will be written into the FIFO
 
 
@@ -71,16 +72,24 @@ end
 initial//
 begin
     #100_000        eff_trg_in=1;  //100.1us
-	#20     eff_trg_in=0;//10ms
+    trg_busy_time_cnt_in=24'd20;
+	#20     begin eff_trg_in=0;
+        //10ms
+    end
+    #20 trg_busy_time_cnt_in=0;
+
     #100_000        eff_trg_in=1;  //100.1us
+    trg_busy_time_cnt_in=24'd30;
 	#20     eff_trg_in=0;//10ms
+            //10ms
+    #20 trg_busy_time_cnt_in=0;
 end
 
 
 initial//
 begin
     #100_000     
-        logic_grp_oe_sig=8'b0000_1001;  //100.1us
+        logic_grp_oe_in=8'b0000_1001;  //100.1us
         hit_sig_stus_in=16'b0000_1001_0110_1111;
         W_logic_all_grp_result_in=5'b10100;
         trg_mode_mip1_in=8'b0000_0011;
@@ -92,7 +101,7 @@ begin
         eff_trg_cnt_in=16'h1234;
         
     #100_000     
-        logic_grp_oe_sig=8'b0000_1001;  //100.1us
+        logic_grp_oe_in=8'b0000_1001;  //100.1us
         hit_sig_stus_in=16'b0000_1001_0110_1111;
         W_logic_all_grp_result_in=5'b10100;
         trg_mode_mip1_in=8'b0000_0011;
@@ -115,7 +124,7 @@ TrgSciData  u_TrgSciData (
 	.data_trans_enb_sig(data_trans_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
-    .logic_grp_oe_sig(logic_grp_oe_sig),
+    .logic_grp_oe_in(logic_grp_oe_in),
     .hit_sig_stus_in(hit_sig_stus_in),
     .W_logic_all_grp_result_in(W_logic_all_grp_result_in),
     .trg_mode_mip1_in(trg_mode_mip1_in[7:0]),
@@ -125,6 +134,7 @@ TrgSciData  u_TrgSciData (
     .trg_mode_ubs_in(trg_mode_ubs_in[7:0]),
     .eff_trg_cnt_in(eff_trg_cnt_in),
     .eff_trg_in(eff_trg_in),
+    .trg_busy_time_cnt_in(trg_busy_time_cnt_in),
     .fifo_data_out(fifo_data_out),
     .fifo_prog_full_out(fifo_prog_full_out),
     .fifo_empty_out(fifo_empty_out)

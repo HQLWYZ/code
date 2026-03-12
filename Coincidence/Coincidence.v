@@ -954,9 +954,9 @@ begin
 			logic_grp0_result_r <= ((logic_grp0_mux_in[7]&acd_fee_top_hit_syn_seed)|(logic_grp0_mux_in[5]&acd_fee_sid_hit_syn_seed)) 
 									&((~logic_grp0_mux_in[6]) | acd_fee_sec_hit_syn_seed) 
 									& ((logic_grp0_mux_in[4]==1'b1)? (csi_fee_hit_a_syn_seed | (hit_mask_in[9])): (csi_fee_hit_b_syn_seed | (hit_mask_in[8])))
-									& ( logic_grp0_fee_tmp1 | logic_grp0_fee_tmp2); //Setting logic for MIPs1 trigger
+									& ( logic_grp0_fee_tmp1 | logic_grp0_fee_tmp2); //Default logic for MIPs1 trigger
 		2'b01:
-			logic_grp0_result_r <= (acd_fee_top_hit_syn_seed|acd_fee_sid_hit_syn_seed) &acd_fee_sec_hit_syn_seed & csi_fee_hit_a_syn_seed & (  cal_fee_2a_hit_syn_seed | cal_fee_4a_hit_syn_seed); //Default logic for MIPs1 trigger
+			logic_grp0_result_r <= (acd_fee_top_hit_syn_seed|acd_fee_sid_hit_syn_seed) &acd_fee_sec_hit_syn_seed & csi_fee_hit_a_syn_seed & (  cal_fee_2a_hit_syn_seed | cal_fee_4a_hit_syn_seed); //Specific logic for MIPs1 trigger
 		2'b10:
 			logic_grp0_result_r <= acd_fee_top_hit_syn_seed;
 		//2'b11:
@@ -976,9 +976,9 @@ begin
 	else begin
 		case (logic_grp1_sel_in)////* synthesis parallel_case */
 		2'b00:
-			logic_grp1_result_r <=  logic_grp1_fee_tmp1 & logic_grp1_fee_tmp2;//Setting logic for MIPs2 trigger
+			logic_grp1_result_r <=  logic_grp1_fee_tmp1 & logic_grp1_fee_tmp2;//Default logic for MIPs2 trigger
 		2'b01:
-			logic_grp1_result_r <=  cal_fee_2b_hit_syn_seed & cal_fee_4b_hit_syn_seed;//Default logic for MIPs2 trigger
+			logic_grp1_result_r <=  cal_fee_2b_hit_syn_seed & cal_fee_4b_hit_syn_seed;//Specific logic for MIPs2 trigger
 		//2'b10:
 			
 		//2'b11:
@@ -1001,9 +1001,9 @@ begin
 			logic_grp2_result_r <=  ((~(((logic_grp2_mux_in[7]&acd_fee_top_hit_syn_seed)|(logic_grp2_mux_in[5]&acd_fee_sid_hit_syn_seed))))
 										&(~(logic_grp2_mux_in[6]&acd_fee_sec_hit_syn_seed)))
 										&((logic_grp2_mux_in[4]==1'b1)?  (csi_fee_hit_a_syn_seed | (hit_mask_in[9])): (csi_fee_hit_b_syn_seed | (hit_mask_in[8])))
-										& (  logic_grp2_fee_tmp1 | logic_grp2_fee_tmp2) ;//Setting logic for GM1 trigger
+										& (  logic_grp2_fee_tmp1 | logic_grp2_fee_tmp2) ;//Default logic for GM1 trigger
 		2'b01:
-			logic_grp2_result_r <=  ((~((acd_fee_top_hit_syn_seed|acd_fee_sid_hit_syn_seed)))&(~acd_fee_sec_hit_syn_seed))& csi_fee_hit_a_syn_seed & (cal_fee_1a_hit_syn_seed | cal_fee_3a_hit_syn_seed) ;//Default logic for GM1 trigger
+			logic_grp2_result_r <=  ((~((acd_fee_top_hit_syn_seed|acd_fee_sid_hit_syn_seed)))&(~acd_fee_sec_hit_syn_seed))& csi_fee_hit_a_syn_seed & (cal_fee_1a_hit_syn_seed | cal_fee_3a_hit_syn_seed) ;//Specific logic for GM1 trigger
 		//2'b10:
 		    
 		//2'b11:
@@ -1026,9 +1026,9 @@ begin
 			logic_grp3_result_r <=  ((~(((logic_grp3_mux_in[7]&acd_fee_top_hit_syn_seed)|(logic_grp3_mux_in[5]&acd_fee_sid_hit_syn_seed))))
 										|(~((~logic_grp0_mux_in[6]) | acd_fee_sec_hit_syn_seed)))
 										&((logic_grp3_mux_in[4]==1'b1)?  (csi_fee_hit_a_syn_seed | (hit_mask_in[9])): (csi_fee_hit_b_syn_seed | (hit_mask_in[8])))
-										& (  logic_grp3_fee_tmp1 | logic_grp3_fee_tmp2) ;//Setting logic for GM2 trigger
+										& (  logic_grp3_fee_tmp1 | logic_grp3_fee_tmp2) ;//Default logic for GM2 trigger
 		2'b01:
-			logic_grp3_result_r <=  ((~((acd_fee_top_hit_syn_seed|acd_fee_sid_hit_syn_seed)))|(~acd_fee_sec_hit_syn_seed))& csi_fee_hit_a_syn_seed & (cal_fee_1a_hit_syn_seed | cal_fee_3a_hit_syn_seed) ;//Default logic for GM2 trigger
+			logic_grp3_result_r <=  ((~((acd_fee_top_hit_syn_seed|acd_fee_sid_hit_syn_seed)))|(~acd_fee_sec_hit_syn_seed))& csi_fee_hit_a_syn_seed & (cal_fee_1a_hit_syn_seed | cal_fee_3a_hit_syn_seed) ;//Specific logic for GM2 trigger
 		//2'b10:
 			
 		//2'b11:
@@ -1048,9 +1048,9 @@ begin
 	else begin
 		case (logic_grp4_sel_in)////* synthesis parallel_case */
 		2'b00:
-            logic_grp4_result_r <=  logic_grp4_fee_tmp1 | logic_grp4_fee_tmp2 ;//Setting logic for UBS trigger
+            logic_grp4_result_r <=  logic_grp4_fee_tmp1 | logic_grp4_fee_tmp2 ;//Default logic for UBS trigger
 		2'b01:
-			logic_grp4_result_r <=  cal_fee_1b_hit_syn_seed | cal_fee_3b_hit_syn_seed ;//Default logic for UBS trigger
+			logic_grp4_result_r <=  cal_fee_1b_hit_syn_seed | cal_fee_3b_hit_syn_seed ;//Specific logic for UBS trigger
 		//2'b10:
 			
 		//2'b11:

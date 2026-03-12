@@ -316,6 +316,7 @@ TrgOutCtrl TrgOutCtrl_inst(
     .trg_dead_time_in(trg_dead_time_sig),
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .eff_trg_out(eff_trg_sig),
+    .trg_busy_time_cnt_out(trg_busy_time_cnt_sig),
     .trg_out_N_acd_a(trg_out_N_acd_a),//trig to acd(primary A)
     .trg_out_N_acd_b(trg_out_N_acd_b),//trig to acd(backup B)
     .trg_out_N_CsI_track_a(trg_out_N_CsI_track_a),//trig to CsI_track(primary A)
@@ -423,6 +424,7 @@ TrgSciData TrgSciData_inst
     .trg_mode_ubs_in(trg_mode_ubs_sig[7:0]),
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .eff_trg_in(eff_trg_sig),
+    .trg_busy_time_cnt_in(trg_busy_time_cnt_sig),
     .fifo_data_out(fifo_data_out),
     .fifo_prog_full_out(fifo_prog_full_out),
     .fifo_empty_out(fifo_empty_out)

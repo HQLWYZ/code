@@ -21,13 +21,14 @@ reg   trg_enb_in                           = 0 ;
 reg   [7:0]  trg_dead_time_in              = 3 ;
 reg   [15:0]  eff_trg_cnt_in               = 12 ;
 reg   [1:0]  busy_syn_in                   = 0 ;   
-reg   busy_ignore_in                        = 1 ; 
+reg   busy_ignore_in                        = 0 ; 
 reg   [1:0]  logic_burst_sel_in             = 0 ;//2'b11: burst mode,
 reg   pmu_busy_in                           = 0 ; 
 
 
 // TrgOutCtrl Outputs
 wire  eff_trg_out                          ;
+wire [23:0] trg_busy_time_cnt_out;
 //wire  trg_out_N                            ;
 //wire  daq_busy_out                         ;
     wire          trg_out_N_acd_a, trg_out_N_acd_b; //width = 400ns, 400us trigger signal with 1000us trigger id check signal
@@ -41,7 +42,7 @@ initial
 begin
     $dumpfile("./tb_TrgOutCtrl.vcd");
     $dumpvars(0,tb_TrgOutCtrl);
-    #2_000_000 $finish;
+    #3_000_000 $finish;
 end
 
 initial
@@ -67,6 +68,13 @@ begin
 end
 
 
+
+initial
+begin
+    #1_300_000 busy_ignore_in=1;//logic
+    //#150_000 busy_ignore_in=16'b0000_0000_1010_0000;//ext
+
+end
 
 
 initial//-----------coincid_trg_in------
@@ -167,6 +175,7 @@ TrgOutCtrl #(
     .trg_dead_time_in        ( trg_dead_time_in  [7:0]  ),
     .eff_trg_cnt_in          ( eff_trg_cnt_in    [15:0] ),
     .eff_trg_out             ( eff_trg_out              ),
+    .trg_busy_time_cnt_out ( trg_busy_time_cnt_out [23:0] ),
     .trg_out_N_acd_a       ( trg_out_N_acd_a                ),
     .trg_out_N_acd_b       ( trg_out_N_acd_b                ),
     .trg_out_N_CsI_track_a ( trg_out_N_CsI_track_a                ),
