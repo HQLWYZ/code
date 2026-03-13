@@ -48,7 +48,7 @@ module ConfigReg(
 	
 	output  [15:0]  hit_ab_sel_out,
     output	[15:0]  hit_mask_out,
-	output	[2:0]	hit_monit_fix_sel_out,
+	output	[3:0]	hit_monit_fix_sel_out,
 	output			busy_monit_fix_sel_out,
 	output  [1:0]   busy_ab_sel_out,
     output  [1:0]   busy_mask_out,
@@ -277,8 +277,8 @@ assign	logic_burst_sel_out 		= trg_mode_brst_reg[7:6];
 assign	hit_ab_sel_out 				= hit_ab_sel_reg[15:0];
 assign	hit_mask_out 				= hit_mask_reg[15:0];
 
-assign	hit_monit_fix_sel_out 		= busy_set_reg[15:13]; 	//temperatory create this for fixed channel
-assign	busy_monit_fix_sel_out 		= busy_set_reg[12];		//temperatory create this for fixed channel
+assign	hit_monit_fix_sel_out 		= busy_set_reg[15:12]; 	//temperatory create this for fixed channel
+assign	busy_monit_fix_sel_out 		= busy_set_reg[11];		//temperatory create this for fixed channel
 assign	busy_ab_sel_out 			= busy_set_reg[7:6];
 assign	busy_mask_out 				= busy_set_reg[5:4];
 assign	busy_ignore_out 			= busy_set_reg[3];

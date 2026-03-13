@@ -8,14 +8,14 @@ initial
     begin
         $dumpfile("./tb_HitTrgCount.vcd");
         $dumpvars(0,tb_HitTrgCount);
-        #3_000_000 $finish;
+        #9_000_000 $finish;
 end
 
 // HitTrgCount Parameters
 parameter PERIOD           = 20;
 parameter HIT_WIDTH        = 8;
 parameter MONIT_HIT_0_IDLE   = 0;
-parameter MONIT_HIT_1_IDLE   = 0;
+//parameter MONIT_HIT_1_IDLE   = 0;
 parameter MONIT_BUSY_IDLE  = 0;
 
 // HitTrgCount Inputs
@@ -217,8 +217,8 @@ end
 
 initial
 begin
-    #3_000_000 hit_monit_fix_sel_in = 3'b000;
-    #3_000_000 hit_monit_fix_sel_in = 3'b001;
+    #3_000_000 hit_monit_fix_sel_in = 4'b0000;
+    #3_000_000 hit_monit_fix_sel_in = 4'b0001;
 end
 
 initial
@@ -229,8 +229,9 @@ end
 
 HitTrgCount #(
     .HIT_WIDTH       ( HIT_WIDTH       ),
-    .MONIT_HIT_0_IDLE  ( MONIT_HIT_0_IDLE  ),
-    .MONIT_HIT_1_IDLE  ( MONIT_HIT_1_IDLE  ))
+    .MONIT_HIT_0_IDLE  ( MONIT_HIT_0_IDLE  )
+    //.MONIT_HIT_1_IDLE  ( MONIT_HIT_1_IDLE  )
+	)
  u_HitTrgCount (
     .clk_in                  ( clk_in                         ),
     .rst_in                ( rst_in                       ),

@@ -139,7 +139,7 @@ wire          	ext_trg_syn_sig;
 //wire          	ext_trg_raw_1us_sig;
 //wire			update_end_sig;
 wire			eff_trg_sig;
-wire	[2:0]	hit_monit_fix_sel_sig;
+wire	[3:0]	hit_monit_fix_sel_sig;
 wire			busy_monit_fix_sel_sig;
 wire	[7:0]	hit_monit_sel_sig;
 wire	[7:0]	hit_monit_err_cnt_sig;
@@ -378,7 +378,7 @@ TrgMonData TrgMonData_inst(
     .trg_mode_brst_in(trg_mode_brst_sig),
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .coincid_trg_cnt_in(coincid_trg_cnt_sig),
-    .hit_monit_fix_sel_in({13'b0_0000_0000_0000, hit_monit_fix_sel_sig}), 
+    .hit_monit_fix_sel_in({12'b0000_0000_0000, hit_monit_fix_sel_sig}), 
     .hit_monit_sel_in({8'b0000_0000, hit_monit_sel_sig}),
     .hit_monit_err_cnt_in({8'b0000_0000, hit_monit_err_cnt_sig}),
     .hit_start_cnt_in(hit_start_cnt_sig),

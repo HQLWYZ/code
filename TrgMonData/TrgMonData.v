@@ -158,41 +158,41 @@ begin
 	else if (rd_in) begin
 			case (rd_addr_in) ///* synthesis parallel_case */
 				//8'b0000_0000: 
-				8'b0001_1001: mon_data_reg <= status_w_r;                 //from ConfigReg module
-				8'b0001_1010: mon_data_reg <= trg_mode_mip1_in_r;        //from ConfigReg module
-                8'b0001_1011: mon_data_reg <= trg_mode_mip2_in_r;         //from ConfigReg module
-                8'b0001_1100: mon_data_reg <= trg_mode_gm1_in_r;          //from ConfigReg module
-                8'b0001_1101: mon_data_reg <= trg_mode_gm2_in_r;          //from ConfigReg module
-                8'b0001_1110: mon_data_reg <= trg_mode_ubs_in_r;          //from ConfigReg module
-                8'b0001_1111: mon_data_reg <= trg_mode_brst_in_r;         //from ConfigReg module
-                8'b0010_0000: mon_data_reg <= eff_trg_cnt_in_r;           //from HitTrgCount module
-                8'b0010_0001: mon_data_reg <= coincid_trg_cnt_in_r;       //from HitTrgCount module
-                8'b0010_0010: mon_data_reg <= monit_hit_sel_w_r;          //from HitTrgCount module
-                8'b0010_0011: mon_data_reg <= hit_monit_err_cnt_in_r;     //from HitTrgCount module
-                8'b0010_0100: mon_data_reg <= hit_start_cnt_in_r;         //from HitTrgCount module
-                8'b0010_0101: mon_data_reg <= hit_monit_cnt_0_in_r1;    //from HitTrgCount module
-                8'b0010_0110: mon_data_reg <= hit_monit_cnt_0_in_r0;    //from HitTrgCount module
-                8'b0010_0111: mon_data_reg <= hit_monit_cnt_1_in_r1;    //from HitTrgCount module
-                8'b0010_1000: mon_data_reg <= hit_monit_cnt_1_in_r0;    //from HitTrgCount module
-                8'b0010_1001: mon_data_reg <= busy_monit_fix_sel_in_r;    //from HitTrgCount module
-                8'b0010_1010: mon_data_reg <= busy_monit_err_cnt_in_r;    //from HitTrgCount module
-                8'b0010_1011: mon_data_reg <= busy_monit_cnt_in_r;        //from HitTrgCount module
-                8'b0010_1100: mon_data_reg <= coincid_MIP1_cnt_in_r;      //from Coincidence module
-                8'b0010_1101: mon_data_reg <= coincid_MIP2_cnt_in_r;      //from Coincidence module
-                8'b0010_1110: mon_data_reg <= coincid_GM1_cnt_in_r;       //from Coincidence module
-                8'b0010_1111: mon_data_reg <= coincid_GM2_cnt_in_r;       //from Coincidence module
-                8'b0011_0000: mon_data_reg <= coincid_UBS_cnt_in_r1;       //from Coincidence module
-                8'b0011_0001: mon_data_reg <= coincid_UBS_cnt_in_r0;       //from Coincidence module
-                8'b0011_0010: mon_data_reg <= logic_match_cnt_in_r;       //from HitTrgCount module
-                8'b0011_0011: mon_data_reg <= ext_trg_cnt_in_r;           //from HitTrgCount module
-                8'b0011_0100: mon_data_reg <= hit_busy_ab_sel_w_r;        //from ConfigReg module
-                8'b0011_0101: mon_data_reg <= hit_busy_mask_w_r;          //from ConfigReg module
-                8'b0011_0110: mon_data_reg <= trg_match_win_in_r;         //from ConfigReg module
-                8'b0011_0111: mon_data_reg <= trg_dead_time_in_r;         //from ConfigReg module
-                8'b0011_1000: mon_data_reg <= config_received_in_r;       //from ConfigReg module
-                8'b0011_1001: mon_data_reg <= ext_trg_delay_in_r;         //from ConfigReg module
-                8'b0011_1010: mon_data_reg <= cycled_trg_period_in_r;      //from ConfigReg module
-                8'b0011_1011: mon_data_reg <= logic_grp_oe_in_r;                 //backup 
+				8'b0001_1001: mon_data_reg <= status_w_r;                 //from ConfigReg module,  触发板状态
+				8'b0001_1010: mon_data_reg <= trg_mode_mip1_in_r;        //from ConfigReg module,   触发模式MIPS1
+                8'b0001_1011: mon_data_reg <= trg_mode_mip2_in_r;         //from ConfigReg module,  触发模式MIPS2
+                8'b0001_1100: mon_data_reg <= trg_mode_gm1_in_r;          //from ConfigReg module,  触发模式GM1
+                8'b0001_1101: mon_data_reg <= trg_mode_gm2_in_r;          //from ConfigReg module,  触发模式GM2
+                8'b0001_1110: mon_data_reg <= trg_mode_ubs_in_r;          //from ConfigReg module,  触发模式UBS
+                8'b0001_1111: mon_data_reg <= trg_mode_brst_in_r;         //from ConfigReg module,  触发模式爆发模式
+                8'b0010_0000: mon_data_reg <= eff_trg_cnt_in_r;           //from HitTrgCount module,    有效触发计数器（触发号）
+                8'b0010_0001: mon_data_reg <= coincid_trg_cnt_in_r;       //from HitTrgCount module,    符合触发计数
+                8'b0010_0010: mon_data_reg <= monit_hit_sel_w_r;          //from HitTrgCount module,    监测击中信号选择
+                8'b0010_0011: mon_data_reg <= hit_monit_err_cnt_in_r;     //from HitTrgCount module,    监测击中信号宽度错误计数
+                8'b0010_0100: mon_data_reg <= hit_start_cnt_in_r;         //from HitTrgCount module,    触发启动击中信号计数
+                8'b0010_0101: mon_data_reg <= hit_monit_cnt_0_in_r1;    //from HitTrgCount module,  监测击中信号计数0高16位
+                8'b0010_0110: mon_data_reg <= hit_monit_cnt_0_in_r0;    //from HitTrgCount module,  监测击中信号计数0低16位
+                8'b0010_0111: mon_data_reg <= hit_monit_cnt_1_in_r1;    //from HitTrgCount module,  监测击中信号计数1高16位
+                8'b0010_1000: mon_data_reg <= hit_monit_cnt_1_in_r0;    //from HitTrgCount module,  监测击中信号计数1低16位
+                8'b0010_1001: mon_data_reg <= busy_monit_fix_sel_in_r;    //from HitTrgCount module,    监测忙信号选择
+                8'b0010_1010: mon_data_reg <= busy_monit_err_cnt_in_r;    //from HitTrgCount module     备用
+                8'b0010_1011: mon_data_reg <= busy_monit_cnt_in_r;        //from HitTrgCount module     监测忙信号计数
+                8'b0010_1100: mon_data_reg <= coincid_MIP1_cnt_in_r;      //from Coincidence module,    触发模式MIPS1计数
+                8'b0010_1101: mon_data_reg <= coincid_MIP2_cnt_in_r;      //from Coincidence module,    触发模式MIPS2计数
+                8'b0010_1110: mon_data_reg <= coincid_GM1_cnt_in_r;       //from Coincidence module,    触发模式GM1计数
+                8'b0010_1111: mon_data_reg <= coincid_GM2_cnt_in_r;       //from Coincidence module,    触发模式GM2计数
+                8'b0011_0000: mon_data_reg <= coincid_UBS_cnt_in_r1;       //from Coincidence module,   触发模式UBS计数高16位
+                8'b0011_0001: mon_data_reg <= coincid_UBS_cnt_in_r0;       //from Coincidence module,   触发模式UBS计数低16位
+                8'b0011_0010: mon_data_reg <= logic_match_cnt_in_r;       //from HitTrgCount module,    逻辑匹配脉冲计数
+                8'b0011_0011: mon_data_reg <= ext_trg_cnt_in_r;           //from HitTrgCount module,    外部触发计数
+                8'b0011_0100: mon_data_reg <= hit_busy_ab_sel_w_r;        //from ConfigReg module,      击中和忙信号AB通道选择
+                8'b0011_0101: mon_data_reg <= hit_busy_mask_w_r;          //from ConfigReg module,      击中和忙信号掩码
+                8'b0011_0110: mon_data_reg <= trg_match_win_in_r;         //from ConfigReg module,      触发匹配窗口
+                8'b0011_0111: mon_data_reg <= trg_dead_time_in_r;         //from ConfigReg module,      触发死时间
+                8'b0011_1000: mon_data_reg <= config_received_in_r;       //from ConfigReg module,      接收指令计数   
+                8'b0011_1001: mon_data_reg <= ext_trg_delay_in_r;         //from ConfigReg module,      外触发延迟
+                8'b0011_1010: mon_data_reg <= cycled_trg_period_in_r;      //from ConfigReg module,     周期性触发周期
+                8'b0011_1011: mon_data_reg <= logic_grp_oe_in_r;                 //backup               当前触发模式使能
 				default: ;
 			endcase
     end

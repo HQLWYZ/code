@@ -2,7 +2,7 @@
 /* 															*/
 /*	file name:	HitTrgCount.v			           			*/
 /* 	date:		2025/03/13									*/
-/* 	modified:	2026/01/03								 	*/
+/* 	modified:	2026/03/13								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
@@ -21,7 +21,7 @@ module HitTrgCount(
 	input			coincid_trg_in,			//from Coincidence module
 	input			logic_match_in,			//from Coincidence module
 	input			ext_trg_syn_in,			//from GroundTestGen module
-	input	[2:0]	hit_monit_fix_sel_in,	// Selected hit signal for monitoring
+	input	[3:0]	hit_monit_fix_sel_in,	// Selected hit signal for monitoring
 	input			busy_monit_fix_sel_in,	// Selected busy signal for monitoring
 	output	[7:0]	hit_monit_sel_out,		// Which hit signal is monitored
 	output	[7:0]	hit_monit_err_cnt_out,	// Hit signal width error count
@@ -253,74 +253,74 @@ end
 
 
 
-//---------------->>  monitor the width of hit signal 1, selected by hit_monit_sel_r
-reg		[3:0]	hit_monit_width_cnt_1; // max value= 16, clk=50Mhz, the width of hit is 320ns
-reg				hit_monit_err_r_1;
+// //---------------->>  monitor the width of hit signal 1, selected by hit_monit_sel_r
+// reg		[3:0]	hit_monit_width_cnt_1; // max value= 16, clk=50Mhz, the width of hit is 320ns
+// reg				hit_monit_err_r_1;
 
-reg [3:0] c_hit_1_monit_state, n_hit_1_monit_state;  //monitor the hit signal
-parameter 	MONIT_HIT_1_IDLE = 0, 
-			MONIT_HIT_1_CNT = 1,
-			MONIT_HIT_1_WIDTH_CHECK = 2;
+// reg [3:0] c_hit_1_monit_state, n_hit_1_monit_state;  //monitor the hit signal
+// parameter 	MONIT_HIT_1_IDLE = 0, 
+// 			MONIT_HIT_1_CNT = 1,
+// 			MONIT_HIT_1_WIDTH_CHECK = 2;
 
-always @(posedge clk_in)
-begin
-	if (rst_in)
-		c_hit_1_monit_state <= MONIT_HIT_1_IDLE;
-	else 
-		c_hit_1_monit_state <= n_hit_1_monit_state;
-end
+// always @(posedge clk_in)
+// begin
+// 	if (rst_in)
+// 		c_hit_1_monit_state <= MONIT_HIT_1_IDLE;
+// 	else 
+// 		c_hit_1_monit_state <= n_hit_1_monit_state;
+// end
 
-always @(c_hit_1_monit_state or W_hit_pulse[hit_monit_sel_r]   or hit_syn_in[hit_monit_sel_r]
-				 or hit_monit_width_cnt_1 or hit_monit_sel_r)
-begin
-	n_hit_1_monit_state = MONIT_HIT_1_IDLE;
-	case (c_hit_1_monit_state)
-		MONIT_HIT_1_IDLE: begin
-			if ( (W_hit_pulse[hit_monit_sel_r])  ) //leading edge of hit signal, if the hit is alway equal to 1 or 0, no error detected////////(hit_syn_in[hit_monit_sel_r]) 
-				n_hit_1_monit_state = MONIT_HIT_1_CNT;
-			else 
-				n_hit_1_monit_state = MONIT_HIT_1_IDLE;
-			end
-		MONIT_HIT_1_CNT: begin
-			if ( ~hit_syn_in[hit_monit_sel_r] ) //falling edge of hit signal, if the hit is alway equal to 1 or 0, no error detected////////(hit_syn_in[hit_monit_sel_r]) 
-				n_hit_1_monit_state = MONIT_HIT_1_WIDTH_CHECK;
-			else 
-				n_hit_1_monit_state = MONIT_HIT_1_CNT;
-			end
-		MONIT_HIT_1_WIDTH_CHECK: begin
-				n_hit_1_monit_state = MONIT_HIT_1_IDLE;
-			end
-		endcase
-end
+// always @(c_hit_1_monit_state or W_hit_pulse[hit_monit_sel_r]   or hit_syn_in[hit_monit_sel_r]
+// 				 or hit_monit_width_cnt_1 or hit_monit_sel_r)
+// begin
+// 	n_hit_1_monit_state = MONIT_HIT_1_IDLE;
+// 	case (c_hit_1_monit_state)
+// 		MONIT_HIT_1_IDLE: begin
+// 			if ( (W_hit_pulse[hit_monit_sel_r])  ) //leading edge of hit signal, if the hit is alway equal to 1 or 0, no error detected////////(hit_syn_in[hit_monit_sel_r]) 
+// 				n_hit_1_monit_state = MONIT_HIT_1_CNT;
+// 			else 
+// 				n_hit_1_monit_state = MONIT_HIT_1_IDLE;
+// 			end
+// 		MONIT_HIT_1_CNT: begin
+// 			if ( ~hit_syn_in[hit_monit_sel_r] ) //falling edge of hit signal, if the hit is alway equal to 1 or 0, no error detected////////(hit_syn_in[hit_monit_sel_r]) 
+// 				n_hit_1_monit_state = MONIT_HIT_1_WIDTH_CHECK;
+// 			else 
+// 				n_hit_1_monit_state = MONIT_HIT_1_CNT;
+// 			end
+// 		MONIT_HIT_1_WIDTH_CHECK: begin
+// 				n_hit_1_monit_state = MONIT_HIT_1_IDLE;
+// 			end
+// 		endcase
+// end
 
-always @(posedge clk_in)
-begin
-    if (rst_in) begin
-        hit_monit_width_cnt_1 <= 4'b0;
-        hit_monit_err_r_1 <= 1'b0;// flag of the error of hit pulse width, hit_monit_err_r
-    end
-    else begin
-        case (c_hit_1_monit_state) 
-         MONIT_HIT_1_IDLE: begin
-            hit_monit_err_r_1 <= 1'b0;
-            hit_monit_width_cnt_1 <= 4'b0;
-         end
-         MONIT_HIT_1_CNT: begin   // 	
-			hit_monit_width_cnt_1 <= hit_monit_width_cnt_1 + 1;
-         end
-		MONIT_HIT_1_WIDTH_CHECK: begin
-			if( (hit_monit_width_cnt_1 < (HIT_WIDTH - 4)) || (hit_monit_width_cnt_1 > (HIT_WIDTH + 4)) ) begin//[80ns to 240ns]
-				hit_monit_err_r_1 <= 1'b1;
-				hit_monit_width_cnt_1 <= 4'b0;
-			end
-         end
-         default: begin
-            hit_monit_width_cnt_1 <= 4'b0;
-            hit_monit_err_r_1 <= 1'b0;  
-         end
-        endcase
-    end
-end
+// always @(posedge clk_in)
+// begin
+//     if (rst_in) begin
+//         hit_monit_width_cnt_1 <= 4'b0;
+//         hit_monit_err_r_1 <= 1'b0;// flag of the error of hit pulse width, hit_monit_err_r
+//     end
+//     else begin
+//         case (c_hit_1_monit_state) 
+//          MONIT_HIT_1_IDLE: begin
+//             hit_monit_err_r_1 <= 1'b0;
+//             hit_monit_width_cnt_1 <= 4'b0;
+//          end
+//          MONIT_HIT_1_CNT: begin   // 	
+// 			hit_monit_width_cnt_1 <= hit_monit_width_cnt_1 + 1;
+//          end
+// 		MONIT_HIT_1_WIDTH_CHECK: begin
+// 			if( (hit_monit_width_cnt_1 < (HIT_WIDTH - 4)) || (hit_monit_width_cnt_1 > (HIT_WIDTH + 4)) ) begin//[80ns to 240ns]
+// 				hit_monit_err_r_1 <= 1'b1;
+// 				hit_monit_width_cnt_1 <= 4'b0;
+// 			end
+//          end
+//          default: begin
+//             hit_monit_width_cnt_1 <= 4'b0;
+//             hit_monit_err_r_1 <= 1'b0;  
+//          end
+//         endcase
+//     end
+// end
 
 
 
@@ -331,7 +331,7 @@ begin
     if (rst_in) begin
         hit_monit_err_cnt <= 8'b0;
     end
-    else if(hit_monit_err_r_0||hit_monit_err_r_1) begin// when the counter is full, stop counting
+    else if(hit_monit_err_r_0) begin// when the counter is full, stop counting
         hit_monit_err_cnt <= (hit_monit_err_cnt == 8'b1111_1111)? hit_monit_err_cnt:(hit_monit_err_cnt + 1);
     end
 end
@@ -428,7 +428,7 @@ assign	hit_start_cnt_out = hit_start_cnt;
 assign	hit_monit_err_cnt_out = hit_monit_err_cnt;
 assign	logic_match_cnt_out = logic_match_cnt;
 assign	coincid_trg_cnt_out = coincid_trg_cnt;
-assign	hit_monit_sel_out = { 1'b0, hit_monit_fix_sel_in,  hit_monit_sel_r};
+assign	hit_monit_sel_out = { hit_monit_fix_sel_in,  hit_monit_sel_r};
 assign	hit_monit_cnt_0_out = hit_monit_cnt_0;
 assign	hit_monit_cnt_1_out = hit_monit_cnt_1;
 assign	ext_trg_cnt_out = ext_trg_cnt;
@@ -436,7 +436,6 @@ assign	eff_trg_cnt_out = eff_trg_cnt;
 assign	busy_monit_err_cnt_out = 8'b0; 
 assign	busy_monit_cnt_out = busy_monit_cnt;
 assign	trg_delay_timer_out = trg_delay_timer_cnt; 
-
 
 
 endmodule

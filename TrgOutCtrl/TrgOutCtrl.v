@@ -36,17 +36,9 @@ parameter   TRG_PULSE_WIDTH = 20; 	//20ns*20 = 400ns
 parameter   CHK_PULSE_WIDTH = 50; 	// 20ns*50 = 1us
 parameter   DEADTIME_UNIT_10US = 500; //500*20ns = 10us， 500=12'b0001_1111_0100
 
-
 wire        coincid_trg_sig_valid, ext_trg_syn_sig_valid, cycled_trg_sig_valid; //
 wire        pmu_busy_sig_valid;
 wire        total_busy;
-
-assign  coincid_trg_sig_valid = coincid_trg_in & (cmd_reg_in[7]&&cmd_reg_in[4]);
-assign  ext_trg_syn_sig_valid = ext_trg_syn_in & (cmd_reg_in[7]&&cmd_reg_in[5]);
-assign  cycled_trg_sig_valid = cycled_trg_in & (cmd_reg_in[7]&&cmd_reg_in[6]);
-assign  pmu_busy_sig_valid = pmu_busy_in & (cmd_reg_in[3]&&cmd_reg_in[2]);
-assign  total_busy = pmu_busy_sig_valid || si_busy_sig;
-
 
 ///internal reg
 reg                 trg_send_r;// trigger pulse output
@@ -61,7 +53,9 @@ integer             i;
 reg                 eff_trg_sig; //register the output signal
 
 reg         [23:0]  trg_busy_time_cnt_reg;//count the busy time of the trigger, 
-
+reg                 total_busy_r, pmu_busy_sig_valid_r;
+reg         [5:0] cycle_timer_cnt;
+reg         [3:0]   busy_time_work_flow;
 
 
 //------------>  state machine for generating trigger signal, which will be sent to the output of FPGA
@@ -77,6 +71,15 @@ parameter   IDLE = 0,
             WAIT_TRG_WITHOUT_SI_BUSY = 8,
             SEND_TRG = 9, 
             SEND_TRG_CHK = 10; 
+
+
+assign  coincid_trg_sig_valid = coincid_trg_in & (cmd_reg_in[7]&&cmd_reg_in[4]);
+assign  ext_trg_syn_sig_valid = ext_trg_syn_in & (cmd_reg_in[7]&&cmd_reg_in[5]);
+assign  cycled_trg_sig_valid = cycled_trg_in & (cmd_reg_in[7]&&cmd_reg_in[6]);
+assign  pmu_busy_sig_valid = pmu_busy_in & (cmd_reg_in[3]&&cmd_reg_in[2]);
+assign  total_busy = pmu_busy_sig_valid || si_busy_sig;
+
+
 
 always @(posedge clk_in)
 begin
@@ -316,15 +319,6 @@ begin
 end
 
 
-
-
-
-reg [5:0] cycle_timer_cnt;
-
-
-
-reg [3:0]   busy_time_work_flow;
-
 always @(posedge clk_in ) begin
     if (rst_in) begin
         trg_busy_time_cnt_reg<= 24'd0;
@@ -376,10 +370,6 @@ always @(posedge clk_in ) begin
                     busy_time_work_flow <= 4'd3;                
         end
         
-
-
-
-
         if(busy_time_work_flow==4'd4) begin
             if(~pmu_busy_sig_valid) begin
                 busy_time_work_flow <= 4'd6;
@@ -423,7 +413,6 @@ always @(posedge clk_in ) begin
 end
 
 
-reg total_busy_r, pmu_busy_sig_valid_r;
 always @(posedge clk_in) begin
     if (rst_in) begin
         total_busy_r <= 1'b0;
