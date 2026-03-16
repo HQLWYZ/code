@@ -44,7 +44,7 @@ wire  [5:0]  coincid_UBS_div_out           ;
 wire  [1:0]  logic_burst_sel_out           ;
 wire  [15:0]  hit_ab_sel_out               ;
 wire  [15:0]  hit_mask_out                 ;
-wire  [2:0]   hit_monit_fix_sel_out               ;
+wire  [3:0]   hit_monit_fix_sel_out               ;
 wire         busy_monit_fix_sel_out              ;
 wire  [1:0]  busy_ab_sel_out               ;
 wire  [1:0]  busy_mask_out                 ;
@@ -83,85 +83,109 @@ initial//-----------wr_data------
 begin
     #100_000 
     wr_addr_in=8'd0;
-    data_in=16'b0000_0000_0000_0101;
+    data_in=16'b0000_0000_0000_0101; 
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
 	#200 
     wr_addr_in=8'd1;
-    data_in=16'b0000_0000_0000_0101;
+    data_in=16'b0000_0000_0000_0101; 
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd2;
     data_in=16'b0000_0000_0000_0001;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd3;
     data_in=16'b0000_0000_0101_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
 
     #2000 
     wr_addr_in=8'd3;
     data_in=16'b0000_0000_0101_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
+
     #2000 
     wr_addr_in=8'd3;
     data_in=16'b0000_0000_0110_0000;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #2000 
     wr_addr_in=8'd3;
     data_in=16'b0000_0000_1001_1100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #2000 
     wr_addr_in=8'd3;
     data_in=16'b0000_0000_1111_1100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #2000 
     wr_addr_in=8'd3;
     data_in=16'b0000_0000_1001_0000;
-    #2000 
-    wr_addr_in=8'd3;
-    data_in=16'b0000_0000_0101_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
+
 
 
     #200 
     wr_addr_in=8'd4;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd5;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd6;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd7;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd8;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd9;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd10;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd11;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd12;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd13;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd14;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd15;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd16;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd17;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd18;
     data_in=16'b0000_0000_0000_0100;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
     #200 
     wr_addr_in=8'd19;
     data_in=16'b0000_0000_0000_0101;
+    #20 wr_in=1'b1; #20 wr_in=1'b0;
 end
 
 initial//-----------wr_in------
@@ -201,7 +225,7 @@ ConfigReg  u_ConfigReg (
     .logic_burst_sel_out        ( logic_burst_sel_out        [1:0]  ),
     .hit_ab_sel_out             ( hit_ab_sel_out             [15:0] ),
     .hit_mask_out               ( hit_mask_out               [15:0] ),
-    .hit_monit_fix_sel_out      ( hit_monit_fix_sel_out     [2:0]         ),
+    .hit_monit_fix_sel_out      ( hit_monit_fix_sel_out     [3:0]         ),
     .busy_monit_fix_sel_out     ( busy_monit_fix_sel_out             ),
     .busy_ab_sel_out            ( busy_ab_sel_out            [1:0]  ),
     .busy_mask_out              ( busy_mask_out              [1:0]  ),

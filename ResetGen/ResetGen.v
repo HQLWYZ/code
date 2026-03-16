@@ -14,7 +14,7 @@ module ResetGen(
 	input			ctrl_rst_in, 	//from FPGA:high 
     input           cmd_rst_in,		//from ConfigReg:high
     output          rst_logic_out,	//"rst_logic_out": reset other modules,except ConfigReg 
-    output          rst_intf_out	//"rst_intf_out": reset the modules of ConfigReg 
+    output          rst_intf_out	//"rst_intf_out": reset all modules 
 	);
 	
 

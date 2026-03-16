@@ -2,7 +2,7 @@
 /* 															*/
 /*	file name:	ConfigReg.v				           			*/
 /* 	date:		2025/03/06									*/
-/* 	modified:	2026/01/02								 	*/
+/* 	modified:	2026/03/16								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
@@ -142,83 +142,41 @@ begin
     end
 end
 
-reg     [5:0]      	cmd_rst_cnt;
-reg		[1:0]		cmd_rst_state;
+reg     [5:0]      cmd_rst_cnt;
 
 always @(posedge clk_in)
-begin
     if(rst_in)
     begin
         cmd_rst_reg <= 1'b0;
         cmd_rst_cnt <= 6'b0;
-		cmd_rst_state<=2'b00;
-	end
-	else if(cmd_rst_state==2'b00 )
-	begin
-		if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0101_0101))
-		begin
-			cmd_rst_reg <= 1'b1;  
-			cmd_rst_cnt <= cmd_rst_cnt + 1;
-		end
-		if(cmd_rst_cnt == 6'd50)//20ns*50=1us
-		begin
-			cmd_rst_cnt <= 6'd0;
-			cmd_rst_state <= 2'b01;
-			cmd_rst_reg <= 1'b0;
-		end
     end
-	else if(cmd_rst_state==2'b01)
-	begin
-		if(!(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0101_0101)))
-		begin
-			cmd_rst_state <= 2'b00;
-			cmd_rst_reg <= 1'b0;
-        	cmd_rst_cnt <= 6'b0;
-		end
-		else
-			cmd_rst_state <= 2'b01;
-	end
-end
-
-
-reg     [5:0]      	cycled_trg_bgn_cnt;
-reg		[1:0]		cycled_trg_state;
-
+    else if(cmd_rst_cnt == 6'd50)
+    begin
+        cmd_rst_cnt <= 6'd0;
+        cmd_rst_reg <= 1'b0;
+    end
+    else if(cmd_rst_reg)
+        cmd_rst_cnt <= cmd_rst_cnt + 1;
+    else if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0101_0101))
+        cmd_rst_reg <= 1'b1;  
+    
+reg     [5:0]      cycled_trg_bgn_cnt;
 
 always @(posedge clk_in)
-begin
     if(rst_in)
     begin
         cycled_trg_bgn_reg <= 1'b0;
-        cycled_trg_bgn_cnt <= 6'b0;
-		cycled_trg_state<=2'b00;
-	end
-	else if(cycled_trg_state==2'b00 )
-	begin
-		if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0110_0000))
-		begin
-			cycled_trg_bgn_reg <= 1'b1;  
-			cycled_trg_bgn_cnt <= cycled_trg_bgn_cnt + 1;
-		end
-		if(cycled_trg_bgn_cnt == 6'd50)//20ns*50=1us
-		begin
-			cycled_trg_bgn_cnt <= 6'd0;
-			cycled_trg_state <= 2'b01;
-			cycled_trg_bgn_reg <= 1'b0;
-		end
+        cycled_trg_bgn_cnt <= 6'd0;
     end
-	else if(cycled_trg_state==2'b01)
-	begin
-		if(!(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0110_0000)))
-		begin
-			cycled_trg_state <= 2'b00;
-			cycled_trg_bgn_reg <= 1'b0;
-        	cycled_trg_bgn_cnt <= 6'b0;
-		end
-		else
-			cycled_trg_state <= 2'b01;
-	end
-end
+    else if(cycled_trg_bgn_cnt == 6'd50)
+    begin
+        cycled_trg_bgn_cnt <= 6'd0;
+        cycled_trg_bgn_reg <= 1'b0;
+    end
+    else if(cycled_trg_bgn_reg)
+        cycled_trg_bgn_cnt <= cycled_trg_bgn_cnt + 1;
+    else if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0110_0000))
+        cycled_trg_bgn_reg <= 1'b1;
 
 
 reg 			wr_in_r;//wr_addr_in_r

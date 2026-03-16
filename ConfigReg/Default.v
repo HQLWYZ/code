@@ -2,6 +2,7 @@
 /* 															*/
 /*	file name:	Default.v				           			*/
 /* 	date:		2025/03/06									*/
+/* 	modified:	2026/03/16								 	*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
@@ -20,7 +21,7 @@
 `define TRG_MODE_BRST_REG       16'b0000_0000_0000_1101 // trigger mode register4 value
 `define HIT_AB_SEL_REG          16'b0000_0000_0000_1101
 `define HIT_MASK_REG            16'b0000_0000_0000_1101
-`define BUSY_SET_REG            16'b0000_0000_0000_1101
+`define BUSY_SET_REG            16'b1111_1111_1111_1101
 `define HIT_DELAY_WIN_REG       16'b0000_0000_0000_1101
 `define HIT_ALIGN_REG_0         16'b0000_0000_0000_1101
 `define HIT_ALIGN_REG_1         16'b0000_0000_0000_1101
