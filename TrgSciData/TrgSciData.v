@@ -2,7 +2,7 @@
 /* 															*/
 /*	file name:	TrgSciData.v			           			*/
 /* 	date:		2025/04/11									*/
-/* 	modified:	2026/01/08								 	*/
+/* 	modified:	2026/03/18									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/

@@ -2,7 +2,7 @@
 /* 															*/
 /*	file name:	ConfigReg.v				           			*/
 /* 	date:		2025/03/06									*/
-/* 	modified:	2026/03/16								 	*/
+/* 	modified:	2026/03/18									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/

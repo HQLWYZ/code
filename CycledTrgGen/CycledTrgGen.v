@@ -2,7 +2,7 @@
 /* 															*/
 /*	file name:	CycledTrgGen.v			           			*/
 /* 	date:		2025/03/07									*/
-/* 	modified:	2026/01/02								 	*/
+/* 	modified:	2026/03/18									*/
 /* 	version:	v1.0										*/
 /* 	author:		Wang Shen									*/
 /* 	email:		wangshen@pmo.ac.cn							*/
@@ -54,7 +54,7 @@ begin
 		c_state <= n_state;	
 end
 
-always @(c_state or cycled_trg_bgn_in or cycled_trg_cnt or cycled_trg_period_cnt or cycled_trg_num_in)
+always @(c_state or cycled_trg_bgn_in or cycled_trg_cnt or cycled_trg_period_in or cycled_trg_period_cnt or cycled_trg_num_in or cycled_trg_bgn_in_r)
 begin
 	n_state = IDLE; //default value
 	case(c_state)
