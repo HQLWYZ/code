@@ -30,6 +30,7 @@ module TrgSciData
     input   [7:0]   trg_mode_ubs_in,
     input   [15:0]  eff_trg_cnt_in,
     input           eff_trg_in,// trigger sources, when trigger happens, trigger sci-data will be written into the FIFO
+    input           trg_sig_end_flag,
     input   [23:0]  trg_busy_time_cnt_in,
     output  [7:0]   fifo_data_out,
     output          fifo_prog_full_out,
@@ -49,7 +50,7 @@ reg [3:0]       sci_data_type_reg;
 parameter   TRG_TIME_TAG_UNIT_1US = 50; //50*20ns = 1us
 
 //----------TBD, 20260312-------------
-assign frame_length = 16'd32; 
+assign frame_length = 16'd24; 
 assign sci_data_tag = 8'h00, module_tag = 4'h9;
 assign sci_data_type = sci_data_type_reg;
 assign time_code = pmu_time_tag_in;
@@ -167,12 +168,12 @@ begin
 		c_state <= n_state;	
 end
 
-always @(c_state or eff_trg_in or wr_fifo_cnt or fifo_full or data_trans_enb_sig)
+always @(c_state  or trg_sig_end_flag or wr_fifo_cnt or fifo_full or data_trans_enb_sig)
 begin
 	n_state = IDLE; //default value
 	case(c_state)
 		IDLE: begin
-			if (eff_trg_in & data_trans_enb_sig)   
+			if (trg_sig_end_flag & data_trans_enb_sig)   
 				n_state = TRIG_IN;
 			else 
 				n_state = IDLE;			
@@ -291,13 +292,13 @@ crc16_ccitt crc16_ccitt_inst(
 
 // fifo_generator_0 fifo_generator_0_inst
 // (
-// //	.rst(rst_in),
+// 	.rst(rst_in),
 // 	.wr_clk(clk_in),
 // 	.rd_clk(fifo_rd_clk),
 // 	.din(sci_data_in),
 // 	.rd_en(fifo_rd_in),
 // 	.wr_en(fifo_wr_in),
-// 	.prog_full_thresh(9'h14),
+// 	.prog_full_thresh(9'h20),
 // 	.dout(sci_data_out),
 // 	.empty(fifo_empty),
 // 	.full(fifo_full),

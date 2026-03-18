@@ -57,6 +57,7 @@ module TrgTop(
     output			trg_out_N_Si2_b,
     output          trg_out_N_cal_fee_1_a, trg_out_N_cal_fee_1_b,trg_out_N_cal_fee_2_a, trg_out_N_cal_fee_2_b,
     output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b,
+    output          trg_out_FPGA,
     output          trg_enb_sig,
     output          fifo_prog_full_out,
     output          data_trans_enb_sig,
@@ -139,7 +140,7 @@ wire          	trg_test_sig;
 wire          	ext_trg_syn_sig;
 //wire          	ext_trg_raw_1us_sig;
 //wire			update_end_sig;
-wire			eff_trg_sig;
+wire			eff_trg_sig, trg_sig_end_flag;
 wire	[3:0]	hit_monit_fix_sel_sig;
 wire			busy_monit_fix_sel_sig;
 wire	[7:0]	hit_monit_sel_sig;
@@ -317,6 +318,7 @@ TrgOutCtrl TrgOutCtrl_inst(
     .trg_dead_time_in(trg_dead_time_sig),
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .eff_trg_out(eff_trg_sig),
+    .trg_sig_end_flag(trg_sig_end_flag),
     .trg_busy_time_cnt_out(trg_busy_time_cnt_sig),
     .trg_out_N_acd_a(trg_out_N_acd_a),//trig to acd(primary A)
     .trg_out_N_acd_b(trg_out_N_acd_b),//trig to acd(backup B)
@@ -333,7 +335,8 @@ TrgOutCtrl TrgOutCtrl_inst(
     .trg_out_N_cal_fee_3_a(trg_out_N_cal_fee_3_a), 
     .trg_out_N_cal_fee_3_b(trg_out_N_cal_fee_3_b),
     .trg_out_N_cal_fee_4_a(trg_out_N_cal_fee_4_a), 
-    .trg_out_N_cal_fee_4_b(trg_out_N_cal_fee_4_b) 
+    .trg_out_N_cal_fee_4_b(trg_out_N_cal_fee_4_b) ,
+    .trg_out_FPGA(trg_out_FPGA)
 	 
 );
 
@@ -427,6 +430,7 @@ TrgSciData TrgSciData_inst
     .trg_mode_ubs_in(trg_mode_ubs_sig[7:0]),
     .eff_trg_cnt_in(eff_trg_cnt_sig),
     .eff_trg_in(eff_trg_sig),
+    .trg_sig_end_flag(trg_sig_end_flag),
     .trg_busy_time_cnt_in(trg_busy_time_cnt_sig),
     .fifo_data_out(fifo_data_out),
     .fifo_prog_full_out(fifo_prog_full_out),

@@ -24,12 +24,14 @@ module TrgOutCtrl(
     input   [7:0]   trg_dead_time_in, //dead time for trigger signal 
     input   [15:0]  eff_trg_cnt_in, //equal to trigger id
     output          eff_trg_out,    //width = 1 clock, signal for the other modules
+    output          trg_sig_end_flag, //the end flag of the trigger signal, just one clock width, can be used to latch the trigger id in other modules
     output [23:0]   trg_busy_time_cnt_out, //unit is 100ns, max time is about 16.77s
     output          trg_out_N_acd_a, trg_out_N_acd_b, //width = 400ns, 400us trigger signal with 1000us trigger id check signal
     output          trg_out_N_CsI_track_a, trg_out_N_CsI_track_b,
     output          trg_out_N_Si1_a, trg_out_N_Si1_b,trg_out_N_Si2_a, trg_out_N_Si2_b,
     output          trg_out_N_cal_fee_1_a, trg_out_N_cal_fee_1_b,trg_out_N_cal_fee_2_a, trg_out_N_cal_fee_2_b,
-    output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b 	 
+    output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b,
+    output          trg_out_FPGA 	 
 );
 
 parameter   TRG_PULSE_WIDTH = 20; 	//20ns*20 = 400ns
@@ -42,6 +44,7 @@ wire        total_busy;
 
 ///internal reg
 reg                 trg_send_r;// trigger pulse output
+reg                 trg_send_r_r;
 reg	                daq_busy_r;
 reg         [7:0]   trg_chksig_width_cnt;// trigger signal and TID check signal's width counter
 reg         [19:0]  trg_dead_time_cnt;//[MAX]=20'b1111_1111_1111_1111_1111 = 1_048_575, about 20ns*1048575=20.97ms
@@ -190,6 +193,14 @@ always @(posedge clk_in) begin
         coincid_trg_sig_valid_r <= 1'b0;
     else
         coincid_trg_sig_valid_r <= coincid_trg_sig_valid;
+end
+
+
+always @(posedge clk_in) begin
+    if(rst_in)
+        trg_send_r_r <= 1'b0;
+    else
+        trg_send_r_r <= trg_send_r;
 end
 
 always @(*)begin
@@ -444,5 +455,7 @@ assign  trg_out_N_cal_fee_3_a = ~trg_send_r;
 assign  trg_out_N_cal_fee_3_b = ~trg_send_r;
 assign  trg_out_N_cal_fee_4_a = ~trg_send_r;
 assign  trg_out_N_cal_fee_4_b = ~trg_send_r;
+assign  trg_out_FPGA = ~trg_send_r;
+assign  trg_sig_end_flag = (~trg_send_r)&&(trg_send_r_r);//the end flag of the trigger signal, just one clock width, can be used to latch the trigger id in other modules
 
 endmodule
