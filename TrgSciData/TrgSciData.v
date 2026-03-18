@@ -18,6 +18,8 @@ module TrgSciData
 	input           data_trans_enb_sig,
 	input           fifo_rd_clk,
     input           fifo_rd_in,  
+    input   [47:0]  pmu_time_tag_in,
+    input   [15:0]  cmd_reg_in,
     input   [7:0]   logic_grp_oe_in,    //TrgModeOEReg
     input   [15:0]  hit_sig_stus_in,     //hit status when raw trigger generated
     input   [4:0]   W_logic_all_grp_result_in,
@@ -42,18 +44,40 @@ wire [15:0]     frame_length;
 wire [47:0]     time_code;
 wire [7:0]      sci_data_tag;
 wire [3:0]      module_tag, sci_data_type;
-
+reg [3:0]       sci_data_type_reg;
 
 parameter   TRG_TIME_TAG_UNIT_1US = 50; //50*20ns = 1us
 
 //----------TBD, 20260312-------------
-assign frame_length = 16'd32, time_code = 48'h00_0000; 
-assign sci_data_tag = 8'h00, module_tag = 4'h0,  sci_data_type = 4'h0;
+assign frame_length = 16'd32; 
+assign sci_data_tag = 8'h00, module_tag = 4'h9;
+assign sci_data_type = sci_data_type_reg;
+assign time_code = pmu_time_tag_in;
 //----------TBD, 20260312-------------
 
 //reg [23:0] trg_busy_time_cnt_reg;//count the busy time of the trigger, 
 reg [15:0] trg_time_tag_cnt_reg;//count the time interval between two triggers, unit is 1us, max time interval is about 65ms
 
+
+always @(posedge clk_in ) begin
+    if (rst_in) begin
+        sci_data_type_reg <= 4'd0;      
+    end 
+    else begin
+        if(cmd_reg_in[7]) begin
+            if(cmd_reg_in[4])
+                sci_data_type_reg <= 4'h1; //coincidence trigger
+            else if(cmd_reg_in[5])
+                sci_data_type_reg <= 4'h2; //external trigger
+            else if(cmd_reg_in[6])
+                sci_data_type_reg <= 4'h3; //cycled trigger
+            else
+                sci_data_type_reg <= 4'h0; //invalid trigger
+        end
+        else
+            sci_data_type_reg <= 4'h0; //invalid trigger
+    end
+end
 
 
 //generate trg_logic_out_reg
@@ -189,7 +213,7 @@ begin
             wr_fifo_cnt<= 5'b0;
             sum_reg <= 16'd0;
             crc_en <= 1'b0;
-            frame_cnt_reg <= 16'd0;
+            //frame_cnt_reg <= 16'd0;
          end
 
          TRIG_IN: begin

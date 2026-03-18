@@ -14,6 +14,7 @@ module TrgTop(
 	input	        clk_in,
     input			ctrl_rst_in,    //to ResetGen module
     input			pmu_busy_in,    
+    input   [47:0]  pmu_time_tag_in,   
     input           wr_in,          //to ConFigReg module
     input	[7:0]   wr_addr_in,     //to ConFigReg module
     input   [15:0]  data_in,        //to ConFigReg module
@@ -414,6 +415,8 @@ TrgSciData TrgSciData_inst
 	.data_trans_enb_sig(data_trans_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
+    .pmu_time_tag_in(pmu_time_tag_in),
+    .cmd_reg_in(cmd_reg_sig),
     .logic_grp_oe_in(logic_grp_oe_sig),
     .hit_sig_stus_in(hit_sig_stus_sig), 
     .W_logic_all_grp_result_in(W_logic_all_grp_result_sig),

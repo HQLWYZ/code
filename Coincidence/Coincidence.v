@@ -446,7 +446,7 @@ reg logic_grp2_fee_tmp1, logic_grp2_fee_tmp2;
 reg logic_grp3_fee_tmp1, logic_grp3_fee_tmp2;
 reg logic_grp4_fee_tmp1, logic_grp4_fee_tmp2;
 
-//coincidence logic group0, fee hit selection
+//coincidence logic group0(MIPS1), fee hit selection
 always @(posedge clk_in)
 begin
 	if (rst_in) begin

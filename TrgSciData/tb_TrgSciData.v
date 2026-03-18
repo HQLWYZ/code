@@ -1,4 +1,8 @@
 //~ `New testbench
+	// 2，iverilog -o ./a.out ./TrgSciData.v ./tb_TrgSciData.v  ./fifo.v ./crc16_ccitt.v
+	// //-使用iverilog编译源代码和仿真代码，生成可执行文件a.out-
+	// 3， vvp -n a.out 	// //-对a.out文件进行仿真，并将波形记录在tb_TrgOutCtrl.vcd文件中 -
+	// 4，gtkwave tb_TrgSciData.vcd //-查看波形文件-
 `timescale  1ns / 1ps
 
 module tb_TrgSciData;
@@ -18,6 +22,8 @@ reg   rst_in                             = 0 ;
 reg   data_trans_enb_sig                     = 0 ;
 reg   fifo_rd_clk                           = 0 ;
 reg   fifo_rd_in                            = 0 ;
+reg [47:0] pmu_time_tag_in = 48'd0;
+reg [15:0] cmd_reg_in = 0 ;
 reg   [7:0]   logic_grp_oe_in = 0 ;
 reg   [15:0]  hit_sig_stus_in = 0 ;
 reg   [4:0]   W_logic_all_grp_result_in = 0 ;
@@ -89,6 +95,8 @@ end
 initial//
 begin
     #100_000     
+        pmu_time_tag_in=48'h3456_789A_BCDE;
+        cmd_reg_in=16'b0000_0000_1001_0001;
         logic_grp_oe_in=8'b0000_1001;  //100.1us
         hit_sig_stus_in=16'b0000_1001_0110_1111;
         W_logic_all_grp_result_in=5'b10100;
@@ -101,6 +109,8 @@ begin
         eff_trg_cnt_in=16'h1234;
         
     #100_000     
+        pmu_time_tag_in=48'h1111_789A_1111;
+        cmd_reg_in=16'b0000_0000_1010_0001;
         logic_grp_oe_in=8'b0000_1001;  //100.1us
         hit_sig_stus_in=16'b0000_1001_0110_1111;
         W_logic_all_grp_result_in=5'b10100;
@@ -124,6 +134,8 @@ TrgSciData  u_TrgSciData (
 	.data_trans_enb_sig(data_trans_enb_sig),
 	.fifo_rd_clk(fifo_rd_clk),
     .fifo_rd_in(fifo_rd_in),  
+    .pmu_time_tag_in(pmu_time_tag_in),
+    .cmd_reg_in(cmd_reg_in),
     .logic_grp_oe_in(logic_grp_oe_in),
     .hit_sig_stus_in(hit_sig_stus_in),
     .W_logic_all_grp_result_in(W_logic_all_grp_result_in),
