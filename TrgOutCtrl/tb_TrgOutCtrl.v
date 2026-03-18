@@ -1,4 +1,8 @@
 //~ `New testbench
+// 2，iverilog -o ./a.out ./TrgOutCtrl.v ./tb_TrgOutCtrl.v  
+// 3， vvp -n a.out 	
+// 4，gtkwave tb_TrgOutCtrl.vcd 
+
 `timescale  1ns / 1ps
 //`include "./TrgOutCtrl.v"
 

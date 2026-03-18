@@ -175,7 +175,7 @@ always @(posedge clk_in)
     end
     else if(cycled_trg_bgn_reg)
         cycled_trg_bgn_cnt <= cycled_trg_bgn_cnt + 1;
-    else if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in==16'b0000_0000_0110_0000))
+    else if(wr_in & (wr_addr_in == 8'b0000_0011) & (data_in[15:4]==12'b0000_0000_1100))
         cycled_trg_bgn_reg <= 1'b1;
 
 

@@ -137,7 +137,7 @@ reg [15:0]  sum_reg;
 
 
 reg [5:0] cycle_cnt;
-
+reg [15:0] wait_time_tag_cnt;
 always @(posedge clk_in ) begin
         if (rst_in) begin
             cycle_cnt <= 6'd0;
@@ -156,9 +156,10 @@ always @(posedge clk_in ) begin
 
 
 parameter   IDLE = 0, 
-            TRIG_IN=1,
-            WRITE_FIFO_START = 2, 
-            WRITE_DONE = 3;
+            WAIT_TIME_TAG = 1,
+            TRIG_IN=2,
+            WRITE_FIFO_START = 3, 
+            WRITE_DONE = 4;
 
 always @(posedge clk_in)
 begin
@@ -168,15 +169,21 @@ begin
 		c_state <= n_state;	
 end
 
-always @(c_state  or trg_sig_end_flag or wr_fifo_cnt or fifo_full or data_trans_enb_sig)
+always @(c_state  or eff_trg_in or wr_fifo_cnt or fifo_full or data_trans_enb_sig or wait_time_tag_cnt)
 begin
 	n_state = IDLE; //default value
 	case(c_state)
 		IDLE: begin
-			if (trg_sig_end_flag & data_trans_enb_sig)   
-				n_state = TRIG_IN;
+			if (eff_trg_in & data_trans_enb_sig)   
+				n_state = WAIT_TIME_TAG;
 			else 
 				n_state = IDLE;			
+		end
+        WAIT_TIME_TAG: begin
+			if (wait_time_tag_cnt==16'd25)   //wait for the time tag to be updated, which means the time interval between two triggers is at least 1ms, then accept the next trigger
+				n_state = TRIG_IN;
+			else 
+				n_state = WAIT_TIME_TAG;			
 		end
         TRIG_IN: begin
 			if (~fifo_full)   
@@ -197,6 +204,8 @@ begin
 	endcase	
 end
 
+
+
 ////////////coincidence process
 always @(posedge clk_in)
 begin
@@ -206,6 +215,7 @@ begin
         crc_en <= 1'b0;
         sum_reg <= 16'd0;
         frame_cnt_reg <= 16'd0;
+        wait_time_tag_cnt <= 16'd0;
     end
     else begin
         case(c_state) 
@@ -215,10 +225,20 @@ begin
             sum_reg <= 16'd0;
             crc_en <= 1'b0;
             //frame_cnt_reg <= 16'd0;
+            wait_time_tag_cnt <= 16'd0;
+
+         end
+         WAIT_TIME_TAG: begin
+            if(wait_time_tag_cnt==16'd25)
+                wait_time_tag_cnt <= 16'd0;
+            else
+                wait_time_tag_cnt <= wait_time_tag_cnt + 1'b1;
+
          end
 
          TRIG_IN: begin
             frame_cnt_reg <= frame_cnt_reg + 1'b1;
+            wait_time_tag_cnt <= 16'd0;
             sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
             sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, sci_data_tag, module_tag, sci_data_type,
