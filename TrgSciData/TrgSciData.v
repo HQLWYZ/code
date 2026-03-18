@@ -37,15 +37,15 @@ module TrgSciData
     output          fifo_empty_out
 );
 
-reg [223:0]     sci_data_reg;
-reg [15:0]      logic_grp_sel_reg;
-reg [15:0]      sel_bit_reg; //select which trigger settings was enabled
-reg  [15:0]     frame_cnt_reg; 
-wire [15:0]     frame_length;
-wire [47:0]     time_code;
-wire [7:0]      sci_data_tag;
-wire [3:0]      module_tag, sci_data_type;
-reg [3:0]       sci_data_type_reg;
+reg     [223:0]     sci_data_reg;
+reg     [15:0]      logic_grp_sel_reg;
+reg     [15:0]      sel_bit_reg; //select which trigger settings was enabled
+reg     [15:0]     frame_cnt_reg; 
+wire    [15:0]     frame_length;
+reg     [47:0]     time_code;
+wire    [7:0]      sci_data_tag;
+wire    [3:0]      module_tag, sci_data_type;
+reg     [3:0]       sci_data_type_reg;
 
 parameter   TRG_TIME_TAG_UNIT_1US = 50; //50*20ns = 1us
 
@@ -53,11 +53,21 @@ parameter   TRG_TIME_TAG_UNIT_1US = 50; //50*20ns = 1us
 assign frame_length = 16'd24; 
 assign sci_data_tag = 8'h00, module_tag = 4'h9;
 assign sci_data_type = sci_data_type_reg;
-assign time_code = pmu_time_tag_in;
+//assign time_code = pmu_time_tag_in;
 //----------TBD, 20260312-------------
 
 //reg [23:0] trg_busy_time_cnt_reg;//count the busy time of the trigger, 
 reg [15:0] trg_time_tag_cnt_reg;//count the time interval between two triggers, unit is 1us, max time interval is about 65ms
+
+always @(posedge clk_in ) begin
+    if (rst_in) begin
+        time_code <= 48'd0;
+    end 
+    else begin
+        time_code <= pmu_time_tag_in;
+    end
+end
+
 
 
 always @(posedge clk_in ) begin

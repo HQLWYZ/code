@@ -106,7 +106,7 @@ end
 
 always @(c_state or trg_enb_in or cycled_trg_sig_valid or ext_trg_syn_sig_valid or coincid_trg_sig_valid or coincid_trg_sig_valid_r or
 					trg_chksig_width_cnt or trg_dead_time_cnt or trg_dead_time_in or eff_trg_cnt_in or 
-                    busy_syn_in or busy_ignore_in or pmu_busy_sig_valid or logic_burst_sel_in)
+                    busy_syn_in or busy_ignore_in or pmu_busy_sig_valid or logic_burst_sel_in or si_busy_sig)
 begin
 	n_state = IDLE;
 	case (c_state)
