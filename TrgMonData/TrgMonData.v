@@ -1,13 +1,13 @@
 /*----------------------------------------------------------*/
-/* 															*/
-/*	file name:	TrgMonData.v			           			*/
-/* 	date:		2025/03/27									*/
-/* 	modified:	2026/01/07								 	*/
-/* 	version:	v1.0										*/
-/* 	author:		Wang Shen									*/
-/* 	email:		wangshen@pmo.ac.cn							*/
-/* 	note:		system clock = 50MHz	                    */
-/* 															*/
+/* */
+/*	file name:	TrgMonData.v			                    */
+/* date:		2025/03/27									*/
+/* modified:	2026/04/04                                  */
+/* version:	    v1.0										*/
+/* author:		Wang Shen									*/
+/* email:		wangshen@pmo.ac.cn							*/
+/* note:		system clock = 50MHz	                    */
+/* */
 /*----------------------------------------------------------*/
 
 module TrgMonData(
@@ -64,13 +64,16 @@ coincid_GM1_cnt_in_r, coincid_GM2_cnt_in_r, coincid_UBS_cnt_in_r1, coincid_UBS_c
 hit_busy_ab_sel_w_r, hit_busy_mask_w_r, trg_match_win_in_r, trg_dead_time_in_r, config_received_in_r, ext_trg_delay_in_r, cycled_trg_period_in_r, logic_grp_oe_in_r;                
 
 reg rd_in_r;
-always@(posedge clk_in)
+
+
+always@(posedge clk_in or posedge rst_in)
     if(rst_in)	
 		rd_in_r <= 1'b0;
 	else
 		rd_in_r <= rd_in;
 
-always@(posedge clk_in)
+
+always@(posedge clk_in or posedge rst_in)
     if(rst_in)
     begin
         status_w_r <= 16'd0;
@@ -110,9 +113,8 @@ always@(posedge clk_in)
 		logic_grp_oe_in_r <= 16'd0;
     end
     else
-        //if(store_en)
 		if(rd_in & ~rd_in_r & (rd_addr_in == 8'b0001_1001))
-        begin//
+        begin
             status_w_r <= status_w;
             trg_mode_mip1_in_r <= trg_mode_mip1_in;
             trg_mode_mip2_in_r <= trg_mode_mip2_in;
@@ -150,14 +152,14 @@ always@(posedge clk_in)
 			logic_grp_oe_in_r <= {8'd0, logic_grp_oe_in};
         end
             
-always @(posedge clk_in)
+
+always @(posedge clk_in or posedge rst_in)
 begin
     if (rst_in) begin    	
     	mon_data_reg <= 16'b0;
 	end
 	else if (rd_in) begin
-			case (rd_addr_in) ///* synthesis parallel_case */
-				//8'b0000_0000: 
+			case (rd_addr_in) 
 				8'b0001_1001: mon_data_reg <= status_w_r;                 //from ConfigReg module,  触发板状态
 				8'b0001_1010: mon_data_reg <= trg_mode_mip1_in_r;        //from ConfigReg module,   触发模式MIPS1
                 8'b0001_1011: mon_data_reg <= trg_mode_mip2_in_r;         //from ConfigReg module,  触发模式MIPS2
@@ -192,8 +194,9 @@ begin
                 8'b0011_1000: mon_data_reg <= config_received_in_r;       //from ConfigReg module,      接收指令计数   
                 8'b0011_1001: mon_data_reg <= ext_trg_delay_in_r;         //from ConfigReg module,      外触发延迟
                 8'b0011_1010: mon_data_reg <= cycled_trg_period_in_r;      //from ConfigReg module,     周期性触发周期
-                8'b0011_1011: mon_data_reg <= logic_grp_oe_in_r;                 //backup               当前触发模式使能
-				default: ;
+                8'b0011_1011: mon_data_reg <= logic_grp_oe_in_r;                 //backup                当前触发模式使能
+				
+                default:      mon_data_reg <= 16'd0;
 			endcase
     end
 end
@@ -203,6 +206,6 @@ assign  status_w              = {ctrl_reg_in[7:0],cmd_reg_in[7:0]};             
 assign  monit_hit_sel_w       = {hit_monit_fix_sel_in[7:0],hit_monit_sel_in[7:0]};  //from HitTrgCount module
 assign  hit_busy_ab_sel_w     = {hit_ab_sel_in[15:8],busy_ab_sel_in[7:0]};           //from ConfigReg module
 assign  hit_busy_mask_w       = {hit_mask_in[9:0],busy_mask_in[5:0]};               //from ConfigReg module
-assign  mon_data_out            = mon_data_reg;
+assign  mon_data_out          = mon_data_reg;
 
 endmodule

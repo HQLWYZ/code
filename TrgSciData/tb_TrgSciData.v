@@ -1,6 +1,5 @@
 //~ `New testbench
 	// 2，iverilog -o ./a.out ./TrgSciData.v ./tb_TrgSciData.v  ./fifo.v ./crc16_ccitt.v
-	// //-使用iverilog编译源代码和仿真代码，生成可执行文件a.out-
 	// 3， vvp -n a.out 	// //-对a.out文件进行仿真，并将波形记录在tb_TrgOutCtrl.vcd文件中 -
 	// 4，gtkwave tb_TrgSciData.vcd //-查看波形文件-
 `timescale  1ns / 1ps
@@ -99,7 +98,7 @@ begin
         cmd_reg_in=16'b0000_0000_1001_0001;
         logic_grp_oe_in=8'b0000_1001;  //100.1us
         hit_sig_stus_in=16'b0000_1001_0110_1111;
-        W_logic_all_grp_result_in=5'b10100;
+        W_logic_all_grp_result_in=5'b11111;
         trg_mode_mip1_in=8'b0000_0011;
         trg_mode_mip2_in=8'b0000_0101;
         trg_mode_gm1_in=8'b0000_0111;
@@ -113,7 +112,7 @@ begin
         cmd_reg_in=16'b0000_0000_1010_0001;
         logic_grp_oe_in=8'b0000_1001;  //100.1us
         hit_sig_stus_in=16'b0000_1001_0110_1111;
-        W_logic_all_grp_result_in=5'b10100;
+        W_logic_all_grp_result_in=5'b11111;
         trg_mode_mip1_in=8'b0000_0011;
         trg_mode_mip2_in=8'b0000_0101;
         trg_mode_gm1_in=8'b0000_0111;

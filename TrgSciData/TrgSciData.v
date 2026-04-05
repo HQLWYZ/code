@@ -41,9 +41,12 @@ reg     [15:0]      sel_bit_reg; //select which trigger settings was enabled
 reg     [15:0]      frame_cnt_reg; 
 wire    [15:0]      frame_length;
 reg     [47:0]      time_code;
-wire    [7:0]       sci_data_tag;
+reg     [7:0]       pre_scale_1_reg;//[H: MIPS1_div, L: MIPS2_div]
+reg     [7:0]       pre_scale_2_reg;//[H: UBS_div, L: backup]
+reg     [7:0]       trg_logic_out_reg;
 wire    [3:0]       module_tag, sci_data_type;
 reg     [3:0]       sci_data_type_reg;
+reg     [15:0]      eff_trg_cnt_reg;//count the time interval between two triggers, unit is 1us, max time interval is about 65ms
 
 wire                fifo_prog_full;
 wire                crc_rst;
@@ -52,7 +55,7 @@ parameter   TRG_TIME_TAG_UNIT_1US = 50; //50*20ns = 1us
 
 //----------TBD, 20260312-------------
 assign frame_length = 16'd24; 
-assign sci_data_tag = 8'h00, module_tag = 4'h9;
+assign module_tag = 4'h9;
 assign sci_data_type = sci_data_type_reg;
 //----------TBD, 20260312-------------
 
@@ -88,43 +91,7 @@ always @(posedge clk_in or posedge rst_in) begin
     end
 end
 
-//generate trg_logic_out_reg
-reg [7:0]   trg_logic_out_reg;
-reg [5:0]   coincid_div_reg;
 
-always @(posedge clk_in or posedge rst_in)
-begin
-    if (rst_in) begin
-        trg_logic_out_reg<= 8'b0;
-        coincid_div_reg<= 6'b0;
-    end
-    else  begin 
-        if((W_logic_all_grp_result_in[4] == 1'b1) && (logic_grp_oe_in[4] == 1'b1) && (eff_trg_in == 1'b1))   begin
-            trg_logic_out_reg<= 8'b0001_0000;
-            coincid_div_reg<=trg_mode_ubs_in[5:0];
-        end
-        else if((W_logic_all_grp_result_in[3] == 1'b1) && (logic_grp_oe_in[3] == 1'b1) && (eff_trg_in == 1'b1)) begin
-            trg_logic_out_reg<= 8'b0000_1000;
-            coincid_div_reg<=trg_mode_gm2_in[5:0];
-        end
-        else if((W_logic_all_grp_result_in[2] == 1'b1) && (logic_grp_oe_in[2] == 1'b1) && (eff_trg_in == 1'b1))  begin
-            trg_logic_out_reg<= 8'b0000_0100;
-            coincid_div_reg<=trg_mode_gm1_in[5:0];
-        end
-        else if((W_logic_all_grp_result_in[1] == 1'b1) && (logic_grp_oe_in[1] == 1'b1) && (eff_trg_in == 1'b1)) begin
-            trg_logic_out_reg<= 8'b0000_0010;
-            coincid_div_reg<=trg_mode_mip2_in[5:0];
-        end
-        else if((W_logic_all_grp_result_in[0] == 1'b1) && (logic_grp_oe_in[0] == 1'b1) && (eff_trg_in == 1'b1)) begin
-            trg_logic_out_reg<= 8'b0000_0001;
-            coincid_div_reg<=trg_mode_mip1_in[5:0];
-        end
-        else    begin
-            trg_logic_out_reg<= 8'b0000_0000;
-            coincid_div_reg<= 6'b0;
-        end
-    end
-end
 
 
 reg[2:0] c_state, n_state;
@@ -163,11 +130,23 @@ always @(posedge clk_in or posedge rst_in) begin
 end
 
 
+always @(posedge clk_in or posedge rst_in) begin
+    if (rst_in) begin
+            eff_trg_cnt_reg <= 16'd0;
+    end 
+    else begin
+            eff_trg_cnt_reg <= eff_trg_cnt_in-1'b1; //make sure the trigger id start from 0
+    end
+end
+
+
+
 parameter   IDLE = 0, 
             WAIT_TIME_TAG = 1,
             TRIG_IN=2,
-            WRITE_FIFO_START = 3, 
-            WRITE_DONE = 4;
+            TRIG_DATA_READY=3,
+            WRITE_FIFO_START = 4, 
+            WRITE_DONE = 5;
 
 always @(posedge clk_in or posedge rst_in)
 begin
@@ -194,10 +173,13 @@ begin
                 n_state = WAIT_TIME_TAG;            
         end
         TRIG_IN: begin
+                n_state = TRIG_DATA_READY;          
+        end
+        TRIG_DATA_READY: begin
             if (fifo_full == 1'b0)   
                 n_state = WRITE_FIFO_START;
             else 
-                n_state = TRIG_IN;          
+                n_state = TRIG_DATA_READY;          
         end
         WRITE_FIFO_START: begin
             if ((wr_fifo_cnt == 5'd31) && (fifo_full == 1'b0))   
@@ -224,6 +206,9 @@ begin
         sum_reg <= 16'd0;
         frame_cnt_reg <= 16'd0;
         wait_time_tag_cnt <= 16'd0;
+        trg_logic_out_reg<= 8'b0;
+        pre_scale_1_reg<= 8'b0;
+        pre_scale_2_reg<= 8'b0;
     end
     else begin
         case(c_state) 
@@ -233,6 +218,9 @@ begin
             sum_reg <= 16'd0;
             crc_en <= 1'b0;
             wait_time_tag_cnt <= 16'd0;
+            trg_logic_out_reg<= 8'b0;
+            pre_scale_1_reg<= 8'b0;
+            pre_scale_2_reg<= 8'b0;
          end
          WAIT_TIME_TAG: begin
             if(wait_time_tag_cnt==16'd25)
@@ -245,10 +233,15 @@ begin
             wait_time_tag_cnt <= 16'd0;
             sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
-            sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, sci_data_tag, module_tag, sci_data_type,
-                        8'b0, logic_grp_oe_in, hit_sig_stus_in, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
-                        trg_busy_time_cnt_in, 2'b0, coincid_div_reg, trg_time_tag_cnt_reg};
             sum_reg <= 16'd0;
+            trg_logic_out_reg<= {3'b0, W_logic_all_grp_result_in}& logic_grp_oe_in;
+            pre_scale_1_reg <= {trg_mode_mip1_in[3:0], trg_mode_mip2_in[3:0]};
+            pre_scale_2_reg <= {trg_mode_ubs_in[3:0], 4'b0};
+         end
+        TRIG_DATA_READY: begin
+            sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, pre_scale_1_reg, module_tag, sci_data_type,
+                        8'b0, logic_grp_oe_in, hit_sig_stus_in, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
+                        trg_busy_time_cnt_in, 2'b0, pre_scale_2_reg, trg_time_tag_cnt_reg};
          end
          WRITE_FIFO_START: begin
             sci_data_reg<=(sci_data_reg<<8);
@@ -276,6 +269,9 @@ begin
             crc_en <= 1'b0;
             sum_reg <= 16'd0;
             frame_cnt_reg <= 16'd0;
+            trg_logic_out_reg<= 8'b0;
+            pre_scale_1_reg<= 8'b0;
+            pre_scale_2_reg<= 8'b0;
             end
         endcase
     end

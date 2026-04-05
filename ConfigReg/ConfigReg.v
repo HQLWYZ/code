@@ -1,33 +1,12 @@
 /*----------------------------------------------------------*/
 /* file name:  ConfigReg.v                                 */
 /* date:       2025/03/06                                  */
-/* modified:   2026/03/23  (TMR & Combinational Outputs)   */
+/* modified:   2026/04/04                                   */
 /* version:    v1.0                                        */
 /* author:     Wang Shen                                   */
 /* email:      wangshen@pmo.ac.cn                          */
 /* note1:      system clock = 50MHz                        */
 /*----------------------------------------------------------*/
-
-`define	CTRL_REG                16'b0000_0000_0000_0000  // control register default value[2:0]
-`define	CMD_REG                 16'b0000_0000_0000_1101
-`define TRG_MODE_MIP1_REG       16'b0000_0000_0000_1101 // trigger mode register0 value
-`define TRG_MODE_MIP2_REG       16'b0000_0000_0000_1101 // trigger mode register1 value
-`define TRG_MODE_GM1_REG        16'b0000_0000_0000_1101 // trigger mode register2 value
-`define TRG_MODE_GM2_REG        16'b0000_0000_0000_1101 // trigger mode register3 value[6:0]
-`define TRG_MODE_UBS_REG        16'b0000_0000_0000_1101 // trigger mode register4 value
-`define TRG_MODE_BRST_REG       16'b0000_0000_0000_1101 // trigger mode register4 value
-`define HIT_AB_SEL_REG          16'b0000_0000_0000_1101
-`define HIT_MASK_REG            16'b0000_0000_0000_1101
-`define BUSY_SET_REG            16'b1111_1111_1111_1101
-`define HIT_DELAY_WIN_REG       16'b0000_0000_0000_1101
-`define HIT_ALIGN_REG_0         16'b0000_0000_0000_1101
-`define HIT_ALIGN_REG_1         16'b0000_0000_0000_1101
-`define TRG_MATCH_WIN_REG       16'b0000_0000_0000_1101
-`define TRG_DEAD_TIME_REG       16'b0000_0000_0000_1101 //default: 50us
-`define TRG_MODE_OE_REG         16'b0000_0000_0000_1101
-`define CYCLE_TRG_PERIOD_REG    16'b0000_0000_0000_1101
-`define CYCLE_TRG_NUM_REG       16'b0000_0000_0000_1101
-`define EXT_TRG_DELAY           16'b0000_0000_0000_1101
 
 module ConfigReg(
     input           clk_in,
@@ -99,6 +78,27 @@ module ConfigReg(
     output  [15:0]  cycled_trg_num_out,
     output  [7:0]   ext_trg_delay_out
 );
+
+    `define CTRL_REG                16'b0000_0000_0000_0000  // control register default value[2:0]
+    `define CMD_REG                 16'b0000_0000_0000_1101
+    `define TRG_MODE_MIP1_REG       16'b0000_0000_0000_1101 // trigger mode register0 value
+    `define TRG_MODE_MIP2_REG       16'b0000_0000_0000_1101 // trigger mode register1 value
+    `define TRG_MODE_GM1_REG        16'b0000_0000_0000_1101 // trigger mode register2 value
+    `define TRG_MODE_GM2_REG        16'b0000_0000_0000_1101 // trigger mode register3 value[6:0]
+    `define TRG_MODE_UBS_REG        16'b0000_0000_0000_1101 // trigger mode register4 value
+    `define TRG_MODE_BRST_REG       16'b0000_0000_0000_1101 // trigger mode register4 value
+    `define HIT_AB_SEL_REG          16'b0000_0000_0000_1101
+    `define HIT_MASK_REG            16'b0000_0000_0000_1101
+    `define BUSY_SET_REG            16'b1111_1111_1111_1101
+    `define HIT_DELAY_WIN_REG       16'b0000_0000_0000_1101
+    `define HIT_ALIGN_REG_0         16'b0000_0000_0000_1101
+    `define HIT_ALIGN_REG_1         16'b0000_0000_0000_1101
+    `define TRG_MATCH_WIN_REG       16'b0000_0000_0000_1101
+    `define TRG_DEAD_TIME_REG       16'b0000_0000_0000_1101 //default: 50us
+    `define TRG_MODE_OE_REG         16'b0000_0000_0000_1101
+    `define CYCLE_TRG_PERIOD_REG    16'b0000_0000_0000_1101
+    `define CYCLE_TRG_NUM_REG       16'b0000_0000_0000_1101
+    `define EXT_TRG_DELAY           16'b0000_0000_0000_1101
     
     // =========================================================================
     // 1. Non-TMR Internal Registers
@@ -164,7 +164,7 @@ module ConfigReg(
     // =========================================================================
     // 4. Register Write Logic (Config Reception)
     // =========================================================================
-    always @(posedge clk_in) begin
+    always @(posedge clk_in or posedge rst_in) begin
         if (rst_in) begin
             trg_enb_reg <= 1'b0;
             data_trans_enb_reg <= 1'b0;  
@@ -225,6 +225,8 @@ module ConfigReg(
                 8'b0001_0011: begin cycled_trg_period_reg_A <= data_in; cycled_trg_period_reg_B <= data_in; cycled_trg_period_reg_C <= data_in; end
                 8'b0001_0100: begin cycled_trg_num_reg_A <= data_in; cycled_trg_num_reg_B <= data_in; cycled_trg_num_reg_C <= data_in; end
                 8'b0001_0101: begin ext_trg_delay_reg_A <= data_in; ext_trg_delay_reg_B <= data_in; ext_trg_delay_reg_C <= data_in; end
+                
+                default: ; 
             endcase
         end
     end
@@ -233,7 +235,9 @@ module ConfigReg(
     // 5. Counters & Internal Flags Logic
     // =========================================================================
     reg [5:0] cmd_rst_cnt;
-    always @(posedge clk_in)
+    
+
+    always @(posedge clk_in or posedge rst_in)
         if(rst_in) begin
             cmd_rst_reg <= 1'b0;
             cmd_rst_cnt <= 6'b0;
@@ -248,7 +252,8 @@ module ConfigReg(
             cmd_rst_reg <= 1'b1;  
         
     reg [5:0] cycled_trg_bgn_cnt;
-    always @(posedge clk_in)
+    
+    always @(posedge clk_in or posedge rst_in)
         if(rst_in) begin
             cycled_trg_bgn_reg <= 1'b0;
             cycled_trg_bgn_cnt <= 6'd0;
@@ -264,11 +269,13 @@ module ConfigReg(
 
     reg wr_in_r;
     reg [15:0] config_received_cnt;
-    always @(posedge clk_in) begin
+    
+    always @(posedge clk_in or posedge rst_in) begin
         if (rst_in) wr_in_r <= 1'b0;
         else wr_in_r <= wr_in;
     end
-    always @(posedge clk_in) begin
+    
+    always @(posedge clk_in or posedge rst_in) begin
         if (rst_in) config_received_cnt <= 16'b0;
         else if (~wr_in & wr_in_r & (wr_addr_in >= 8'h02) & (wr_addr_in <= 8'h15))
             config_received_cnt <= config_received_cnt + 1'b1;

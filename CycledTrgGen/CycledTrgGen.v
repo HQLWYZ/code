@@ -1,14 +1,14 @@
 /*----------------------------------------------------------*/
-/* 															*/
-/*	file name:	CycledTrgGen.v			           			*/
-/* 	date:		2025/03/07									*/
-/* 	modified:	2026/03/18									*/
-/* 	version:	v1.0										*/
-/* 	author:		Wang Shen									*/
-/* 	email:		wangshen@pmo.ac.cn							*/
-/* 	note:		                                            */
-/* 	note1:		system clock = 50MHz						*/
-/* 															*/
+/* */
+/*	file name:	CycledTrgGen.v			                    */
+/* date:		2025/03/07									*/
+/* modified:	2026/04/04                                   */
+/* version: 	v1.0										*/
+/* author:		Wang Shen									*/
+/* email:		wangshen@pmo.ac.cn							*/
+/* note:		                                            */
+/* note1:		system clock = 50MHz						*/
+/* */
 /*----------------------------------------------------------*/
 
 module CycledTrgGen(
@@ -21,19 +21,20 @@ module CycledTrgGen(
     output          cycled_trg_end_out//width = 1 clock
 	);
 	
-parameter   TRG_PERIOD_UNIT_2MS = 100000; //100000*20ns = 2ms
+parameter   TRG_PERIOD_UNIT_500US = 25000; //25000*20ns = 500us
 
 //register the output signal
 reg  cycled_trg_end_sig;
 
 //cycled trigger 
 reg  cycled_trg_sig;
-reg[27:0]   cycled_trg_period_cnt;//the clk is 50Mhz
+reg[27:0]   cycled_trg_period_cnt;
 reg[15:0]   cycled_trg_cnt;
 
 
 reg cycled_trg_bgn_in_r;
-always@(posedge clk_in)
+
+always@(posedge clk_in or posedge rst_in)
     if(rst_in)
         cycled_trg_bgn_in_r <= 1'b0;
     else
@@ -46,7 +47,7 @@ parameter   IDLE = 0,
             CYCLED_TRG_GEN = 2, 
 			CYCLED_TRG_END = 3;
 
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in)
 		c_state <= IDLE;
@@ -54,7 +55,7 @@ begin
 		c_state <= n_state;	
 end
 
-always @(c_state or cycled_trg_bgn_in or cycled_trg_cnt or cycled_trg_period_in or cycled_trg_period_cnt or cycled_trg_num_in or cycled_trg_bgn_in_r)
+always @(*)
 begin
 	n_state = IDLE; //default value
 	case(c_state)
@@ -73,7 +74,7 @@ begin
 		end
 
 		CYCLED_TRG_GEN: begin
-			if (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_2MS}) //
+			if (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_500US}) //
             //if (cycled_trg_period_cnt == {cycled_trg_period_in, 2'b0})//[ONLY FOR SIMULATION]
 				n_state = CYCLED_TRG_CHECK;
 			else 
@@ -90,7 +91,7 @@ begin
 	endcase	
 end
 
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	   if (rst_in) begin
         cycled_trg_period_cnt <= 28'b0;
@@ -113,7 +114,7 @@ begin
         CYCLED_TRG_GEN: begin
             cycled_trg_period_cnt <= cycled_trg_period_cnt + 1'b1;
             //if( (cycled_trg_period_cnt == {cycled_trg_period_in, 2'b0}) ) begin //[ONLY FOR SIMULATION]
-            if( (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_2MS}) ) begin 
+            if( (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_500US}) ) begin 
                 cycled_trg_sig <= 1'b1;//
                 cycled_trg_period_cnt <= 28'b0;
             end

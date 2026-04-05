@@ -1,4 +1,8 @@
 //~ `New testbench
+//~ `New testbench
+// 2，iverilog -o ./a.out ./HitTrgCount.v ./tb_HitTrgCount.v  
+// 3， vvp -n a.out 	
+// 4，gtkwave tb_HitTrgCount.vcd 
 `timescale  1ns / 1ps
 
 module tb_HitTrgCount;
@@ -8,7 +12,7 @@ initial
     begin
         $dumpfile("./tb_HitTrgCount.vcd");
         $dumpvars(0,tb_HitTrgCount);
-        #9_000_000 $finish;
+        #20_000_000 $finish;
 end
 
 // HitTrgCount Parameters

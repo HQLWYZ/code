@@ -1,14 +1,14 @@
 /*----------------------------------------------------------*/
-/* 															*/
-/*	file name:	Coincidence.v			           			*/
-/* 	date:		2025/02/27									*/
-/* 	modified:	2026/03/18									*/
-/* 	version:	v1.0										*/
-/* 	author:		Wang Shen									*/
-/* 	email:		wangshen@pmo.ac.cn							*/
-/* 	note1:		system clock = 50MHz						*/
-/* 	note2:		ACD_side means ACD top2						*/
-/* 															*/
+/* */
+/*	file name:	Coincidence.v			                    */
+/* date:		2025/02/27									*/
+/* modified:	2026/04/04          						*/
+/* version:		v1.0										*/
+/* author:		Wang Shen									*/
+/* email:		wangshen@pmo.ac.cn							*/
+/* note1:		system clock = 50MHz						*/
+/* note2:		ACD_side means ACD top2						*/
+/* */
 /*----------------------------------------------------------*/
 module Coincidence(
 	input			clk_in,
@@ -103,7 +103,7 @@ module Coincidence(
 
 
 //synchonize the input of hit signal, if (ab_sel_in == 0) select  signal from channel A, 
-always @(posedge clk_in)//two stage synchronizer, delay time {1CK, 2CK}, e.g. 20ns to 40ns
+always @(posedge clk_in or posedge rst_in)//two stage synchronizer, delay time {1CK, 2CK}, e.g. 20ns to 40ns
 begin
 	if (rst_in) begin
 		busy_syn_tmp_r <= 2'b0;
@@ -120,18 +120,18 @@ begin
 end
 
 
-	//ACD's hits are faster than CsI's, so different hit signals should be aligned. Default delay time is around 4us. After delay, ACD's hit will be late than CsI's hit.
-	wire [7:0] 	ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;//this step: delay time = (DELAY bit+1)*40ns
-	reg	[12:0]	shift_reg;
-	assign  ACD_TOP_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_top_hit_align_in;
-	assign  ACD_SEC_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_sec_hit_align_in;
-	assign  ACD_SID_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_sid_hit_align_in;
-	reg [7:0] wr_ptr_12, wr_ptr_11, wr_ptr_10, wr_ptr_9, wr_ptr_8, wr_ptr_7, wr_ptr_6, wr_ptr_5, wr_ptr_4, wr_ptr_3, wr_ptr_2, wr_ptr_1, wr_ptr_0; // write pointer
-	reg [255:0] buffer_12, buffer_11, buffer_10, buffer_9, buffer_8, buffer_7, buffer_6, buffer_5, buffer_4, buffer_3, buffer_2, buffer_1, buffer_0;//ring buffer depth = 256
+//ACD's hits are faster than CsI's, so different hit signals should be aligned. Default delay time is around 4us. After delay, ACD's hit will be late than CsI's hit.
+wire [7:0] 	ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;//this step: delay time = (DELAY bit+1)*40ns
+reg	[12:0]	shift_reg;
+assign  ACD_TOP_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_top_hit_align_in;
+assign  ACD_SEC_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_sec_hit_align_in;
+assign  ACD_SID_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_sid_hit_align_in;
+reg [7:0] wr_ptr_12, wr_ptr_11, wr_ptr_10, wr_ptr_9, wr_ptr_8, wr_ptr_7, wr_ptr_6, wr_ptr_5, wr_ptr_4, wr_ptr_3, wr_ptr_2, wr_ptr_1, wr_ptr_0; // write pointer
+reg [255:0] buffer_12, buffer_11, buffer_10, buffer_9, buffer_8, buffer_7, buffer_6, buffer_5, buffer_4, buffer_3, buffer_2, buffer_1, buffer_0;//ring buffer depth = 256
 
 
 //Align the hit signal of ACD_TOP1
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_12<=8'b0;
@@ -146,7 +146,7 @@ begin
 end
 
 //Align the hit signal of ACD_SEC
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_11<=8'b0;
@@ -161,7 +161,7 @@ begin
 end
 
 //Align the hit signal of ACD_TOP2
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_10<=8'b0;
@@ -176,7 +176,7 @@ begin
 end
 
 //Align the hit signal of CSI_A
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_9<=8'b0;
@@ -191,7 +191,7 @@ begin
 end
 
 //Align the hit signal of CSI_B
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_8<=8'b0;
@@ -207,7 +207,7 @@ end
 
 
 //Align the hit signal of CAL_1_A
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_7<=8'b0;
@@ -222,7 +222,7 @@ begin
 end
 
 //Align the hit signal of CAL_1_B
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_6<=8'b0;
@@ -237,7 +237,7 @@ begin
 end
 
 //Align the hit signal of CAL_2_A
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_5<=8'b0;
@@ -252,7 +252,7 @@ begin
 end
 
 //Align the hit signal of CAL_2_B
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_4<=8'b0;
@@ -267,7 +267,7 @@ begin
 end
 
 //Align the hit signal of CAL_3_A
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_3<=8'b0;
@@ -282,7 +282,7 @@ begin
 end
 
 //Align the hit signal of CAL_3_B
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_2<=8'b0;
@@ -297,7 +297,7 @@ begin
 end
 
 //Align the hit signal of CAL_4_A
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_1<=8'b0;
@@ -312,7 +312,7 @@ begin
 end
 
 //Align the hit signal of CAL_4_B
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		wr_ptr_0<=8'b0;
@@ -361,7 +361,7 @@ wire		acd_fee_top_hit_syn_seed,
 
 //The windows for trigger seed, set CAL_HIT as trigger T0 reference.
 //state:1: wait for hit_start_r; state:2: in seed window, collect all hit info; state:3: in trigger logic window, do nothing
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		trg_seed_state <= 3'b000;
@@ -447,7 +447,7 @@ reg logic_grp3_fee_tmp1, logic_grp3_fee_tmp2;
 reg logic_grp4_fee_tmp1, logic_grp4_fee_tmp2;
 
 //coincidence logic group0(MIPS1), fee hit selection
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp0_fee_tmp1 <= 1'b0;
@@ -545,7 +545,7 @@ begin
 end
 
 //coincidence logic group1, fee hit selection
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp1_fee_tmp1 <= 1'b0;
@@ -644,7 +644,7 @@ begin
 end
 
 //coincidence logic group2, fee hit selection
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp2_fee_tmp1 <= 1'b0;
@@ -743,7 +743,7 @@ begin
 end
 
 ////coincidence logic group3, fee hit selection
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp3_fee_tmp1 <= 1'b0;
@@ -842,7 +842,7 @@ begin
 end
 
 ////coincidence logic group4, fee hit selection
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp4_fee_tmp1 <= 1'b0;
@@ -943,7 +943,7 @@ end
 
 
 //coincidence logic group0, for MIPs trigger type1
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp0_result_r <= 1'b0;
@@ -968,7 +968,7 @@ begin
 end
 
 //coincidence logic group1, for MIPs trigger type2
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp1_result_r <= 1'b0;
@@ -990,7 +990,7 @@ begin
 end
 
 //coincidence logic group2, for Gamma trigger type1
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp2_result_r <= 1'b0;
@@ -1015,7 +1015,7 @@ begin
 end
 
 //coincidence logic group3, for Gamma trigger type2
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp3_result_r <= 1'b0;
@@ -1040,7 +1040,7 @@ begin
 end
 
 //coincidence logic group4, for unbias trigger.
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		logic_grp4_result_r <= 1'b0;
@@ -1072,7 +1072,7 @@ reg	coincid_trg_raw_r, coincid_tag_raw_enb_r;///coincide trigger signal before l
 
 
 ////coincide trigger  counter
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		coincid_MIP1_cnt <= 16'b0;
@@ -1093,7 +1093,7 @@ end
 
 
 ////pre-scaler (divider) for the the trigger: mip1, mip2, unbias trigger.	
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in) begin
 		coincid_MIP1_engine_enb_r <= 1'b1;
@@ -1191,7 +1191,7 @@ parameter   IDLE = 0,
             COINCIDENCE_TRIGGER_GEN = 3, 
 			COINCIDENCE_END = 4;
 
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	if (rst_in)
 		c_state <= IDLE;
@@ -1199,13 +1199,12 @@ begin
 		c_state <= n_state;	
 end
 
-
-always @(c_state or hit_start_r or trg_win_cnt  or trg_match_win_in or logic_burst_sel_in or busy_mask_in )
+always @(*)
 begin
 	n_state = IDLE; //default value
 	case(c_state)
 		IDLE: begin
-			if (hit_start_r)   ///detect the hit_start signal 
+			if (hit_start_r == 1'b1)   ///detect the hit_start signal 
 				n_state = COINCIDENCE_STAGE;
 			else 
 				n_state = IDLE;			
@@ -1226,7 +1225,7 @@ begin
 		 end
 
 		COINCIDENCE_END: begin
-			if (!hit_start_r)//wait for the hit start signal to invalid, to make sure the timing of the next trigger
+			if (hit_start_r == 1'b0)//wait for the hit start signal to invalid, to make sure the timing of the next trigger
 				n_state = IDLE;
 			else 
 				n_state = COINCIDENCE_END;			
@@ -1239,7 +1238,7 @@ end
 
 
 //coincidence process
-always @(posedge clk_in)
+always @(posedge clk_in or posedge rst_in)
 begin
 	   if (rst_in) begin
         coincid_trg_sig <= 1'b0;////the final result of the coincid trg
@@ -1260,7 +1259,7 @@ begin
          COINCIDENCE_STAGE: begin
 			coincid_trg_sig <= 1'b0;
 			coincid_trg_raw_r <= 1'b0;
-            trg_win_cnt <= trg_win_cnt + 1;           
+            trg_win_cnt <= trg_win_cnt + 1;            
             if (trg_win_cnt == {trg_match_win_in[15:8]}) //wait for other hit
 			begin
             	coincid_result_r <= W_logic_all_grp_result;
