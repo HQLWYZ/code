@@ -223,6 +223,7 @@ begin
             pre_scale_2_reg<= 8'b0;
          end
          WAIT_TIME_TAG: begin
+            trg_logic_out_reg<= {3'b0, W_logic_all_grp_result_in}& logic_grp_oe_in;
             if(wait_time_tag_cnt==16'd25)
                 wait_time_tag_cnt <= 16'd0;
             else
@@ -234,14 +235,13 @@ begin
             sci_data_reg<= 224'd0;
             wr_fifo_cnt<= 5'b0;
             sum_reg <= 16'd0;
-            trg_logic_out_reg<= {3'b0, W_logic_all_grp_result_in}& logic_grp_oe_in;
             pre_scale_1_reg <= {trg_mode_mip1_in[3:0], trg_mode_mip2_in[3:0]};
             pre_scale_2_reg <= {trg_mode_ubs_in[3:0], 4'b0};
          end
         TRIG_DATA_READY: begin
             sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, pre_scale_1_reg, module_tag, sci_data_type,
                         8'b0, logic_grp_oe_in, hit_sig_stus_in, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
-                        trg_busy_time_cnt_in, 2'b0, pre_scale_2_reg, trg_time_tag_cnt_reg};
+                        trg_busy_time_cnt_in, pre_scale_2_reg, trg_time_tag_cnt_reg};
          end
          WRITE_FIFO_START: begin
             sci_data_reg<=(sci_data_reg<<8);
