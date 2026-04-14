@@ -56,7 +56,7 @@ module TrgMonData(
 	
 reg         [15:0]	mon_data_reg;
 wire        [15:0]	status_w, monit_hit_sel_w, hit_busy_ab_sel_w, hit_busy_mask_w;
-reg         [15:0]  status_w_r, trg_mode_mip1_in_r, trg_mode_mip2_in_r, trg_mode_gm1_in_r, trg_mode_gm2_in_r,
+reg         [15:0]  trg_mode_mip1_in_r, trg_mode_mip2_in_r, trg_mode_gm1_in_r, trg_mode_gm2_in_r,
 trg_mode_ubs_in_r, trg_mode_brst_in_r, eff_trg_cnt_in_r, coincid_trg_cnt_in_r, monit_hit_sel_w_r, hit_monit_err_cnt_in_r,
 hit_start_cnt_in_r, hit_monit_cnt_0_in_r1, hit_monit_cnt_0_in_r0, hit_monit_cnt_1_in_r1, hit_monit_cnt_1_in_r0, 
 busy_monit_fix_sel_in_r, busy_monit_err_cnt_in_r, busy_monit_cnt_in_r, coincid_MIP1_cnt_in_r, coincid_MIP2_cnt_in_r,
@@ -76,7 +76,7 @@ always@(posedge clk_in or posedge rst_in)
 always@(posedge clk_in or posedge rst_in)
     if(rst_in)
     begin
-        status_w_r <= 16'd0;
+        //status_w_r <= 16'd0;
         trg_mode_mip1_in_r <= 16'd0;
         trg_mode_mip2_in_r <= 16'd0;
         trg_mode_gm1_in_r <= 16'd0;
@@ -115,7 +115,7 @@ always@(posedge clk_in or posedge rst_in)
     else
 		if(rd_in & ~rd_in_r & (rd_addr_in == 8'b0001_1001))
         begin
-            status_w_r <= status_w;
+            //status_w_r <= status_w;
             trg_mode_mip1_in_r <= trg_mode_mip1_in;
             trg_mode_mip2_in_r <= trg_mode_mip2_in;
             trg_mode_gm1_in_r <= trg_mode_gm1_in;
@@ -160,7 +160,7 @@ begin
 	end
 	else if (rd_in) begin
 			case (rd_addr_in) 
-				8'b0001_1001: mon_data_reg <= status_w_r;                 //from ConfigReg module,  触发板状态
+				8'b0001_1001: mon_data_reg <= status_w;                 //from ConfigReg module,  触发板状态
 				8'b0001_1010: mon_data_reg <= trg_mode_mip1_in_r;        //from ConfigReg module,   触发模式MIPS1
                 8'b0001_1011: mon_data_reg <= trg_mode_mip2_in_r;         //from ConfigReg module,  触发模式MIPS2
                 8'b0001_1100: mon_data_reg <= trg_mode_gm1_in_r;          //from ConfigReg module,  触发模式GM1

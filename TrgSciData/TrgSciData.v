@@ -223,9 +223,12 @@ begin
             pre_scale_2_reg<= 8'b0;
          end
          WAIT_TIME_TAG: begin
-            trg_logic_out_reg<= {3'b0, W_logic_all_grp_result_in}& logic_grp_oe_in;
             if(wait_time_tag_cnt==16'd25)
                 wait_time_tag_cnt <= 16'd0;
+            else if (wait_time_tag_cnt==16'd5) begin
+                trg_logic_out_reg<= {3'b0, W_logic_all_grp_result_in}& logic_grp_oe_in;
+                wait_time_tag_cnt <= wait_time_tag_cnt + 1'b1;
+            end
             else
                 wait_time_tag_cnt <= wait_time_tag_cnt + 1'b1;
          end
