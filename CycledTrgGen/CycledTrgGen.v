@@ -15,7 +15,7 @@ module CycledTrgGen(
 	input			clk_in,
 	input			rst_in,
     input           cycled_trg_bgn_in,
-    input   [7:0]	cycled_trg_period_in,//the Unit = 2ms. So the maximum period is 2ms*2^8 = 512ms. Default: 10ms[baseline mode], 20ms[normal cali mode], 50ms[waveform cali mode]
+    input   [7:0]	cycled_trg_period_in,//the Unit = 0.5ms. So the maximum period is 0.5ms*2^8 = 128ms. Default: 10ms[baseline mode], 20ms[normal cali mode], 50ms[waveform cali mode]
     input   [15:0]	cycled_trg_num_in,//cycled trigger number
     output          cycled_trg_out,
     output          cycled_trg_end_out//width = 1 clock

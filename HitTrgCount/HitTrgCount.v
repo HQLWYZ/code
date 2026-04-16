@@ -166,6 +166,22 @@ begin
     end
 end
 
+
+//count the selected hit signal 1
+always @(posedge clk_in or posedge rst_in)
+begin
+    if (rst_in) begin
+        hit_monit_cnt_1 <= 32'b0;
+    end
+    else if ((~rd_in & rd_in_r) && (rd_edge_cnt == 2'd3)) begin
+        hit_monit_cnt_1 <= 32'b0;
+    end
+    else if (W_hit_pulse[hit_monit_sel_r]) begin
+        hit_monit_cnt_1 <= hit_monit_cnt_1 + 1'b1; 
+    end
+end
+
+
 //count the selected hit signal 0
 always @(posedge clk_in or posedge rst_in)
 begin
@@ -175,14 +191,7 @@ begin
 		hit_monit_cnt_0 <= hit_monit_cnt_0 + 1;	
 end
 
-//count the selected hit signal 1
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in)
-		hit_monit_cnt_1 <= 32'b0;
-	else if (W_hit_pulse[hit_monit_sel_r])
-		hit_monit_cnt_1 <= hit_monit_cnt_1 + 1;	
-end
+
 
 //count the selected busy signal
 always @(posedge clk_in or posedge rst_in)

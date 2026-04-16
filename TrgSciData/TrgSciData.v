@@ -36,6 +36,7 @@ module TrgSciData
 );
 
 reg     [223:0]     sci_data_reg;
+reg     [15:0]      hit_sig_stus_reg;
 reg     [15:0]      logic_grp_sel_reg;
 reg     [15:0]      sel_bit_reg; //select which trigger settings was enabled
 reg     [15:0]      frame_cnt_reg; 
@@ -91,6 +92,38 @@ always @(posedge clk_in or posedge rst_in) begin
     end
 end
 
+
+
+
+reg  [23:0] trg_busy_time_cnt_delay;
+reg  [23:0] trg_busy_time_cnt_reg;
+reg [23:0] delay_d1;
+reg [23:0] delay_d2;
+reg [23:0] delay_d3;
+reg [23:0] delay_d4;
+reg [23:0] delay_d5;
+reg [23:0] delay_d6;
+
+always @(posedge clk_in or posedge rst_in) begin
+    if (rst_in) begin
+        delay_d1              <= 24'd0;
+        delay_d2              <= 24'd0;
+        delay_d3              <= 24'd0;
+        delay_d4              <= 24'd0;
+        delay_d5              <= 24'd0;
+        delay_d6              <= 24'd0;
+        trg_busy_time_cnt_delay <= 24'd0;
+    end 
+    else begin
+        delay_d1              <= trg_busy_time_cnt_in; 
+        delay_d2              <= delay_d1;             
+        delay_d3              <= delay_d2;            
+        delay_d4              <= delay_d3; 
+        delay_d5              <= delay_d4;  
+        delay_d6              <= delay_d5;          
+        trg_busy_time_cnt_delay <= delay_d6;            
+    end
+end
 
 
 
@@ -209,6 +242,8 @@ begin
         trg_logic_out_reg<= 8'b0;
         pre_scale_1_reg<= 8'b0;
         pre_scale_2_reg<= 8'b0;
+        hit_sig_stus_reg <= 16'b0;
+        trg_busy_time_cnt_reg<=24'd0;
     end
     else begin
         case(c_state) 
@@ -221,13 +256,17 @@ begin
             trg_logic_out_reg<= 8'b0;
             pre_scale_1_reg<= 8'b0;
             pre_scale_2_reg<= 8'b0;
+            hit_sig_stus_reg <= 16'b0;
+            trg_busy_time_cnt_reg<=24'd0;
          end
          WAIT_TIME_TAG: begin
             if(wait_time_tag_cnt==16'd25)
                 wait_time_tag_cnt <= 16'd0;
             else if (wait_time_tag_cnt==16'd5) begin
                 trg_logic_out_reg<= {3'b0, W_logic_all_grp_result_in}& logic_grp_oe_in;
+                hit_sig_stus_reg <= hit_sig_stus_in;
                 wait_time_tag_cnt <= wait_time_tag_cnt + 1'b1;
+                trg_busy_time_cnt_reg<=trg_busy_time_cnt_delay;
             end
             else
                 wait_time_tag_cnt <= wait_time_tag_cnt + 1'b1;
@@ -243,8 +282,8 @@ begin
          end
         TRIG_DATA_READY: begin
             sci_data_reg<={16'hEB90, frame_cnt_reg, frame_length, time_code, pre_scale_1_reg, module_tag, sci_data_type,
-                        8'b0, logic_grp_oe_in, hit_sig_stus_in, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
-                        trg_busy_time_cnt_in, pre_scale_2_reg, trg_time_tag_cnt_reg};
+                        8'b0, logic_grp_oe_in, hit_sig_stus_reg, 8'b0, trg_logic_out_reg, eff_trg_cnt_in, 
+                        trg_busy_time_cnt_reg, pre_scale_2_reg, trg_time_tag_cnt_reg};
          end
          WRITE_FIFO_START: begin
             sci_data_reg<=(sci_data_reg<<8);
