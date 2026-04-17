@@ -55,11 +55,11 @@ module TrgTop(
     output          trg_out_N_Si2_b,
     output          trg_out_N_cal_fee_1_a, trg_out_N_cal_fee_1_b,trg_out_N_cal_fee_2_a, trg_out_N_cal_fee_2_b,
     output          trg_out_N_cal_fee_3_a, trg_out_N_cal_fee_3_b,trg_out_N_cal_fee_4_a, trg_out_N_cal_fee_4_b,
-    output          trg_out_FPGA,
-    output          trg_enb_sig,
-    output          fifo_prog_full_out,
-    output          data_trans_enb_sig,
-    output          cmd_rst_sig
+    output          trg_out_FPGA,       //ONLY FOR TEST
+    output          trg_enb_sig,        //ONLY FOR TEST
+    output          fifo_prog_full_out, //ONLY FOR TEST
+    output          data_trans_enb_sig, //ONLY FOR TEST
+    output          cmd_rst_sig         //ONLY FOR TEST
 );
 
 wire    [7:0]   logic_grp0_mux_sig; 

@@ -45,8 +45,10 @@ wire	[12:0] 		W_hit_pulse_F;
 wire	[1:0] 		W_busy_pulse;
 wire				W_update_end_pulse;
 reg		[3:0]		hit_monit_sel_r;
-reg		[31:0]		hit_monit_cnt_0;
-reg		[31:0]		hit_monit_cnt_1;
+reg     [15:0]      hit_monit_cnt_0_H;
+reg     [15:0]      hit_monit_cnt_0_L;
+reg     [15:0]      hit_monit_cnt_1_H;
+reg     [15:0]      hit_monit_cnt_1_L;
 reg		[15:0]		hit_start_cnt; 
 reg		[15:0]		coincid_trg_cnt;
 reg		[15:0]		logic_match_cnt; 
@@ -171,13 +173,18 @@ end
 always @(posedge clk_in or posedge rst_in)
 begin
     if (rst_in) begin
-        hit_monit_cnt_1 <= 32'b0;
+        hit_monit_cnt_1_H <= 16'b0;
+        hit_monit_cnt_1_L <= 16'b0;
     end
     else if ((~rd_in & rd_in_r) && (rd_edge_cnt == 2'd3)) begin
-        hit_monit_cnt_1 <= 32'b0;
+        hit_monit_cnt_1_H <= 16'b0;
+        hit_monit_cnt_1_L <= 16'b0;
     end
     else if (W_hit_pulse[hit_monit_sel_r]) begin
-        hit_monit_cnt_1 <= hit_monit_cnt_1 + 1'b1; 
+        hit_monit_cnt_1_L <= hit_monit_cnt_1_L + 1'b1;
+        if (hit_monit_cnt_1_L == 16'hFFFF) begin
+            hit_monit_cnt_1_H <= hit_monit_cnt_1_H + 1'b1;
+        end
     end
 end
 
@@ -185,12 +192,17 @@ end
 //count the selected hit signal 0
 always @(posedge clk_in or posedge rst_in)
 begin
-	if (rst_in)
-		hit_monit_cnt_0 <= 32'b0;
-	else if (W_hit_pulse[hit_monit_fix_sel_in])
-		hit_monit_cnt_0 <= hit_monit_cnt_0 + 1;	
+    if (rst_in) begin
+        hit_monit_cnt_0_H <= 16'b0;
+        hit_monit_cnt_0_L <= 16'b0;
+    end
+    else if (W_hit_pulse[hit_monit_fix_sel_in]) begin
+        hit_monit_cnt_0_L <= hit_monit_cnt_0_L + 1'b1;
+        if (hit_monit_cnt_0_L == 16'hFFFF) begin
+            hit_monit_cnt_0_H <= hit_monit_cnt_0_H + 1'b1;
+        end
+    end
 end
-
 
 
 //count the selected busy signal
@@ -381,13 +393,13 @@ assign	hit_monit_err_cnt_out = hit_monit_err_cnt;
 assign	logic_match_cnt_out = logic_match_cnt;
 assign	coincid_trg_cnt_out = coincid_trg_cnt;
 assign	hit_monit_sel_out = { hit_monit_fix_sel_in,  hit_monit_sel_r};
-assign	hit_monit_cnt_0_out = hit_monit_cnt_0;
-assign	hit_monit_cnt_1_out = hit_monit_cnt_1;
 assign	ext_trg_cnt_out = ext_trg_cnt;
-assign	eff_trg_cnt_out = eff_trg_cnt;
+assign	eff_trg_cnt_out = eff_trg_cnt-1'b1;
 assign	busy_monit_err_cnt_out = 8'b0; 
 assign	busy_monit_cnt_out = busy_monit_cnt;
 assign	trg_delay_timer_out = trg_delay_timer_cnt; 
+assign  hit_monit_cnt_0_out = {hit_monit_cnt_0_H, hit_monit_cnt_0_L};
+assign  hit_monit_cnt_1_out = {hit_monit_cnt_1_H, hit_monit_cnt_1_L};
 
 
 endmodule

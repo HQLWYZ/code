@@ -24,15 +24,14 @@ module CycledTrgGen(
 parameter   TRG_PERIOD_UNIT_500US = 25000; //25000*20ns = 500us
 
 //register the output signal
-reg  cycled_trg_end_sig;
+reg         cycled_trg_end_sig;
+reg         cycled_trg_sig;
+reg  [15:0] cycled_trg_cnt;
+reg         cycled_trg_bgn_in_r;
+reg  [11:0] cycled_trg_period_cnt_H;
+reg  [15:0] cycled_trg_period_cnt_L;
 
-//cycled trigger 
-reg  cycled_trg_sig;
-reg[27:0]   cycled_trg_period_cnt;
-reg[15:0]   cycled_trg_cnt;
-
-
-reg cycled_trg_bgn_in_r;
+wire [27:0] cycled_trg_period_cnt = {cycled_trg_period_cnt_H, cycled_trg_period_cnt_L};
 
 always@(posedge clk_in or posedge rst_in)
     if(rst_in)
@@ -94,7 +93,8 @@ end
 always @(posedge clk_in or posedge rst_in)
 begin
 	   if (rst_in) begin
-        cycled_trg_period_cnt <= 28'b0;
+        cycled_trg_period_cnt_H <= 12'b0;
+        cycled_trg_period_cnt_L <= 16'b0;
         cycled_trg_sig <= 1'b0;
         cycled_trg_end_sig <= 1'b0;
         cycled_trg_cnt <= 16'b0;
@@ -102,7 +102,8 @@ begin
     else begin
         case(c_state) 
          IDLE: begin
-            cycled_trg_period_cnt <= 28'b0;
+            cycled_trg_period_cnt_H <= 12'b0;
+            cycled_trg_period_cnt_L <= 16'b0;
             cycled_trg_sig <= 1'b0;
             cycled_trg_end_sig <= 1'b0;
             cycled_trg_cnt <= 16'b0;
@@ -112,11 +113,15 @@ begin
         end
 
         CYCLED_TRG_GEN: begin
-            cycled_trg_period_cnt <= cycled_trg_period_cnt + 1'b1;
-            //if( (cycled_trg_period_cnt == {cycled_trg_period_in, 2'b0}) ) begin //[ONLY FOR SIMULATION]
+            cycled_trg_period_cnt_L <= cycled_trg_period_cnt_L + 1'b1;
+            if (cycled_trg_period_cnt_L == 16'hFFFF) begin
+                cycled_trg_period_cnt_H <= cycled_trg_period_cnt_H + 1'b1;
+            end
+            // if( (cycled_trg_period_cnt == {cycled_trg_period_in, 2'b0}) ) begin //[ONLY FOR SIMULATION]
             if( (cycled_trg_period_cnt == {cycled_trg_period_in * TRG_PERIOD_UNIT_500US}) ) begin 
-                cycled_trg_sig <= 1'b1;//
-                cycled_trg_period_cnt <= 28'b0;
+                cycled_trg_sig <= 1'b1;
+                cycled_trg_period_cnt_H <= 12'b0;
+                cycled_trg_period_cnt_L <= 16'b0;
             end
             else begin
                 cycled_trg_sig <= 1'b0;
@@ -129,7 +134,8 @@ begin
         end
 
          default: begin
-            cycled_trg_period_cnt <= 28'b0;
+            cycled_trg_period_cnt_H <= 12'b0;
+            cycled_trg_period_cnt_L <= 16'b0;
             cycled_trg_sig <= 1'b0;
             cycled_trg_end_sig <= 1'b0;
             cycled_trg_cnt <= 16'b0;

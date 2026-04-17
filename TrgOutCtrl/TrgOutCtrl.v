@@ -35,7 +35,7 @@ module TrgOutCtrl(
     output          trg_out_FPGA   
 );
 
-// [Fix Rule 11]: Define exact widths for parameters to prevent 32-bit truncation warnings
+
 parameter [7:0]     TRG_PULSE_WIDTH = 8'd20;   //20ns*20 = 400ns
 parameter [7:0]     CHK_PULSE_WIDTH = 8'd50;   //20ns*50 = 1us
 parameter [19:0]    DEADTIME_UNIT_10US = 20'd500; //500*20ns = 10us
@@ -49,17 +49,20 @@ reg                 trg_send_r;// trigger pulse output
 reg                 trg_send_r_r;
 reg                 daq_busy_r;
 reg         [7:0]   trg_chksig_width_cnt;// trigger signal and TID check signal's width counter
-reg         [19:0]  trg_dead_time_cnt;//[MAX]=20'b1111_1111_1111_1111_1111 = 1_048_575, about 20ns*1048575=20.97ms
+reg         [3:0]   trg_dead_time_cnt_H;
+reg         [15:0]  trg_dead_time_cnt_L;
+wire        [19:0]  trg_dead_time_cnt = {trg_dead_time_cnt_H, trg_dead_time_cnt_L};
 reg                 coincid_trg_sig_valid_r;
 wire                si_busy_sig;
 reg         [19:0]  trg_dead_time_temp;//[MAX]=20'b1111_1111_1111_1111_1111 = 1_048_575, about 20ns*1048575=20.97ms
 wire        [19:0]  trg_dead_time_prodcut;
 
-// [Fix Rule 6]: Change unbounded integer to strictly bounded reg
 reg         [4:0]   i;
 reg                 eff_trg_sig; //register the output signal
-
-reg         [23:0]  trg_busy_time_cnt_reg;//count the busy time of the trigger, 
+ 
+reg         [7:0]   trg_busy_time_cnt_reg_H;
+reg         [15:0]  trg_busy_time_cnt_reg_L;
+wire        [23:0]  trg_busy_time_cnt_reg = {trg_busy_time_cnt_reg_H, trg_busy_time_cnt_reg_L};
 reg                 total_busy_r, pmu_busy_sig_valid_r;
 reg         [5:0]   cycle_timer_cnt;
 reg         [3:0]   busy_time_work_flow;
@@ -207,13 +210,11 @@ always @(posedge clk_in or posedge rst_in) begin
         trg_send_r_r <= trg_send_r;
 end
 
-// [Fix Rule 2]: Use always @(*)
+
 always @(*)begin
-    trg_dead_time_temp = 20'd0; // [Fix Rule 11]: match bitwidth
-    // [Fix Rule 6, 11]: loop iter bounds and bitwidth matched
+    trg_dead_time_temp = 20'd0; 
     for(i=5'd0; i<5'd20; i=i+5'd1)begin
         if(DEADTIME_UNIT_10US[i] == 1'b1)
-            // [Fix Rule 7]: Explicit width extension before shift to prevent signed/unsigned mixing warnings
             trg_dead_time_temp = trg_dead_time_temp + ({12'd0, trg_dead_time_in} << i);
     end
 end
@@ -225,13 +226,15 @@ begin
         eff_trg_sig <= 1'b0;
         daq_busy_r <= 1'b0;
         trg_chksig_width_cnt <= 8'b0;
-        trg_dead_time_cnt <= 20'b0;
+        trg_dead_time_cnt_H <= 4'b0;
+        trg_dead_time_cnt_L <= 16'b0;
     end
     else begin
      case (c_state)
         IDLE: begin
             trg_chksig_width_cnt <= 8'b0;
-            trg_dead_time_cnt <= 20'b0;
+            trg_dead_time_cnt_H <= 4'b0;
+            trg_dead_time_cnt_L <= 16'b0;
             trg_send_r <= 1'b0;
             eff_trg_sig <= 1'b0;
             daq_busy_r <= 1'b0;      
@@ -239,44 +242,56 @@ begin
         WAIT_DEAD_TIME: begin
             eff_trg_sig <= 1'b0; 
             trg_send_r <= 1'b0;
-            trg_dead_time_cnt <= 20'b0;
+            trg_dead_time_cnt_H <= 4'b0;
+            trg_dead_time_cnt_L <= 16'b0;
         end
         BURST_MODE: begin
             eff_trg_sig <= 1'b0; 
             trg_send_r <= 1'b0;
             if ( trg_dead_time_cnt > trg_dead_time_prodcut ) begin  
-                trg_dead_time_cnt <= 20'b0;
+                trg_dead_time_cnt_H <= 4'b0;
+                trg_dead_time_cnt_L <= 16'b0;
                 daq_busy_r <= 1'b0;  
             end
             else begin 
-                trg_dead_time_cnt <= trg_dead_time_cnt + 20'd1; // [Fix Rule 11]
+                trg_dead_time_cnt_L <= trg_dead_time_cnt_L + 16'd1;
+                if (trg_dead_time_cnt_L == 16'hFFFF) begin
+                    trg_dead_time_cnt_H <= trg_dead_time_cnt_H + 4'd1;
+                end// [Fix Rule 11]
             end
         end
         IGNORE_SI_BUSY: begin
             eff_trg_sig <= 1'b0; 
             trg_send_r <= 1'b0;
             if ( trg_dead_time_cnt > trg_dead_time_prodcut ) begin 
-                trg_dead_time_cnt <= 20'b0;
+                trg_dead_time_cnt_H <= 4'b0;
+                trg_dead_time_cnt_L <= 16'b0;
                 daq_busy_r <= 1'b0;  
             end
             else begin 
-                trg_dead_time_cnt <= trg_dead_time_cnt + 20'd1; // [Fix Rule 11]
+                trg_dead_time_cnt_L <= trg_dead_time_cnt_L + 16'd1;
+                if (trg_dead_time_cnt_L == 16'hFFFF) begin
+                    trg_dead_time_cnt_H <= trg_dead_time_cnt_H + 4'd1;
+                end // [Fix Rule 11]
             end
         end
         CHECK_SI_BUSY: begin
             eff_trg_sig <= 1'b0; 
             trg_send_r <= 1'b0;
-            trg_dead_time_cnt <= 20'b0;
+            trg_dead_time_cnt_H <= 4'b0;
+            trg_dead_time_cnt_L <= 16'b0;
         end
         WAIT_PMU_BUSY_WITH_SI_BUSY: begin
             eff_trg_sig <= 1'b0; 
             trg_send_r <= 1'b0;
-            trg_dead_time_cnt <= 20'b0;
+            trg_dead_time_cnt_H <= 4'b0;
+            trg_dead_time_cnt_L <= 16'b0;
         end
         WAIT_PMU_BUSY_WITHOUT_SI_BUSY: begin
             eff_trg_sig <= 1'b0; 
             trg_send_r <= 1'b0;
-            trg_dead_time_cnt <= 20'b0;
+            trg_dead_time_cnt_H <= 4'b0;
+            trg_dead_time_cnt_L <= 16'b0;
         end
         WAIT_TRG_WITH_SI_BUSY: begin
             // [Fix Rule 9]: boolean checks
@@ -310,7 +325,8 @@ begin
             if (trg_chksig_width_cnt >= (TRG_PULSE_WIDTH - 8'd1)) begin// [Fix Rule 11]
                 trg_send_r <= 1'b0;
                 trg_chksig_width_cnt <= 8'b0;
-                trg_dead_time_cnt <= 20'b0;
+                trg_dead_time_cnt_H <= 4'b0;
+                trg_dead_time_cnt_L <= 16'b0;
             end
             else begin
                 trg_chksig_width_cnt <= trg_chksig_width_cnt + 8'd1; // [Fix Rule 11]
@@ -320,10 +336,14 @@ begin
         SEND_TRG_CHK: begin //send the check signal
             eff_trg_sig <= 1'b0; 
             trg_chksig_width_cnt <= trg_chksig_width_cnt + 8'd1; // [Fix Rule 11]
-            trg_dead_time_cnt <= trg_dead_time_cnt + 20'd1; // [Fix Rule 11]
-            if (trg_chksig_width_cnt >= (8'd9 + CHK_PULSE_WIDTH))//0.2us+1us  // [Fix Rule 11]
+            trg_dead_time_cnt_L <= trg_dead_time_cnt_L + 16'd1;
+            if (trg_dead_time_cnt_L == 16'hFFFF) begin
+                trg_dead_time_cnt_H <= trg_dead_time_cnt_H + 4'd1;
+            end
+            
+            if (trg_chksig_width_cnt >= (8'd9 + CHK_PULSE_WIDTH))//0.2us+1us 
                 trg_send_r <= 1'b0; 
-            else if (trg_chksig_width_cnt >= 8'd9)//0.2us gap between the trigger signal and the trigger id check signal  // [Fix Rule 11]
+            else if (trg_chksig_width_cnt >= 8'd9)//0.2us gap between the trigger signal and the trigger id check signal 
                 trg_send_r <= 1'b1; // trigger id check signal
         end         
         default: begin
@@ -331,7 +351,8 @@ begin
             eff_trg_sig <= 1'b0;
             daq_busy_r <= 1'b0;
             trg_chksig_width_cnt <= 8'b0;
-            trg_dead_time_cnt <= 20'b0;
+            trg_dead_time_cnt_H <= 4'b0;
+            trg_dead_time_cnt_L <= 16'd0;
         end
      endcase
     end
@@ -339,13 +360,15 @@ end
 
 always @(posedge clk_in or posedge rst_in) begin
     if (rst_in) begin
-        trg_busy_time_cnt_reg <= 24'd0;
+        trg_busy_time_cnt_reg_H <= 8'd0;
+        trg_busy_time_cnt_reg_L <= 16'd0;
         busy_time_work_flow <= 4'b0;
         cycle_timer_cnt <= 6'b0;
     end 
     else begin
         if (busy_time_work_flow==4'd0) begin
-            trg_busy_time_cnt_reg <= 24'd0;  
+            trg_busy_time_cnt_reg_H <= 8'd0;
+            trg_busy_time_cnt_reg_L <= 16'd0;
             if(trg_enb_in == 1'b1)   begin
                 busy_time_work_flow <= 4'd1;
             end            
@@ -394,7 +417,10 @@ always @(posedge clk_in or posedge rst_in) begin
                 cycle_timer_cnt <= cycle_timer_cnt + 6'd1; // [Fix Rule 11]
                 if(cycle_timer_cnt == 6'd4) begin
                     cycle_timer_cnt <= 6'd0;
-                    trg_busy_time_cnt_reg <= trg_busy_time_cnt_reg + 24'd1; // [Fix Rule 11]
+                    trg_busy_time_cnt_reg_L <= trg_busy_time_cnt_reg_L + 16'd1; 
+                    if (trg_busy_time_cnt_reg_L == 16'hFFFF) begin
+                        trg_busy_time_cnt_reg_H <= trg_busy_time_cnt_reg_H + 8'd1;
+                    end
                 end
             end
         end
@@ -408,7 +434,10 @@ always @(posedge clk_in or posedge rst_in) begin
                 cycle_timer_cnt <= cycle_timer_cnt + 6'd1; // [Fix Rule 11]
                 if(cycle_timer_cnt == 6'd4) begin
                     cycle_timer_cnt <= 6'd0;
-                    trg_busy_time_cnt_reg <= trg_busy_time_cnt_reg + 24'd1; // [Fix Rule 11]
+                    trg_busy_time_cnt_reg_L <= trg_busy_time_cnt_reg_L + 16'd1;
+                    if (trg_busy_time_cnt_reg_L == 16'hFFFF) begin
+                        trg_busy_time_cnt_reg_H <= trg_busy_time_cnt_reg_H + 8'd1;
+                    end
                 end
             end
         end
@@ -434,12 +463,11 @@ always @(posedge clk_in or posedge rst_in) begin
     end
 end
 
+
+
 assign  trg_busy_time_cnt_out = trg_busy_time_cnt_reg;
 assign  trg_dead_time_prodcut = trg_dead_time_temp;
-
-// [Fix Rule 9]: boolean logic inside assign
 assign  si_busy_sig = (busy_syn_in[1] == 1'b1) || (busy_syn_in[0] == 1'b1);
-
 assign  eff_trg_out = eff_trg_sig;
 assign  trg_out_N_acd_a = ~trg_send_r;
 assign  trg_out_N_acd_b = ~trg_send_r;
@@ -458,8 +486,6 @@ assign  trg_out_N_cal_fee_3_b = ~trg_send_r;
 assign  trg_out_N_cal_fee_4_a = ~trg_send_r;
 assign  trg_out_N_cal_fee_4_b = ~trg_send_r;
 assign  trg_out_FPGA = ~trg_send_r;
-
-// [Fix Rule 9]: Ensure boolean logic inside trigger flags
 assign  trg_sig_end_flag = (trg_send_r == 1'b0) && (trg_send_r_r == 1'b1);
 
 endmodule
