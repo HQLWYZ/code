@@ -1,5 +1,8 @@
 //~ `New testbench
-
+//~ `New testbench
+// 2，iverilog -o ./a.out ./Coincidence.v ./tb_Coincidence.v  
+// 3， vvp -n a.out 	
+// 4，gtkwave tb_Coincidence.vcd 
 `timescale  1ns / 1ps
 
 module tb_Coincidence;
@@ -42,7 +45,7 @@ reg   [7:0]   acd_csi_hit_tim_diff_in       = 8'b11 ; //default set 4us, e.g. 4u
 reg   [3:0]   acd_fee_top_hit_align_in      = 4'b01 ;//default jitter is 40ns, 40ns/40ns = 1 = 4'h1
 reg   [3:0]   acd_fee_sec_hit_align_in      = 4'b10 ;
 reg   [3:0]   acd_fee_sid_hit_align_in      = 4'b01 ;
-reg   [3:0]   csi_hit_align_in	            = 4'b01 ;//default jitter is 200ns, 200ns/40ns = 5 = 4'h5, at least 1'b1
+reg   [3:0]   csi_hit_align_in	            = 4'b00 ;//default jitter is 200ns, 200ns/40ns = 5 = 4'h5, at least 1'b1
 reg   [3:0]   cal_fee_1_hit_align_in        = 4'b01 ;//at least 1'b1
 reg   [3:0]   cal_fee_2_hit_align_in        = 4'b10 ;//at least 1'b1
 reg   [3:0]   cal_fee_3_hit_align_in        = 4'b01 ;//at least 1'b1
@@ -68,11 +71,11 @@ reg   [5:0]  coincid_MIP2_div_in           = 6'b00_0010 ;
 // Coincidence Outputs
 wire  coincid_trg_out                      ;
 wire  logic_match_out                      ;
-wire  [7:0]  hit_syn_out                  ;
+wire  [12:0]  hit_syn_out                  ;
 wire  [1:0]	busy_syn_out                ;     
 wire  hit_start_out                        ;
 wire  busy_start_out                        ;
-wire  [15:0]  coincid_UBS_cnt_out          ;
+wire  [31:0]  coincid_UBS_cnt_out          ;
 wire  [15:0]  coincid_MIP1_cnt_out          ;
 wire  [15:0]  coincid_MIP2_cnt_out           ;
 wire  coincid_trg_raw_1us_out              ;
@@ -275,7 +278,7 @@ begin
 repeat(3000)
 	begin
 	#200      cal_fee_4_hit_a_in_N=1;
-	#159_840    cal_fee_4_hit_a_in_N=0;
+	#2000    cal_fee_4_hit_a_in_N=0;
 	end
 cal_fee_4_hit_a_in_N=1'b1;
 end
@@ -364,11 +367,11 @@ Coincidence #(
     //.trg_dead_time_in       ( trg_dead_time_in          [7:0]  ),
     .coincid_trg_out          ( coincid_trg_out                 ),
     .logic_match_out          ( logic_match_out                 ),
-    .hit_syn_out              ( hit_syn_out              [7:0] ),
+    .hit_syn_out              ( hit_syn_out              [12:0] ),
     .busy_syn_out              ( busy_syn_out              [1:0] ),
     .hit_start_out            ( hit_start_out                   ),
    // .busy_start_out            ( busy_start_out                   ),
-    .coincid_UBS_cnt_out      ( coincid_UBS_cnt_out      [15:0] ),
+    .coincid_UBS_cnt_out      ( coincid_UBS_cnt_out      [31:0] ),
     .coincid_MIP1_cnt_out      ( coincid_MIP1_cnt_out      [15:0] ),
     .coincid_MIP2_cnt_out       ( coincid_MIP2_cnt_out       [15:0] )
     //.coincid_trg_raw_1us_out  ( coincid_trg_raw_1us_out         ),

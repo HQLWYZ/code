@@ -121,210 +121,69 @@ end
 
 
 //ACD's hits are faster than CsI's, so different hit signals should be aligned. Default delay time is around 4us. After delay, ACD's hit will be late than CsI's hit.
-wire [7:0] 	ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;//this step: delay time = (DELAY bit+1)*40ns
-reg	[12:0]	shift_reg;
-assign  ACD_TOP_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_top_hit_align_in;
-assign  ACD_SEC_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_sec_hit_align_in;
-assign  ACD_SID_DELAY =acd_csi_hit_tim_diff_in+ acd_fee_sid_hit_align_in;
-reg [7:0] wr_ptr_12, wr_ptr_11, wr_ptr_10, wr_ptr_9, wr_ptr_8, wr_ptr_7, wr_ptr_6, wr_ptr_5, wr_ptr_4, wr_ptr_3, wr_ptr_2, wr_ptr_1, wr_ptr_0; // write pointer
-reg [255:0] buffer_12, buffer_11, buffer_10, buffer_9, buffer_8, buffer_7, buffer_6, buffer_5, buffer_4, buffer_3, buffer_2, buffer_1, buffer_0;//ring buffer depth = 256
+wire [7:0]  ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;//this step: delay time = (DELAY bit+1)*40ns
+reg  [12:0] shift_reg;
+assign  ACD_TOP_DELAY = acd_csi_hit_tim_diff_in + acd_fee_top_hit_align_in;
+assign  ACD_SEC_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sec_hit_align_in;
+assign  ACD_SID_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sid_hit_align_in;
 
 
-//Align the hit signal of ACD_TOP1
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_12<=8'b0;
-		buffer_12<=256'b0;
-		shift_reg[12]<=1'b0;     
-	end 
-	else begin
-		buffer_12[wr_ptr_12] <= hit_syn_r[12];//write current input signal to buffer current write pointer position
-		shift_reg[12] <= buffer_12[(wr_ptr_12 - ACD_TOP_DELAY) % 256];//read pointer = write pointer - delay value
-		wr_ptr_12 <= (wr_ptr_12 == 255) ? 0 : wr_ptr_12 + 1;//update write pointer
-	end
+// Define a unified write pointer (all channels write synchronously, so only one write pointer is needed)
+reg [7:0] wr_ptr;
+
+// Define a RAM with a depth of 256 and a width of 13-bit (corresponding to the 13 hit_syn_r signals)
+// The synthesis attribute (* ram_style = "distributed" *) can force the synthesis tool to use LUT RAM instead of flip-flops
+(* ram_style = "distributed" *) reg [12:0] delay_ram [0:255]; 
+
+// Define independent read pointers for each channel (read pointer = write pointer - respective delay amount)
+wire [7:0] rd_ptr_12 = wr_ptr - ACD_TOP_DELAY;
+wire [7:0] rd_ptr_11 = wr_ptr - ACD_SEC_DELAY;
+wire [7:0] rd_ptr_10 = wr_ptr - ACD_SID_DELAY;
+wire [7:0] rd_ptr_9  = wr_ptr - csi_hit_align_in;
+wire [7:0] rd_ptr_8  = wr_ptr - csi_hit_align_in;
+wire [7:0] rd_ptr_7  = wr_ptr - cal_fee_1_hit_align_in;
+wire [7:0] rd_ptr_6  = wr_ptr - cal_fee_1_hit_align_in;
+wire [7:0] rd_ptr_5  = wr_ptr - cal_fee_2_hit_align_in;
+wire [7:0] rd_ptr_4  = wr_ptr - cal_fee_2_hit_align_in;
+wire [7:0] rd_ptr_3  = wr_ptr - cal_fee_3_hit_align_in;
+wire [7:0] rd_ptr_2  = wr_ptr - cal_fee_3_hit_align_in;
+wire [7:0] rd_ptr_1  = wr_ptr - cal_fee_4_hit_align_in;
+wire [7:0] rd_ptr_0  = wr_ptr - cal_fee_4_hit_align_in;
+
+always @(posedge clk_in or posedge rst_in) begin
+    if (rst_in) begin
+        wr_ptr <= 8'b0;
+        shift_reg <= 13'b0;
+        // Note: RAM-based designs typically do not require initializing every bit inside the RAM
+        // because the read data will be valid once the write pointer starts running.
+    end 
+    else begin
+        // 1. Synchronous write: Combine the 13 bits and write them together into the RAM address pointed to by the current wr_ptr
+        delay_ram[wr_ptr] <= hit_syn_r;
+        
+        // 2. Asynchronous read / Synchronous output: Fetch historical data from RAM based on respective delays and latch it into shift_reg
+        shift_reg[12] <= delay_ram[rd_ptr_12][12];
+        shift_reg[11] <= delay_ram[rd_ptr_11][11];
+        shift_reg[10] <= delay_ram[rd_ptr_10][10];
+        shift_reg[9]  <= delay_ram[rd_ptr_9][9];
+        shift_reg[8]  <= delay_ram[rd_ptr_8][8];
+        shift_reg[7]  <= delay_ram[rd_ptr_7][7];
+        shift_reg[6]  <= delay_ram[rd_ptr_6][6];
+        shift_reg[5]  <= delay_ram[rd_ptr_5][5];
+        shift_reg[4]  <= delay_ram[rd_ptr_4][4];
+        shift_reg[3]  <= delay_ram[rd_ptr_3][3];
+        shift_reg[2]  <= delay_ram[rd_ptr_2][2];
+        shift_reg[1]  <= delay_ram[rd_ptr_1][1];
+        shift_reg[0]  <= delay_ram[rd_ptr_0][0];
+        
+        // 3. Update write pointer
+        wr_ptr <= wr_ptr + 1'b1;
+    end
 end
-
-//Align the hit signal of ACD_SEC
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_11<=8'b0;
-		buffer_11<=256'b0;
-		shift_reg[11]<=1'b0;     
-	end 
-	else begin
-		buffer_11[wr_ptr_11] <= hit_syn_r[11];//write current input signal to buffer current write pointer position
-		shift_reg[11] <= buffer_11[(wr_ptr_11 - ACD_SEC_DELAY) % 256];//read pointer = write pointer - delay value
-		wr_ptr_11 <= (wr_ptr_11 == 255) ? 0 : wr_ptr_11 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of ACD_TOP2
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_10<=8'b0;
-		buffer_10<=256'b0;
-		shift_reg[10]<=1'b0;     
-	end 
-	else begin
-		buffer_10[wr_ptr_10] <= hit_syn_r[10];//write current input signal to buffer current write pointer position
-		shift_reg[10] <= buffer_10[(wr_ptr_10 - ACD_SID_DELAY) % 256];//read pointer = write pointer - delay value
-		wr_ptr_10 <= (wr_ptr_10 == 255) ? 0 : wr_ptr_10 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CSI_A
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_9<=8'b0;
-		buffer_9<=256'b0;
-		shift_reg[9]<=1'b0;     
-	end 
-	else begin
-		buffer_9[wr_ptr_9] <= hit_syn_r[9];//write current input signal to buffer current write pointer position
-		shift_reg[9] <= buffer_9[(wr_ptr_9 - csi_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_9 <= (wr_ptr_9 == 255) ? 0 : wr_ptr_9 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CSI_B
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_8<=8'b0;
-		buffer_8<=256'b0;
-		shift_reg[8]<=1'b0;     
-	end 
-	else begin
-		buffer_8[wr_ptr_8] <= hit_syn_r[8];//write current input signal to buffer current write pointer position
-		shift_reg[8] <= buffer_8[(wr_ptr_8 - csi_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_8 <= (wr_ptr_8 == 255) ? 0 : wr_ptr_8 + 1;//update write pointer
-	end
-end
-
-
-//Align the hit signal of CAL_1_A
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_7<=8'b0;
-		buffer_7<=256'b0;
-		shift_reg[7]<=1'b0;     
-	end 
-	else begin
-		buffer_7[wr_ptr_7] <= hit_syn_r[7];//write current input signal to buffer current write pointer position
-		shift_reg[7] <= buffer_7[(wr_ptr_7 - cal_fee_1_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_7 <= (wr_ptr_7 == 255) ? 0 : wr_ptr_7 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_1_B
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_6<=8'b0;
-		buffer_6<=256'b0;
-		shift_reg[6]<=1'b0;     
-	end 
-	else begin
-		buffer_6[wr_ptr_6] <= hit_syn_r[6];//write current input signal to buffer current write pointer position
-		shift_reg[6] <= buffer_6[(wr_ptr_6 - cal_fee_1_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_6 <= (wr_ptr_6 == 255) ? 0 : wr_ptr_6 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_2_A
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_5<=8'b0;
-		buffer_5<=256'b0;
-		shift_reg[5]<=1'b0;     
-	end 
-	else begin
-		buffer_5[wr_ptr_5] <= hit_syn_r[5];//write current input signal to buffer current write pointer position
-		shift_reg[5] <= buffer_5[(wr_ptr_5 - cal_fee_2_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_5 <= (wr_ptr_5 == 255) ? 0 : wr_ptr_5 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_2_B
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_4<=8'b0;
-		buffer_4<=256'b0;
-		shift_reg[4]<=1'b0;     
-	end 
-	else begin
-		buffer_4[wr_ptr_4] <= hit_syn_r[4];//write current input signal to buffer current write pointer position
-		shift_reg[4] <= buffer_4[(wr_ptr_4 - cal_fee_2_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_4 <= (wr_ptr_4 == 255) ? 0 : wr_ptr_4 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_3_A
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_3<=8'b0;
-		buffer_3<=256'b0;
-		shift_reg[3]<=1'b0;     
-	end 
-	else begin
-		buffer_3[wr_ptr_3] <= hit_syn_r[3];//write current input signal to buffer current write pointer position
-		shift_reg[3] <= buffer_3[(wr_ptr_3 - cal_fee_3_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_3 <= (wr_ptr_3 == 255) ? 0 : wr_ptr_3 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_3_B
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_2<=8'b0;
-		buffer_2<=256'b0;
-		shift_reg[2]<=1'b0;     
-	end 
-	else begin
-		buffer_2[wr_ptr_2] <= hit_syn_r[2];//write current input signal to buffer current write pointer position
-		shift_reg[2] <= buffer_2[(wr_ptr_2 - cal_fee_3_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_2 <= (wr_ptr_2 == 255) ? 0 : wr_ptr_2 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_4_A
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_1<=8'b0;
-		buffer_1<=256'b0;
-		shift_reg[1]<=1'b0;     
-	end 
-	else begin
-		buffer_1[wr_ptr_1] <= hit_syn_r[1];//write current input signal to buffer current write pointer position
-		shift_reg[1] <= buffer_1[(wr_ptr_1 - cal_fee_4_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_1 <= (wr_ptr_1 == 255) ? 0 : wr_ptr_1 + 1;//update write pointer
-	end
-end
-
-//Align the hit signal of CAL_4_B
-always @(posedge clk_in or posedge rst_in)
-begin
-	if (rst_in) begin
-		wr_ptr_0<=8'b0;
-		buffer_0<=256'b0;
-		shift_reg[0]<=1'b0;     
-	end 
-	else begin
-		buffer_0[wr_ptr_0] <= hit_syn_r[0];//write current input signal to buffer current write pointer position
-		shift_reg[0] <= buffer_0[(wr_ptr_0 - cal_fee_4_hit_align_in) % 256];//read pointer = write pointer - delay value
-		wr_ptr_0 <= (wr_ptr_0 == 255) ? 0 : wr_ptr_0 + 1;//update write pointer
-	end
-end
+// =========================================================================
+// [Optimization End]
+// These lines of code completely replace the original 13 always blocks and the 13 massive register arrays.
+// ==
 
 
 	assign acd_fee_top_hit_syn = shift_reg[12];
