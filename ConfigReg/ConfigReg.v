@@ -1,7 +1,7 @@
 /*----------------------------------------------------------*/
 /* file name:  ConfigReg.v                                 */
 /* date:       2025/03/06                                  */
-/* modified:   2026/04/04                                   */
+/* modified:   2026/04/20                                   */
 /* version:    v1.0                                        */
 /* author:     Wang Shen                                   */
 /* email:      wangshen@pmo.ac.cn                          */
@@ -108,30 +108,70 @@ module ConfigReg(
     // =========================================================================
     // 2. TMR Internal Registers (with synthesis attributes to prevent optimization)
     // =========================================================================
-    (* preserve = "true", keep = "true" *) reg [15:0] ctrl_reg_A, ctrl_reg_B, ctrl_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] cmd_reg_A, cmd_reg_B, cmd_reg_C;
+    (* preserve = "true" *) reg [15:0] ctrl_reg_A;
+    (* preserve = "true" *) reg [15:0] ctrl_reg_B;
+    (* preserve = "true" *) reg [15:0] ctrl_reg_C;
+    (* preserve = "true" *) reg [15:0] cmd_reg_A;
+    (* preserve = "true" *) reg [15:0] cmd_reg_B;
+    (* preserve = "true" *) reg [15:0] cmd_reg_C;
     
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_mip1_reg_A, trg_mode_mip1_reg_B, trg_mode_mip1_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_mip2_reg_A, trg_mode_mip2_reg_B, trg_mode_mip2_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_gm1_reg_A,  trg_mode_gm1_reg_B,  trg_mode_gm1_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_gm2_reg_A,  trg_mode_gm2_reg_B,  trg_mode_gm2_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_ubs_reg_A,  trg_mode_ubs_reg_B,  trg_mode_ubs_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_brst_reg_A, trg_mode_brst_reg_B, trg_mode_brst_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_mip1_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_mip1_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_mip1_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_mip2_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_mip2_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_mip2_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_gm1_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_gm1_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_gm1_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_gm2_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_gm2_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_gm2_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_ubs_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_ubs_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_ubs_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_brst_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_brst_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_brst_reg_C;
     
-    (* preserve = "true", keep = "true" *) reg [15:0] hit_ab_sel_reg_A, hit_ab_sel_reg_B, hit_ab_sel_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] hit_mask_reg_A, hit_mask_reg_B, hit_mask_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] busy_set_reg_A, busy_set_reg_B, busy_set_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] hit_delay_win_reg_A, hit_delay_win_reg_B, hit_delay_win_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] hit_align_reg0_A, hit_align_reg0_B, hit_align_reg0_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] hit_align_reg1_A, hit_align_reg1_B, hit_align_reg1_C;
+    (* preserve = "true" *) reg [15:0] hit_ab_sel_reg_A;
+    (* preserve = "true" *) reg [15:0] hit_ab_sel_reg_B;
+    (* preserve = "true" *) reg [15:0] hit_ab_sel_reg_C;
+    (* preserve = "true" *) reg [15:0] hit_mask_reg_A;
+    (* preserve = "true" *) reg [15:0] hit_mask_reg_B;
+    (* preserve = "true" *) reg [15:0] hit_mask_reg_C;
+    (* preserve = "true" *) reg [15:0] busy_set_reg_A;
+    (* preserve = "true" *) reg [15:0] busy_set_reg_B;
+    (* preserve = "true" *) reg [15:0] busy_set_reg_C;
+    (* preserve = "true" *) reg [15:0] hit_delay_win_reg_A;
+    (* preserve = "true" *) reg [15:0] hit_delay_win_reg_B;
+    (* preserve = "true" *) reg [15:0] hit_delay_win_reg_C;
+    (* preserve = "true" *) reg [15:0] hit_align_reg0_A;
+    (* preserve = "true" *) reg [15:0] hit_align_reg0_B;
+    (* preserve = "true" *) reg [15:0] hit_align_reg0_C;
+    (* preserve = "true" *) reg [15:0] hit_align_reg1_A;
+    (* preserve = "true" *) reg [15:0] hit_align_reg1_B;
+    (* preserve = "true" *) reg [15:0] hit_align_reg1_C;
     
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_match_win_reg_A, trg_match_win_reg_B, trg_match_win_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_dead_time_reg_A, trg_dead_time_reg_B, trg_dead_time_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] trg_mode_oe_reg_A, trg_mode_oe_reg_B, trg_mode_oe_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_match_win_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_match_win_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_match_win_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_dead_time_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_dead_time_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_dead_time_reg_C;
+    (* preserve = "true" *) reg [15:0] trg_mode_oe_reg_A;
+    (* preserve = "true" *) reg [15:0] trg_mode_oe_reg_B;
+    (* preserve = "true" *) reg [15:0] trg_mode_oe_reg_C;
     
-    (* preserve = "true", keep = "true" *) reg [15:0] cycled_trg_period_reg_A, cycled_trg_period_reg_B, cycled_trg_period_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] cycled_trg_num_reg_A, cycled_trg_num_reg_B, cycled_trg_num_reg_C;
-    (* preserve = "true", keep = "true" *) reg [15:0] ext_trg_delay_reg_A, ext_trg_delay_reg_B, ext_trg_delay_reg_C;
+    (* preserve = "true" *) reg [15:0] cycled_trg_period_reg_A;
+    (* preserve = "true" *) reg [15:0] cycled_trg_period_reg_B;
+    (* preserve = "true" *) reg [15:0] cycled_trg_period_reg_C;
+    (* preserve = "true" *) reg [15:0] cycled_trg_num_reg_A;
+    (* preserve = "true" *) reg [15:0] cycled_trg_num_reg_B;
+    (* preserve = "true" *) reg [15:0] cycled_trg_num_reg_C;
+    (* preserve = "true" *) reg [15:0] ext_trg_delay_reg_A;
+    (* preserve = "true" *) reg [15:0] ext_trg_delay_reg_B;
+    (* preserve = "true" *) reg [15:0] ext_trg_delay_reg_C;
 
     // =========================================================================
     // 3. Majority Voter Wires (W_ prefix)
