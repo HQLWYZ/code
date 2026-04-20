@@ -1,8 +1,7 @@
 /*----------------------------------------------------------*/
-/* */
 /*	file name:	Coincidence.v			                    */
 /* date:		2025/02/27									*/
-/* modified:	2026/04/04          						*/
+/* modified:	2026/04/20          						*/
 /* version:		v1.0										*/
 /* author:		Wang Shen									*/
 /* email:		wangshen@pmo.ac.cn							*/
@@ -119,71 +118,170 @@ begin
 	end
 end
 
+//-------------------------------------------------------//
+//--            -----For simulation---------		   --//
+//--                                                   --//
+//-[Logic Optimization Start]-- [Logic Optimization End]-//
+//--                                                   --//
+//--                                                   --//
+//-------------------------------------------------------//
+// //ACD's hits are faster than CsI's, so different hit signals should be aligned. Default delay time is around 4us. After delay, ACD's hit will be late than CsI's hit.
+// // [Logic Optimization Start]
+// wire [7:0]  ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;//this step: delay time = (DELAY bit+1)*40ns
+// reg  [12:0] shift_reg;
+// assign  ACD_TOP_DELAY = acd_csi_hit_tim_diff_in + acd_fee_top_hit_align_in;
+// assign  ACD_SEC_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sec_hit_align_in;
+// assign  ACD_SID_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sid_hit_align_in;
 
-//ACD's hits are faster than CsI's, so different hit signals should be aligned. Default delay time is around 4us. After delay, ACD's hit will be late than CsI's hit.
-wire [7:0]  ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;//this step: delay time = (DELAY bit+1)*40ns
-reg  [12:0] shift_reg;
-assign  ACD_TOP_DELAY = acd_csi_hit_tim_diff_in + acd_fee_top_hit_align_in;
-assign  ACD_SEC_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sec_hit_align_in;
-assign  ACD_SID_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sid_hit_align_in;
 
+// // Define a unified write pointer (all channels write synchronously, so only one write pointer is needed)
+// reg [7:0] wr_ptr;
 
-// Define a unified write pointer (all channels write synchronously, so only one write pointer is needed)
-reg [7:0] wr_ptr;
+// // Define a RAM with a depth of 256 and a width of 13-bit (corresponding to the 13 hit_syn_r signals)
+// // The synthesis attribute (* ram_style = "distributed" *) can force the synthesis tool to use LUT RAM instead of flip-flops
+// (* ram_style = "distributed" *) reg [12:0] delay_ram [0:255]; 
 
-// Define a RAM with a depth of 256 and a width of 13-bit (corresponding to the 13 hit_syn_r signals)
-// The synthesis attribute (* ram_style = "distributed" *) can force the synthesis tool to use LUT RAM instead of flip-flops
-(* ram_style = "distributed" *) reg [12:0] delay_ram [0:255]; 
+// // Define independent read pointers for each channel (read pointer = write pointer - respective delay amount)
+// wire [7:0] rd_ptr_12 = wr_ptr - ACD_TOP_DELAY;
+// wire [7:0] rd_ptr_11 = wr_ptr - ACD_SEC_DELAY;
+// wire [7:0] rd_ptr_10 = wr_ptr - ACD_SID_DELAY;
+// wire [7:0] rd_ptr_9  = wr_ptr - csi_hit_align_in;
+// wire [7:0] rd_ptr_8  = wr_ptr - csi_hit_align_in;
+// wire [7:0] rd_ptr_7  = wr_ptr - cal_fee_1_hit_align_in;
+// wire [7:0] rd_ptr_6  = wr_ptr - cal_fee_1_hit_align_in;
+// wire [7:0] rd_ptr_5  = wr_ptr - cal_fee_2_hit_align_in;
+// wire [7:0] rd_ptr_4  = wr_ptr - cal_fee_2_hit_align_in;
+// wire [7:0] rd_ptr_3  = wr_ptr - cal_fee_3_hit_align_in;
+// wire [7:0] rd_ptr_2  = wr_ptr - cal_fee_3_hit_align_in;
+// wire [7:0] rd_ptr_1  = wr_ptr - cal_fee_4_hit_align_in;
+// wire [7:0] rd_ptr_0  = wr_ptr - cal_fee_4_hit_align_in;
 
-// Define independent read pointers for each channel (read pointer = write pointer - respective delay amount)
-wire [7:0] rd_ptr_12 = wr_ptr - ACD_TOP_DELAY;
-wire [7:0] rd_ptr_11 = wr_ptr - ACD_SEC_DELAY;
-wire [7:0] rd_ptr_10 = wr_ptr - ACD_SID_DELAY;
-wire [7:0] rd_ptr_9  = wr_ptr - csi_hit_align_in;
-wire [7:0] rd_ptr_8  = wr_ptr - csi_hit_align_in;
-wire [7:0] rd_ptr_7  = wr_ptr - cal_fee_1_hit_align_in;
-wire [7:0] rd_ptr_6  = wr_ptr - cal_fee_1_hit_align_in;
-wire [7:0] rd_ptr_5  = wr_ptr - cal_fee_2_hit_align_in;
-wire [7:0] rd_ptr_4  = wr_ptr - cal_fee_2_hit_align_in;
-wire [7:0] rd_ptr_3  = wr_ptr - cal_fee_3_hit_align_in;
-wire [7:0] rd_ptr_2  = wr_ptr - cal_fee_3_hit_align_in;
-wire [7:0] rd_ptr_1  = wr_ptr - cal_fee_4_hit_align_in;
-wire [7:0] rd_ptr_0  = wr_ptr - cal_fee_4_hit_align_in;
-
-always @(posedge clk_in or posedge rst_in) begin
-    if (rst_in) begin
-        wr_ptr <= 8'b0;
-        shift_reg <= 13'b0;
-        // Note: RAM-based designs typically do not require initializing every bit inside the RAM
-        // because the read data will be valid once the write pointer starts running.
-    end 
-    else begin
-        // 1. Synchronous write: Combine the 13 bits and write them together into the RAM address pointed to by the current wr_ptr
-        delay_ram[wr_ptr] <= hit_syn_r;
+// always @(posedge clk_in or posedge rst_in) begin
+//     if (rst_in) begin
+//         wr_ptr <= 8'b0;
+//         shift_reg <= 13'b0;
+//         // Note: RAM-based designs typically do not require initializing every bit inside the RAM
+//         // because the read data will be valid once the write pointer starts running.
+//     end 
+//     else begin
+//         // 1. Synchronous write: Combine the 13 bits and write them together into the RAM address pointed to by the current wr_ptr
+//         delay_ram[wr_ptr] <= hit_syn_r;
         
-        // 2. Asynchronous read / Synchronous output: Fetch historical data from RAM based on respective delays and latch it into shift_reg
-        shift_reg[12] <= delay_ram[rd_ptr_12][12];
-        shift_reg[11] <= delay_ram[rd_ptr_11][11];
-        shift_reg[10] <= delay_ram[rd_ptr_10][10];
-        shift_reg[9]  <= delay_ram[rd_ptr_9][9];
-        shift_reg[8]  <= delay_ram[rd_ptr_8][8];
-        shift_reg[7]  <= delay_ram[rd_ptr_7][7];
-        shift_reg[6]  <= delay_ram[rd_ptr_6][6];
-        shift_reg[5]  <= delay_ram[rd_ptr_5][5];
-        shift_reg[4]  <= delay_ram[rd_ptr_4][4];
-        shift_reg[3]  <= delay_ram[rd_ptr_3][3];
-        shift_reg[2]  <= delay_ram[rd_ptr_2][2];
-        shift_reg[1]  <= delay_ram[rd_ptr_1][1];
-        shift_reg[0]  <= delay_ram[rd_ptr_0][0];
+//         // 2. Asynchronous read / Synchronous output: Fetch historical data from RAM based on respective delays and latch it into shift_reg
+//         shift_reg[12] <= delay_ram[rd_ptr_12][12];
+//         shift_reg[11] <= delay_ram[rd_ptr_11][11];
+//         shift_reg[10] <= delay_ram[rd_ptr_10][10];
+//         shift_reg[9]  <= delay_ram[rd_ptr_9][9];
+//         shift_reg[8]  <= delay_ram[rd_ptr_8][8];
+//         shift_reg[7]  <= delay_ram[rd_ptr_7][7];
+//         shift_reg[6]  <= delay_ram[rd_ptr_6][6];
+//         shift_reg[5]  <= delay_ram[rd_ptr_5][5];
+//         shift_reg[4]  <= delay_ram[rd_ptr_4][4];
+//         shift_reg[3]  <= delay_ram[rd_ptr_3][3];
+//         shift_reg[2]  <= delay_ram[rd_ptr_2][2];
+//         shift_reg[1]  <= delay_ram[rd_ptr_1][1];
+//         shift_reg[0]  <= delay_ram[rd_ptr_0][0];
         
-        // 3. Update write pointer
-        wr_ptr <= wr_ptr + 1'b1;
-    end
-end
+//         // 3. Update write pointer
+//         wr_ptr <= wr_ptr + 1'b1;
+//     end
+// end
 // =========================================================================
-// [Optimization End]
+// [Logic Optimization End]
 // These lines of code completely replace the original 13 always blocks and the 13 massive register arrays.
 // ==
+
+//-------------------------------------------------------//
+//--            -----Final code---------		       --//
+//--                                                   --//
+//-[IP Core Optimization Start]-to [IP Core Optimization End]-//
+//--                                                   --//
+//--                                                   --//
+//-------------------------------------------------------//
+
+//ACD's hits are faster than CsI's, so different hit signals should be aligned. Default delay time is around 4us.
+    wire [7:0]  ACD_TOP_DELAY, ACD_SEC_DELAY, ACD_SID_DELAY;
+    reg  [12:0] shift_reg;
+    assign  ACD_TOP_DELAY = acd_csi_hit_tim_diff_in + acd_fee_top_hit_align_in;
+    assign  ACD_SEC_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sec_hit_align_in;
+    assign  ACD_SID_DELAY = acd_csi_hit_tim_diff_in + acd_fee_sid_hit_align_in;
+
+    // =========================================================================
+    // [优化核心: 基于 ISE Distributed Memory IP 的延时通道替换]
+    // =========================================================================
+
+    // 1. 统一的写指针 (由于 13 个信号是同一个时钟沿到达，共用一个写指针即可保证绝对同步)
+    reg [7:0] wr_ptr;
+
+    // 2. 各通道独立的读指针计算 (利用 8-bit wire 的自动溢出回卷特性，等效于 % 256)
+    // 读地址 = 当前写地址 - 该通道需要的延迟节拍数
+    wire [7:0] rd_ptr_12 = wr_ptr - ACD_TOP_DELAY;
+    wire [7:0] rd_ptr_11 = wr_ptr - ACD_SEC_DELAY;
+    wire [7:0] rd_ptr_10 = wr_ptr - ACD_SID_DELAY;
+    wire [7:0] rd_ptr_9  = wr_ptr - csi_hit_align_in;
+    wire [7:0] rd_ptr_8  = wr_ptr - csi_hit_align_in;
+    wire [7:0] rd_ptr_7  = wr_ptr - cal_fee_1_hit_align_in;
+    wire [7:0] rd_ptr_6  = wr_ptr - cal_fee_1_hit_align_in;
+    wire [7:0] rd_ptr_5  = wr_ptr - cal_fee_2_hit_align_in;
+    wire [7:0] rd_ptr_4  = wr_ptr - cal_fee_2_hit_align_in;
+    wire [7:0] rd_ptr_3  = wr_ptr - cal_fee_3_hit_align_in;
+    wire [7:0] rd_ptr_2  = wr_ptr - cal_fee_3_hit_align_in;
+    wire [7:0] rd_ptr_1  = wr_ptr - cal_fee_4_hit_align_in;
+    wire [7:0] rd_ptr_0  = wr_ptr - cal_fee_4_hit_align_in;
+
+    // 3. 用于接收 Distributed Memory IP 核异步/同步读出的数据连线
+    wire [12:0] ram_data_out;
+
+    // 4. 写指针更新逻辑 (完全保留原有的递增逻辑逻辑)
+    always @(posedge clk_in or posedge rst_in) begin
+        if (rst_in) begin
+            wr_ptr <= 8'b0;
+        end 
+        else begin
+            wr_ptr <= wr_ptr + 1'b1;
+        end
+    end
+
+    // =========================================================================
+    // 5. 例化 13 个 深度为256、位宽为1 的双端口 Distributed Memory
+    // 端口说明: 
+    // clk  : 时钟
+    // we   : 写使能 (1'b1，每个周期都把当前 hit 状态写进去)
+    // a    : 写地址 (统一使用 wr_ptr)
+    // d    : 写入数据 (对应的 hit_syn_r bit)
+    // dpra : 读地址 (即 Dual Port Read Address，各自独立偏移)
+	// spo  : 读出数据 (Single Port Output, 不使用)
+    // dpo  : 读出数据 (Dual Port Output)
+    // =========================================================================
+    
+    dist_ram_256x1 ram_inst_12 ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[12]), .dpra(rd_ptr_12), .spo(), .dpo(ram_data_out[12]) );
+    dist_ram_256x1 ram_inst_11 ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[11]), .dpra(rd_ptr_11), .spo(), .dpo(ram_data_out[11]) );
+    dist_ram_256x1 ram_inst_10 ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[10]), .dpra(rd_ptr_10), .spo(), .dpo(ram_data_out[10]) );
+    dist_ram_256x1 ram_inst_9  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[9]),  .dpra(rd_ptr_9),  .spo(), .dpo(ram_data_out[9])  );
+    dist_ram_256x1 ram_inst_8  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[8]),  .dpra(rd_ptr_8),  .spo(), .dpo(ram_data_out[8])  );
+    dist_ram_256x1 ram_inst_7  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[7]),  .dpra(rd_ptr_7),  .spo(), .dpo(ram_data_out[7])  );
+    dist_ram_256x1 ram_inst_6  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[6]),  .dpra(rd_ptr_6),  .spo(), .dpo(ram_data_out[6])  );
+    dist_ram_256x1 ram_inst_5  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[5]),  .dpra(rd_ptr_5),  .spo(), .dpo(ram_data_out[5])  );
+    dist_ram_256x1 ram_inst_4  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[4]),  .dpra(rd_ptr_4),  .spo(), .dpo(ram_data_out[4])  );
+    dist_ram_256x1 ram_inst_3  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[3]),  .dpra(rd_ptr_3),  .spo(), .dpo(ram_data_out[3])  );
+    dist_ram_256x1 ram_inst_2  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[2]),  .dpra(rd_ptr_2),  .spo(), .dpo(ram_data_out[2])  );
+    dist_ram_256x1 ram_inst_1  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[1]),  .dpra(rd_ptr_1),  .spo(), .dpo(ram_data_out[1])  );
+    dist_ram_256x1 ram_inst_0  ( .clk(clk_in), .we(1'b1), .a(wr_ptr), .d(hit_syn_r[0]),  .dpra(rd_ptr_0),  .spo(), .dpo(ram_data_out[0])  );
+
+    // =========================================================================
+    // 6. 输出打拍对齐 (保持原有时序逻辑)
+    // 从 IP 核中读出的数据，在时钟沿打入 shift_reg，与你原代码的行为 100% 对齐。
+    // =========================================================================
+    always @(posedge clk_in or posedge rst_in) begin
+        if (rst_in) begin
+            shift_reg <= 13'b0;
+        end 
+        else begin
+            shift_reg <= ram_data_out;
+        end
+    end
+// [Logic Optimization End]
+
 
 
 	assign acd_fee_top_hit_syn = shift_reg[12];
