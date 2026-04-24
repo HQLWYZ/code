@@ -388,6 +388,7 @@ HitTrgCount HitTrgCount_inst(
     .clk_in(clk_in),
     .rst_in(rst_logic_sig), 
     .rd_in(rd_in), 
+    .rd_addr_in(rd_addr_in),
     .hit_syn_in(hit_syn_sig),
     .busy_syn_in(busy_syn_sig),
     .hit_start_in(hit_start_sig),
