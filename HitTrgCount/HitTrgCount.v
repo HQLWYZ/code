@@ -13,7 +13,8 @@
 module HitTrgCount(
 	input			clk_in,
 	input			rst_in, 	
-	input			rd_in,			
+	input			rd_in,	
+	input   [7:0]   rd_addr_in,		
 	input	[12:0]	hit_syn_in,				// hit signals after synchronization, from Coincidence module
 	input	[1:0]	busy_syn_in,			// busy signals after synchronization, from Coincidence module
 	input			hit_start_in,			// hit start signal, the fastest signal from the ECAL, from Coincidence module
@@ -149,7 +150,7 @@ begin
         rd_edge_cnt     <= 2'b0; 
     end
     else begin
-        if (~rd_in & rd_in_r) begin 
+        if (~rd_in & rd_in_r &   (rd_addr_in == 8'b0001_1001) ) begin 
             if (rd_edge_cnt == 2'd3) begin 
                 rd_edge_cnt <= 2'd0; 
                 
@@ -176,7 +177,7 @@ begin
         hit_monit_cnt_1_H <= 16'b0;
         hit_monit_cnt_1_L <= 16'b0;
     end
-    else if ((~rd_in & rd_in_r) && (rd_edge_cnt == 2'd3)) begin
+    else if ((~rd_in & rd_in_r  &   (rd_addr_in == 8'b0001_1001) ) && (rd_edge_cnt == 2'd3)) begin
         hit_monit_cnt_1_H <= 16'b0;
         hit_monit_cnt_1_L <= 16'b0;
     end
